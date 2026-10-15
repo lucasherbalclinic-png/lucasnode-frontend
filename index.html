@@ -1027,3 +1027,1849 @@ section {
   font-size:12px;
   line-height:1.8;
 }
+/* ===== CSS CONTINUED ===== */
+
+.cta-section {
+  padding:70px 0;
+  background:var(--bg);
+}
+
+.cta-box {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:30px;
+  padding:45px;
+  border-radius:24px;
+  background:linear-gradient(120deg,#0b1739,#123d50);
+  color:#fff;
+}
+
+.cta-box h2 {
+  font-size:clamp(25px,4vw,38px);
+  line-height:1.2;
+  margin-bottom:12px;
+}
+
+.cta-box p {
+  color:#c7d5e7;
+  font-size:14px;
+  max-width:600px;
+}
+
+.contact-section {
+  background:#fff;
+}
+
+.contact-grid {
+  display:grid;
+  grid-template-columns:.85fr 1.15fr;
+  gap:40px;
+}
+
+.contact-info h2 {
+  font-size:32px;
+  color:var(--navy);
+  line-height:1.2;
+  margin:15px 0;
+}
+
+.contact-info p {
+  color:var(--muted);
+  font-size:14px;
+}
+
+.contact-item {
+  display:flex;
+  align-items:center;
+  gap:13px;
+  margin-top:20px;
+}
+
+.contact-item i {
+  width:42px;
+  height:42px;
+  display:grid;
+  place-items:center;
+  color:var(--green2);
+  background:#e9fbf3;
+  border-radius:12px;
+}
+
+.contact-item strong {
+  display:block;
+  font-size:13px;
+  color:var(--navy);
+}
+
+.contact-item span {
+  color:var(--muted);
+  font-size:12px;
+}
+
+.contact-form {
+  display:grid;
+  gap:14px;
+  padding:28px;
+  border:1px solid var(--border);
+  border-radius:20px;
+  box-shadow:var(--shadow);
+}
+
+.form-row {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+}
+
+.field {
+  display:grid;
+  gap:7px;
+}
+
+.field label {
+  color:var(--navy);
+  font-size:12px;
+  font-weight:750;
+}
+
+.field input,
+.field textarea,
+.field select {
+  width:100%;
+  min-width:0;
+  border:1px solid #dfe5ef;
+  border-radius:10px;
+  padding:12px 13px;
+  outline:none;
+  background:#fff;
+  color:var(--text);
+  font-size:13px;
+}
+
+.field input:focus,
+.field textarea:focus,
+.field select:focus {
+  border-color:var(--green);
+  box-shadow:0 0 0 3px rgba(16,185,129,.1);
+}
+
+.field textarea {
+  resize:vertical;
+  min-height:120px;
+}
+
+.footer {
+  background:#09132e;
+  color:#fff;
+  padding:55px 0 20px;
+}
+
+.footer-grid {
+  display:grid;
+  grid-template-columns:1.5fr 1fr 1fr 1fr;
+  gap:35px;
+  padding-bottom:35px;
+}
+
+.footer .brand-name {
+  color:#fff;
+}
+
+.footer-about {
+  color:#aab8cf;
+  font-size:13px;
+  margin-top:17px;
+  max-width:310px;
+}
+
+.footer h4 {
+  margin-bottom:15px;
+  font-size:13px;
+}
+
+.footer-links {
+  display:grid;
+  gap:10px;
+}
+
+.footer-links a {
+  color:#aab8cf;
+  font-size:12px;
+}
+
+.footer-links a:hover {
+  color:#6ee7b7;
+}
+
+.footer-bottom {
+  display:flex;
+  justify-content:space-between;
+  gap:15px;
+  flex-wrap:wrap;
+  padding-top:20px;
+  border-top:1px solid rgba(255,255,255,.12);
+  color:#98a8c2;
+  font-size:11px;
+}
+
+.notice {
+  padding:13px 15px;
+  border-radius:11px;
+  font-size:12px;
+  line-height:1.7;
+  margin:12px 0;
+  overflow-wrap:anywhere;
+}
+
+.notice-info {
+  color:#1d4ed8;
+  background:#eff6ff;
+  border:1px solid #dbeafe;
+}
+
+.notice-success {
+  color:#047857;
+  background:#ecfdf5;
+  border:1px solid #d1fae5;
+}
+
+.notice-error {
+  color:#b91c1c;
+  background:#fef2f2;
+  border:1px solid #fee2e2;
+}
+
+.status-text {
+  font-size:12px;
+  color:var(--muted);
+  margin-top:10px;
+  overflow-wrap:anywhere;
+}
+
+.api-status {
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  font-size:11px;
+  font-weight:750;
+  color:#64748b;
+}
+
+.api-status i {
+  font-size:8px;
+}
+
+.api-status.ok {
+  color:#059669;
+}
+
+.api-status.bad {
+  color:#dc2626;
+}
+
+.project-area {
+  padding:25px;
+  border:1px solid var(--border);
+  border-radius:18px;
+  background:#fff;
+  box-shadow:0 10px 35px rgba(15,35,75,.05);
+}
+
+.project-toolbar {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+  flex-wrap:wrap;
+  margin-bottom:20px;
+}
+
+.project-toolbar h3 {
+  color:var(--navy);
+  font-size:19px;
+}
+
+.project-grid {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:15px;
+}
+
+.project-card {
+  min-width:0;
+  padding:19px;
+  border:1px solid var(--border);
+  border-radius:15px;
+  background:#fff;
+}
+
+.project-card h4 {
+  color:var(--navy);
+  font-size:14px;
+  overflow-wrap:anywhere;
+}
+
+.project-card p {
+  color:var(--muted);
+  font-size:12px;
+  margin:9px 0;
+  overflow-wrap:anywhere;
+}
+
+.project-card .project-meta {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:14px;
+}
+
+.project-badge {
+  padding:5px 8px;
+  border-radius:20px;
+  background:#f1f5f9;
+  color:#475569;
+  font-size:10px;
+  font-weight:750;
+}
+
+.empty-state {
+  padding:30px 12px;
+  text-align:center;
+  color:var(--muted);
+  font-size:13px;
+  grid-column:1/-1;
+}
+
+.empty-state i {
+  display:block;
+  color:#9aa8bd;
+  font-size:28px;
+  margin-bottom:12px;
+}
+
+.app-section {
+  background:#fff;
+}
+
+.app-grid {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:22px;
+}
+
+.app-panel {
+  padding:24px;
+  border:1px solid var(--border);
+  border-radius:18px;
+  background:#fff;
+  box-shadow:0 10px 35px rgba(15,35,75,.05);
+  min-width:0;
+}
+
+.app-panel h3 {
+  font-size:18px;
+  color:var(--navy);
+  margin-bottom:7px;
+}
+
+.app-panel > p {
+  color:var(--muted);
+  font-size:12px;
+  margin-bottom:18px;
+}
+
+.editor-textarea {
+  display:block;
+  width:100%;
+  min-height:270px;
+  padding:15px;
+  border-radius:12px;
+  border:1px solid #dce3ef;
+  background:#0f1b37;
+  color:#c9f7e3;
+  font-family:monospace;
+  font-size:12px;
+  line-height:1.7;
+  resize:vertical;
+  outline:none;
+  tab-size:2;
+}
+
+.editor-textarea:focus {
+  border-color:var(--green);
+}
+
+.editor-actions {
+  display:flex;
+  flex-wrap:wrap;
+  gap:9px;
+  margin-top:13px;
+}
+
+.preview-frame {
+  width:100%;
+  height:330px;
+  border:1px solid var(--border);
+  border-radius:12px;
+  background:#fff;
+}
+
+.builder-prompt {
+  width:100%;
+  min-height:130px;
+  resize:vertical;
+  padding:13px;
+  border:1px solid #dfe5ef;
+  border-radius:11px;
+  font:inherit;
+  font-size:13px;
+  outline:none;
+}
+
+.domain-row {
+  display:flex;
+  gap:10px;
+}
+
+.domain-row input {
+  flex:1;
+  min-width:0;
+}
+
+.domain-result {
+  margin-top:15px;
+}
+
+.mini-table {
+  width:100%;
+  border-collapse:collapse;
+  font-size:12px;
+}
+
+.mini-table th,
+.mini-table td {
+  text-align:left;
+  padding:12px 9px;
+  border-bottom:1px solid var(--border);
+}
+
+.mini-table th {
+  color:var(--muted);
+  font-weight:750;
+  background:#f8fafc;
+}
+
+@media(max-width:1000px) {
+  .nav-links {
+    gap:13px;
+  }
+
+  .nav-links a {
+    font-size:12px;
+  }
+
+  .hero-grid {
+    gap:30px;
+  }
+
+  .features-grid {
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .steps-grid {
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .footer-grid {
+    grid-template-columns:repeat(2,1fr);
+  }
+}
+
+@media(max-width:760px) {
+  section {
+    padding:65px 0;
+  }
+
+  .topbar {
+    font-size:10px;
+  }
+
+  .nav-inner {
+    min-height:68px;
+  }
+
+  .brand-name {
+    font-size:20px;
+  }
+
+  .brand-icon {
+    width:39px;
+    height:39px;
+  }
+
+  .menu-toggle {
+    display:block;
+  }
+
+  .nav-actions .nav-login {
+    display:none;
+  }
+
+  .nav-links {
+    display:none;
+    position:absolute;
+    top:68px;
+    left:0;
+    right:0;
+    padding:18px 5%;
+    background:#fff;
+    border-bottom:1px solid var(--border);
+    box-shadow:0 15px 25px rgba(15,35,75,.07);
+    align-items:stretch;
+    gap:0;
+  }
+
+  .nav-links.open {
+    display:flex;
+    flex-direction:column;
+  }
+
+  .nav-links a {
+    padding:12px 0;
+    border-bottom:1px solid #f0f2f7;
+    font-size:14px;
+  }
+
+  .hero {
+    padding:55px 0;
+  }
+
+  .hero-grid,
+  .builder-grid,
+  .contact-grid,
+  .app-grid {
+    grid-template-columns:1fr;
+  }
+
+  .hero h1 {
+    font-size:42px;
+    letter-spacing:-1.7px;
+  }
+
+  .hero-copy {
+    font-size:14px;
+  }
+
+  .dashboard-shell {
+    margin:8px 8px 0 0;
+  }
+
+  .floating-note {
+    right:-8px;
+    bottom:20px;
+  }
+
+  .trust-inner {
+    justify-content:center;
+  }
+
+  .trust-title {
+    width:100%;
+    text-align:center;
+  }
+
+  .project-grid {
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .pricing-grid,
+  .security-grid {
+    grid-template-columns:1fr;
+    gap:20px;
+  }
+
+  .cta-box {
+    padding:30px 23px;
+    flex-direction:column;
+    align-items:flex-start;
+  }
+
+  .contact-form {
+    padding:20px;
+  }
+
+  .editor-workspace {
+    grid-template-columns:1fr;
+  }
+}
+
+@media(max-width:480px) {
+  .container {
+    width:91%;
+  }
+
+  .hero h1 {
+    font-size:36px;
+  }
+
+  .hero-buttons .btn {
+    width:100%;
+  }
+
+  .preview-content {
+    padding:13px;
+  }
+
+  .preview-balance {
+    padding:17px;
+  }
+
+  .balance-value {
+    font-size:23px;
+  }
+
+  .preview-stats {
+    gap:6px;
+  }
+
+  .preview-stat {
+    padding:10px 7px;
+  }
+
+  .preview-stat strong {
+    font-size:14px;
+  }
+
+  .preview-stat span {
+    font-size:9px;
+  }
+
+  .features-grid,
+  .steps-grid,
+  .project-grid,
+  .footer-grid,
+  .form-row {
+    grid-template-columns:1fr;
+  }
+
+  .project-area,
+  .app-panel {
+    padding:17px;
+  }
+
+  .domain-row {
+    flex-direction:column;
+  }
+
+  .floating-note {
+    position:relative;
+    right:auto;
+    bottom:auto;
+    margin:12px 0 0 auto;
+    width:max-content;
+    max-width:100%;
+  }
+
+  .footer-bottom {
+    flex-direction:column;
+  }
+}
+</style>
+</head>
+
+<body>
+<div class="topbar">
+  <i class="fa-solid fa-cloud"></i>
+  <strong>LucasNode</strong> — Jenga, jaribu na peleka miradi yako mtandaoni.
+</div>
+
+<header class="navbar">
+  <div class="container nav-inner">
+    <a href="#home" class="brand" aria-label="LucasNode mwanzo">
+      <span class="brand-icon">L</span>
+      <span class="brand-name">Lucas<span>Node</span></span>
+    </a>
+
+    <nav class="nav-links" id="navLinks">
+      <a href="#home">Mwanzo</a>
+      <a href="#features">Huduma</a>
+      <a href="#projects">Miradi</a>
+      <a href="#builder">AI Builder</a>
+      <a href="#domains">Domains</a>
+      <a href="#pricing">Bei</a>
+    </nav>
+
+    <div class="nav-actions">
+      <a href="#projects" class="btn btn-outline btn-small nav-login">Dashboard</a>
+      <a href="#get-started" class="btn btn-primary btn-small">Anza sasa <i class="fa-solid fa-arrow-right"></i></a>
+      <button class="menu-toggle" id="menuToggle" aria-label="Fungua menyu" aria-expanded="false">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main>
+<section class="hero" id="home">
+  <div class="container hero-grid">
+    <div>
+      <span class="eyebrow"><i class="fa-solid fa-bolt"></i> Jukwaa la kidijitali</span>
+      <h1>Jenga. Jaribu.<br><span>Deploy.</span> Kila kitu sehemu moja.</h1>
+      <p class="hero-copy">
+        LucasNode inakupa nafasi ya kuandaa miradi yako, kuhariri code,
+        kuona preview na kuandaa hatua za kuipeleka mtandaoni.
+        Lengo ni kurahisisha safari kutoka wazo hadi huduma inayopatikana mtandaoni.
+      </p>
+
+      <div class="hero-buttons">
+        <a href="#get-started" class="btn btn-primary">
+          <i class="fa-solid fa-rocket"></i> Anza kujenga
+        </a>
+        <a href="#features" class="btn btn-outline">
+          <i class="fa-solid fa-circle-play"></i> Gundua huduma
+        </a>
+      </div>
+
+      <div class="hero-points">
+        <span><i class="fa-solid fa-circle-check"></i> Code Editor</span>
+        <span><i class="fa-solid fa-circle-check"></i> Live Preview</span>
+        <span><i class="fa-solid fa-circle-check"></i> Cloud Projects</span>
+      </div>
+
+      <div class="status-text">
+        <span class="api-status" id="apiStatus">
+          <i class="fa-solid fa-circle"></i> API: inakaguliwa...
+        </span>
+      </div>
+    </div>
+
+    <div class="dashboard-shell">
+      <div class="dashboard-window">
+        <div class="window-bar">
+          <div class="window-dots"><span></span><span></span><span></span></div>
+          <span class="window-label">LucasNode Workspace</span>
+          <i class="fa-solid fa-ellipsis" style="color:#8491a8"></i>
+        </div>
+
+        <div class="preview-content">
+          <div class="preview-welcome">
+            <div>
+              <h3>Workspace yako</h3>
+              <p>Mahali pa kusimamia miradi yako</p>
+            </div>
+            <span class="live-pill"><i class="fa-solid fa-circle"></i> Workspace</span>
+          </div>
+
+          <div class="preview-balance">
+            <div class="balance-top">
+              <span>LucasNode Cloud</span>
+              <i class="fa-solid fa-cloud"></i>
+            </div>
+            <div class="balance-value">Build your future.</div>
+            <div class="balance-foot">
+              <i class="fa-solid fa-shield-halved"></i>
+              Jenga kwa mpangilio, hatua kwa hatua.
+            </div>
+          </div>
+
+          <div class="preview-stats">
+            <div class="preview-stat">
+              <i class="fa-solid fa-folder-open"></i>
+              <strong id="heroProjectCount">—</strong>
+              <span>Miradi ya API</span>
+            </div>
+            <div class="preview-stat">
+              <i class="fa-solid fa-code"></i>
+              <strong>HTML</strong>
+              <span>Code Editor</span>
+            </div>
+            <div class="preview-stat">
+              <i class="fa-solid fa-globe"></i>
+              <strong>DNS</strong>
+              <span>Domains</span>
+            </div>
+          </div>
+
+          <div class="preview-project-title">
+            <span>Miradi ya LucasNode</span>
+            <a href="#projects" style="color:var(--green2)">Angalia <i class="fa-solid fa-arrow-right"></i></a>
+          </div>
+
+          <div class="preview-project">
+            <div class="project-symbol"><i class="fa-solid fa-code"></i></div>
+            <div class="preview-project-info">
+              <strong>Code Editor</strong>
+              <span>Andaa HTML, CSS na JavaScript</span>
+            </div>
+          </div>
+
+          <div class="preview-project">
+            <div class="project-symbol"><i class="fa-solid fa-eye"></i></div>
+            <div class="preview-project-info">
+              <strong>Live Preview</strong>
+              <span>Jaribu muonekano kabla ya deploy</span>
+            </div>
+          </div>
+
+          <div class="preview-project">
+            <div class="project-symbol"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+            <div class="preview-project-info">
+              <strong>Hosting & Deployment</strong>
+              <span>Inahitaji huduma ya deployment</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="floating-note">
+        <div class="note-icon"><i class="fa-solid fa-code-branch"></i></div>
+        <div>
+          <strong>Project Workspace</strong>
+          <span>Jenga kwa hatua</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="trust-strip">
+  <div class="container trust-inner">
+    <span class="trust-title">Zana za safari yako ya kidijitali</span>
+    <span class="trust-item"><i class="fa-solid fa-code"></i> Code Editor</span>
+    <span class="trust-item"><i class="fa-solid fa-eye"></i> Preview</span>
+    <span class="trust-item"><i class="fa-solid fa-globe"></i> Domains</span>
+    <span class="trust-item"><i class="fa-solid fa-cloud"></i> Cloud Projects</span>
+  </div>
+</div>
+
+<section class="features-section" id="features">
+  <div class="container">
+    <div class="section-heading">
+      <span class="eyebrow">Huduma za LucasNode</span>
+      <h2>Zana muhimu za kujenga bidhaa yako</h2>
+      <p>Muundo mmoja unaounganisha kuandika code, kuandaa miradi na kupanga huduma za cloud.</p>
+    </div>
+
+    <div class="features-grid">
+      <article class="feature-card">
+        <div class="feature-icon"><i class="fa-solid fa-folder-open"></i></div>
+        <h3>Projects Dashboard</h3>
+        <p>Unda na angalia miradi yako iliyohifadhiwa kwenye API iliyopo.</p>
+        <a class="feature-link" href="#projects">Fungua miradi <i class="fa-solid fa-arrow-right"></i></a>
+      </article>
+
+      <article class="feature-card">
+        <div class="feature-icon"><i class="fa-solid fa-code"></i></div>
+        <h3>Code Editor</h3>
+        <p>Andika au rekebisha HTML, CSS na JavaScript moja kwa moja kwenye browser.</p>
+        <a class="feature-link" href="#editor">Jaribu editor <i class="fa-solid fa-arrow-right"></i></a>
+      </article>
+
+      <article class="feature-card">
+        <div class="feature-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+        <h3>AI App Builder</h3>
+        <p>Sehemu ya kuandika maelezo ya app. AI halisi itahitaji kuunganishwa na huduma ya AI.</p>
+        <a class="feature-link" href="#builder">Fungua builder <i class="fa-solid fa-arrow-right"></i></a>
+      </article>
+
+      <article class="feature-card">
+        <div class="feature-icon"><i class="fa-solid fa-eye"></i></div>
+        <h3>Live Preview</h3>
+        <p>Angalia HTML yako kwenye iframe salama kabla ya kuhifadhi au kuandaa deployment.</p>
+        <a class="feature-link" href="#editor">Fungua preview <i class="fa-solid fa-arrow-right"></i></a>
+      </article>
+
+      <article class="feature-card">
+        <div class="feature-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+        <h3>Hosting & Deploy</h3>
+        <p>Sehemu ya kupanga uchapishaji wa miradi. Deployment halisi inahitaji endpoint na build/hosting service.</p>
+        <a class="feature-link" href="#deployment">Jifunze zaidi <i class="fa-solid fa-arrow-right"></i></a>
+      </article>
+
+      <article class="feature-card">
+        <div class="feature-icon"><i class="fa-solid fa-globe"></i></div>
+        <h3>Domains & DNS</h3>
+        <p>Angalia taarifa za domain kupitia RDAP. Kununua domain kunahitaji registrar integration.</p>
+        <a class="feature-link" href="#domains">Angalia domain <i class="fa-solid fa-arrow-right"></i></a>
+      </article>
+
+      <article class="feature-card">
+        <div class="feature-icon"><i class="fa-solid fa-credit-card"></i></div>
+        <h3>Payments & Billing</h3>
+        <p>Sehemu ya mipango na malipo. Malipo halisi yanahitaji gateway, webhook na uthibitishaji wa server.</p>
+        <a class="feature-link" href="#pricing">Angalia mipango <i class="fa-solid fa-arrow-right"></i></a>
+      </article>
+
+      <article class="feature-card">
+        <div class="feature-icon"><i class="fa-solid fa-shield-halved"></i></div>
+        <h3>Security & Database</h3>
+        <p>Muundo wa huduma za usalama, database, monitoring na backup kwa hatua zinazofuata.</p>
+        <a class="feature-link" href="#security">Taarifa zaidi <i class="fa-solid fa-arrow-right"></i></a>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="how-section" id="workflow">
+  <div class="container">
+    <div class="section-heading">
+      <span class="eyebrow">Workflow</span>
+      <h2>Kuanzia wazo hadi deployment</h2>
+      <p>Hatua za msingi za kuandaa na kupeleka mradi wako mtandaoni.</p>
+    </div>
+
+    <div class="steps-grid">
+      <article class="step-card">
+        <div class="step-number">01</div>
+        <h3>Unda Project</h3>
+        <p>Weka jina, aina ya project na maelezo yake ili iandaliwe kwenye workspace.</p>
+      </article>
+
+      <article class="step-card">
+        <div class="step-number">02</div>
+        <h3>Andika Code</h3>
+        <p>Tumia editor kuandika HTML, CSS na JavaScript za tovuti yako.</p>
+      </article>
+
+      <article class="step-card">
+        <div class="step-number">03</div>
+        <h3>Jaribu Preview</h3>
+        <p>Kagua muonekano na tabia ya code kabla ya kuamua kuendelea.</p>
+      </article>
+
+      <article class="step-card">
+        <div class="step-number">04</div>
+        <h3>Deploy & Connect</h3>
+        <p>Deployment ya umma, malipo na domain vitahitaji huduma husika ziwe zimeunganishwa.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="builder-section" id="builder">
+  <div class="container builder-grid">
+    <div class="builder-copy">
+      <span class="eyebrow"><i class="fa-solid fa-wand-magic-sparkles"></i> AI App Builder</span>
+      <h2>Eleza wazo lako. Andaa msingi wa app yako.</h2>
+      <p>
+        Andika maelezo ya app unayotaka kuunda. Sehemu hii ni kiolesura cha kuandaa ombi;
+        haitazalisha code kwa AI mpaka API ya AI iwe imeunganishwa.
+      </p>
+
+      <ul class="builder-list">
+        <li><i class="fa-solid fa-circle-check"></i><span>Eleza lengo na kazi kuu za app.</span></li>
+        <li><i class="fa-solid fa-circle-check"></i><span>Chagua aina ya mradi unaotaka kuandaa.</span></li>
+        <li><i class="fa-solid fa-circle-check"></i><span>Hifadhi ombi kama project draft kupitia API iliyopo.</span></li>
+      </ul>
+
+      <div class="notice notice-info">
+        <strong>Hali ya sasa:</strong> Hii ni fomu ya kuandaa project. AI generation yenyewe bado inahitaji AI API.
+      </div>
+    </div>
+
+    <div class="editor-mock">
+      <div class="editor-top">
+        <strong><i class="fa-solid fa-wand-magic-sparkles"></i> Andaa project</strong>
+        <span>LucasNode</span>
+      </div>
+
+      <div style="padding-top:18px">
+        <div class="field">
+          <label for="aiProjectName">Jina la project</label>
+          <input id="aiProjectName" type="text" placeholder="Mfano: Duka langu mtandaoni">
+        </div>
+
+        <div class="field" style="margin-top:14px">
+          <label for="aiProjectType">Aina ya project</label>
+          <select id="aiProjectType">
+            <option value="HTML / CSS / JS">HTML / CSS / JavaScript</option>
+            <option value="Static Website">Static Website</option>
+            <option value="Web Application">Web Application</option>
+            <option value="AI App">AI App</option>
+          </select>
+        </div>
+
+        <div class="field" style="margin-top:14px">
+          <label for="aiPrompt">Eleza app yako</label>
+          <textarea id="aiPrompt" class="builder-prompt" placeholder="App itafanya nini? Itatumiwa na nani? Ina kurasa au vipengele gani?"></textarea>
+        </div>
+
+        <button class="btn btn-primary" style="width:100%;margin-top:15px" id="createFromAI">
+          <i class="fa-solid fa-folder-plus"></i> Hifadhi kama Project Draft
+        </button>
+        <div id="aiResult" aria-live="polite"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="app-section" id="projects">
+  <div class="container">
+    <div class="section-heading">
+      <span class="eyebrow">Workspace yako</span>
+      <h2>Projects Dashboard</h2>
+      <p>Angalia miradi inayorudishwa na API ya LucasNode au unda project mpya.</p>
+      <div class="status-text">
+        API: <span class="api-status" id="projectsApiStatus">Inasubiri...</span>
+      </div>
+    </div>
+
+    <div class="project-area">
+      <div class="project-toolbar">
+        <div>
+          <h3>Miradi yako</h3>
+          <p class="muted" style="font-size:12px">Taarifa hupakiwa kutoka API; ownership na login zinahitaji uthibitisho wa backend.</p>
+        </div>
+        <button class="btn btn-outline btn-small" id="refreshProjects">
+          <i class="fa-solid fa-rotate"></i> Pakia upya
+        </button>
+      </div>
+
+      <div id="projectsMessage" aria-live="polite"></div>
+      <div class="project-grid" id="projectGrid">
+        <div class="empty-state"><i class="fa-solid fa-spinner fa-spin"></i>Inapakia miradi kutoka API...</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="app-section" id="editor">
+  <div class="container">
+    <div class="section-heading">
+      <span class="eyebrow">Code Editor</span>
+      <h2>Andika code na uone preview yake</h2>
+      <p>Editor hii inaendesha HTML ndani ya iframe. Code haipakiwi kwenye cloud moja kwa moja.</p>
+    </div>
+
+    <div class="app-grid">
+      <div class="app-panel">
+        <h3><i class="fa-solid fa-code" style="color:var(--green2)"></i> HTML Editor</h3>
+        <p>Badilisha code hii au futa na uandike yako.</p>
+
+        <textarea id="htmlEditor" class="editor-textarea" spellcheck="false" aria-label="HTML code editor"><!DOCTYPE html>
+<html lang="sw">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {
+  font-family: Arial, sans-serif;
+  padding: 25px;
+  color: #15213b;
+  background: #f5f7fb;
+}
+.card {
+  padding: 25px;
+  border-radius: 16px;
+  background: white;
+  box-shadow: 0 10px 30px #15213b12;
+}
+button {
+  padding: 10px 15px;
+  border: 0;
+  border-radius: 8px;
+  background: #059669;
+  color: white;
+}
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>Karibu LucasNode!</h1>
+  <p>Hii ni preview ya HTML yako.</p>
+  <button onclick="document.getElementById('msg').textContent='Inafanya kazi!'">Jaribu</button>
+  <p id="msg"></p>
+</div>
+</body>
+</html></textarea>
+
+        <div class="editor-actions">
+          <button class="btn btn-primary btn-small" id="runPreview">
+            <i class="fa-solid fa-play"></i> Run Preview
+          </button>
+          <button class="btn btn-outline btn-small" id="saveLocal">
+            <i class="fa-solid fa-floppy-disk"></i> Hifadhi kwenye browser
+          </button>
+          <button class="btn btn-outline btn-small" id="downloadHTML">
+            <i class="fa-solid fa-download"></i> Pakua HTML
+          </button>
+        </div>
+        <div id="editorMessage" aria-live="polite"></div>
+      </div>
+
+      <div class="app-panel">
+        <h3><i class="fa-solid fa-eye" style="color:var(--green2)"></i> Live Preview</h3>
+        <p>Preview inaonyesha HTML uliyoiendesha. Iko kwenye iframe iliyotengwa.</p>
+        <iframe
+          id="previewFrame"
+          class="preview-frame"
+          title="HTML live preview"
+          sandbox="allow-scripts"
+          referrerpolicy="no-referrer"
+        ></iframe>
+        <div class="notice notice-info">
+          Hifadhi kwenye browser ni localStorage ya kifaa hiki. Haibadilishi cloud database na haifanyi deployment ya umma.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="app-section" id="domains" style="background:var(--bg)">
+  <div class="container">
+    <div class="section-heading">
+      <span class="eyebrow">Domains</span>
+      <h2>Chunguza domain unayotaka</h2>
+      <p>Utafutaji huu hutumia RDAP kupata taarifa za domain. Matokeo ya RDAP pekee hayahakikishi kuwa domain inaweza kununuliwa.</p>
+    </div>
+
+    <div class="app-panel" style="max-width:800px;margin:auto">
+      <h3><i class="fa-solid fa-globe" style="color:var(--green2)"></i> Domain Lookup</h3>
+      <p>Ingiza jina kamili la domain, kwa mfano lucasnode.com.</p>
+
+      <div class="domain-row">
+        <div class="field" style="flex:1">
+          <label for="domainInput">Jina la domain</label>
+          <input id="domainInput" type="text" placeholder="mfano.com" autocomplete="off">
+        </div>
+        <button class="btn btn-primary" id="checkDomain" style="align-self:end">
+          <i class="fa-solid fa-magnifying-glass"></i> Kagua
+        </button>
+      </div>
+
+      <div id="domainResult" class="domain-result" aria-live="polite"></div>
+      <div class="notice notice-info">
+        Ununuzi wa domain, DNS, SSL na renewal utahitaji registrar na huduma za DNS kuunganishwa.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="deployment">
+  <div class="container">
+    <div class="section-heading">
+      <span class="eyebrow">Hosting & Deployment</span>
+      <h2>Andaa mradi wako kwa kuchapishwa</h2>
+      <p>LucasNode itahitaji build/deploy service ili project draft iwe tovuti halisi yenye public URL.</p>
+    </div>
+
+    <div class="security-grid">
+      <article class="security-card">
+        <i class="fa-solid fa-file-code"></i>
+        <div>
+          <h3>Static Websites</h3>
+          <p>HTML, CSS, JavaScript na picha zinahitaji upload, storage na njia ya kuzihudumia kwa public URL.</p>
+        </div>
+      </article>
+
+      <article class="security-card">
+        <i class="fa-solid fa-gears"></i>
+        <div>
+          <h3>Build Applications</h3>
+          <p>React na framework nyingine zinahitaji build process, kuhifadhi build output na deployment pipeline.</p>
+        </div>
+      </article>
+
+      <article class="security-card">
+        <i class="fa-solid fa-cubes"></i>
+        <div>
+          <h3>Node.js & Containers</h3>
+          <p>App zinazohitaji server ya kudumu zinahitaji runtime au container infrastructure inayoweza kuziendesha.</p>
+        </div>
+      </article>
+    </div>
+
+    <div class="notice notice-info" style="max-width:800px;margin:25px auto 0">
+      <strong>Hali ya sasa:</strong> Sehemu hii ni maelezo ya workflow. Hakuna kitufe cha deploy cha uongo; deployment haitatangazwa kuwa imefanikiwa mpaka backend iwe na endpoint na ithibitishe matokeo.
+    </div>
+  </div>
+</section>
+
+<section class="pricing-section" id="pricing">
+  <div class="container">
+    <div class="section-heading">
+      <span class="eyebrow">Mipango</span>
+      <h2>Mipango ya LucasNode</h2>
+      <p>Bei hapa ni muundo wa kuonyesha mipango tu. Sio bei zilizothibitishwa na mfumo wa billing.</p>
+    </div>
+
+    <div class="pricing-grid">
+      <article class="price-card">
+        <h3>Starter</h3>
+        <p class="price-desc">Kwa kuanza kujifunza na kuandaa miradi.</p>
+        <div class="price-value">Bure <small>/ kuanza</small></div>
+        <a href="#get-started" class="btn btn-outline">Anza kujaribu</a>
+        <ul class="price-features">
+          <li><i class="fa-solid fa-check"></i> Code Editor ya browser</li>
+          <li><i class="fa-solid fa-check"></i> HTML Live Preview</li>
+          <li><i class="fa-solid fa-check"></i> Kuandaa project draft</li>
+          <li><i class="fa-solid fa-check"></i> Local browser save</li>
+        </ul>
+      </article>
+
+      <article class="price-card popular">
+        <span class="popular-label">Mpango wa baadaye</span>
+        <h3>Developer</h3>
+        <p class="price-desc">Kwa watengenezaji wanaohitaji cloud workflow.</p>
+        <div class="price-value">TBD <small>/ mwezi</small></div>
+        <a href="#get-started" class="btn btn-primary">Chunguza huduma</a>
+        <ul class="price-features">
+          <li><i class="fa-solid fa-check"></i> Cloud project storage</li>
+          <li><i class="fa-solid fa-check"></i> Build na deployment</li>
+          <li><i class="fa-solid fa-check"></i> Custom domains</li>
+          <li><i class="fa-solid fa-check"></i> Billing integration</li>
+        </ul>
+      </article>
+
+      <article class="price-card">
+        <h3>Business</h3>
+        <p class="price-desc">Kwa timu na miradi ya biashara.</p>
+        <div class="price-value">TBD <small>/ mwezi</small></div>
+        <a href="#contact" class="btn btn-outline">Wasiliana</a>
+        <ul class="price-features">
+          <li><i class="fa-solid fa-check"></i> Roles na access control</li>
+          <li><i class="fa-solid fa-check"></i> Monitoring</li>
+          <li><i class="fa-solid fa-check"></i> Backup & recovery</li>
+          <li><i class="fa-solid fa-check"></i> Team workflows</li>
+        </ul>
+      </article>
+    </div>
+
+    <div class="notice notice-info" style="max-width:800px;margin:25px auto 0">
+      Malipo halisi bado yanahitaji payment gateway, webhook verification, invoice na entitlement checks kwenye backend.
+    </div>
+  </div>
+</section>
+
+<section class="security-section" id="security">
+  <div class="container">
+    <div class="section-heading">
+      <span class="eyebrow">Usalama na uaminifu</span>
+      <h2>Msingi wa platform inayoweza kukua</h2>
+      <p>Vipengele hivi vinapaswa kutekelezwa na kuthibitishwa kwenye backend na miundombinu.</p>
+    </div>
+
+    <div class="security-grid">
+      <article class="security-card">
+        <i class="fa-solid fa-lock"></i>
+        <div>
+          <h3>Authentication & Access</h3>
+          <p>Login, user ownership, ruhusa za admin na ukaguzi wa kila request kwenye server.</p>
+        </div>
+      </article>
+
+      <article class="security-card">
+        <i class="fa-solid fa-database"></i>
+        <div>
+          <h3>Cloud Database</h3>
+          <p>Database yenye schema, access policies, validation na backup iliyopangwa.</p>
+        </div>
+      </article>
+
+      <article class="security-card">
+        <i class="fa-solid fa-chart-line"></i>
+        <div>
+          <h3>Monitoring & Recovery</h3>
+          <p>Logs, metrics, alerts, backup verification na taratibu za kurejesha huduma.</p>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="cta-section" id="get-started">
+  <div class="container">
+    <div class="cta-box">
+      <div>
+        <h2>Wazo lako linaweza kuanza hapa.</h2>
+        <p>Unda project draft, andika code na ujaribu preview. Baada ya hapo, hatua zinazohitaji cloud deployment zitaunganishwa na backend husika.</p>
+      </div>
+      <a href="#projects" class="btn btn-primary">
+        <i class="fa-solid fa-rocket"></i> Fungua Projects
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="contact-section" id="contact">
+  <div class="container contact-grid">
+    <div class="contact-info">
+      <span class="eyebrow">Wasiliana nasi</span>
+      <h2>Tuambie kuhusu mradi wako</h2>
+      <p>Fomu hii itafungua programu ya barua pepe ya kifaa chako. Kutuma ujumbe moja kwa moja kunahitaji contact endpoint.</p>
+
+      <div class="contact-item">
+        <i class="fa-solid fa-globe"></i>
+        <div>
+          <strong>Tovuti</strong>
+          <span>lucasnode.com</span>
+        </div>
+      </div>
+
+      <div class="contact-item">
+        <i class="fa-solid fa-server"></i>
+        <div>
+          <strong>API</strong>
+          <span>api.lucasnode.com</span>
+        </div>
+      </div>
+
+      <div class="contact-item">
+        <i class="fa-solid fa-shield-halved"></i>
+        <div>
+          <strong>Jenga kwa usalama</strong>
+          <span>Usiweke API secrets kwenye frontend.</span>
+        </div>
+      </div>
+    </div>
+
+    <form class="contact-form" id="contactForm">
+      <div class="form-row">
+        <div class="field">
+          <label for="contactName">Jina</label>
+          <input id="contactName" name="name" required maxlength="100" placeholder="Jina lako">
+        </div>
+
+        <div class="field">
+          <label for="contactEmail">Barua pepe</label>
+          <input id="contactEmail" name="email" type="email" required maxlength="200" placeholder="wewe@example.com">
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="contactSubject">Mada</label>
+        <input id="contactSubject" name="subject" required maxlength="150" placeholder="Unahitaji msaada gani?">
+      </div>
+
+      <div class="field">
+        <label for="contactMessage">Ujumbe</label>
+        <textarea id="contactMessage" name="message" required maxlength="3000" placeholder="Andika ujumbe wako..."></textarea>
+      </div>
+
+      <button type="submit" class="btn btn-primary">
+        <i class="fa-solid fa-envelope"></i> Andaa barua pepe
+      </button>
+      <div id="contactResult" aria-live="polite"></div>
+    </form>
+  </div>
+</section>
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a href="#home" class="brand">
+          <span class="brand-icon">L</span>
+          <span class="brand-name">Lucas<span>Node</span></span>
+        </a>
+        <p class="footer-about">
+          Jukwaa la kuandaa miradi, kuandika code, kujaribu preview na kuelekea deployment ya huduma za kidijitali.
+        </p>
+      </div>
+
+      <div>
+        <h4>Jukwaa</h4>
+        <div class="footer-links">
+          <a href="#features">Huduma</a>
+          <a href="#projects">Projects</a>
+          <a href="#editor">Code Editor</a>
+          <a href="#builder">AI Builder</a>
+        </div>
+      </div>
+
+      <div>
+        <h4>Cloud</h4>
+        <div class="footer-links">
+          <a href="#domains">Domains</a>
+          <a href="#deployment">Hosting & Deploy</a>
+          <a href="#pricing">Billing</a>
+          <a href="#security">Security</a>
+        </div>
+      </div>
+
+      <div>
+        <h4>Msaada</h4>
+        <div class="footer-links">
+          <a href="#contact">Wasiliana nasi</a>
+          <a href="#workflow">Jinsi inavyofanya kazi</a>
+          <a href="#home">Rudi juu</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>© <span id="currentYear"></span> LucasNode. Haki zote zimehifadhiwa.</span>
+      <span>Jenga kwa mpangilio. Jaribu kwa uangalifu.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+"use strict";
+
+/*
+ * LucasNode frontend configuration.
+ * Do not put Supabase service-role keys or payment secrets here.
+ */
+const API_BASE = "https://api.lucasnode.com/api/v1";
+
+const $ = (selector) => document.querySelector(selector);
+
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, (char) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[char]);
+}
+
+function showNotice(target, message, type = "info") {
+  const element = typeof target === "string" ? $(target) : target;
+  if (!element) return;
+
+  element.innerHTML =
+    '<div class="notice notice-' + escapeHTML(type) + '">' +
+    escapeHTML(message) +
+    '</div>';
+}
+
+async function apiRequest(path, options = {}) {
+  const response = await fetch(API_BASE + path, {
+    ...options,
+    headers: {
+      "Accept": "application/json",
+      ...(options.body ? {"Content-Type": "application/json"} : {}),
+      ...(options.headers || {})
+    }
+  });
+
+  const text = await response.text();
+  let data = {};
+
+  try {
+    data = text ? JSON.parse(text) : {};
+  } catch {
+    throw new Error("API imerudisha majibu yasiyo JSON.");
+  }
+
+  if (!response.ok) {
+    throw new Error(
+      data.error ||
+      data.message ||
+      "Ombi halikufaulu. HTTP " + response.status
+    );
+  }
+
+  return data;
+}
+
+/* Mobile navigation */
+const menuToggle = $("#menuToggle");
+const navLinks = $("#navLinks");
+
+menuToggle?.addEventListener("click", () => {
+  const open = navLinks.classList.toggle("open");
+  menuToggle.setAttribute("aria-expanded", String(open));
+  menuToggle.innerHTML = open
+    ? '<i class="fa-solid fa-xmark"></i>'
+    : '<i class="fa-solid fa-bars"></i>';
+});
+
+navLinks?.querySelectorAll("a").forEach((link) => {
+  link.addEventListener("click", () => {
+    navLinks.classList.remove("open");
+    menuToggle?.setAttribute("aria-expanded", "false");
+    if (menuToggle) {
+      menuToggle.innerHTML = '<i class="fa-solid fa-bars"></i>';
+    }
+  });
+});
+
+$("#currentYear").textContent = new Date().getFullYear();
+
+/* Health check */
+async function checkAPIHealth() {
+  const badges = [$("#apiStatus"), $("#projectsApiStatus")].filter(Boolean);
+
+  badges.forEach((badge) => {
+    badge.className = "api-status";
+    badge.textContent = "Inakaguliwa...";
+  });
+
+  try {
+    await apiRequest("/health");
+
+    badges.forEach((badge) => {
+      badge.className = "api-status ok";
+      badge.innerHTML = '<i class="fa-solid fa-circle"></i> API inajibu';
+    });
+  } catch (error) {
+    badges.forEach((badge) => {
+      badge.className = "api-status bad";
+      badge.innerHTML = '<i class="fa-solid fa-circle"></i> API haijathibitishwa';
+    });
+    console.warn("LucasNode API health check:", error.message);
+  }
+}
+
+/* Projects dashboard */
+function extractProjects(data) {
+  if (Array.isArray(data)) return data;
+  if (Array.isArray(data.projects)) return data.projects;
+  if (Array.isArray(data.data)) return data.data;
+  if (data.data && Array.isArray(data.data.projects)) return data.data.projects;
+  return [];
+}
+
+function renderProjects(projects) {
+  const grid = $("#projectGrid");
+  if (!grid) return;
+
+  $("#heroProjectCount").textContent = String(projects.length);
+
+  if (!projects.length) {
+    grid.innerHTML =
+      '<div class="empty-state">' +
+      '<i class="fa-solid fa-folder-open"></i>' +
+      'Hakuna miradi iliyorudishwa na API kwa sasa.' +
+      '</div>';
+    return;
+  }
+
+  grid.innerHTML = projects.map((project) => {
+    const name = escapeHTML(project.name || "Project isiyo na jina");
+    const description = escapeHTML(project.description || "Hakuna maelezo.");
+    const framework = escapeHTML(project.framework || "Haijaainishwa");
+    const status = escapeHTML(project.status || "draft");
+    const slug = escapeHTML(project.slug || "");
+    const url = project.production_url
+      ? escapeHTML(project.production_url)
+      : "";
+
+    return `
+      <article class="project-card">
+        <h4><i class="fa-solid fa-folder" style="color:var(--green2)"></i> ${name}</h4>
+        <p>${description}</p>
+        <p><strong>Aina:</strong> ${framework}</p>
+        ${slug ? `<p><strong>Slug:</strong> ${slug}</p>` : ""}
+        <div class="project-meta">
+          <span class="project-badge">${status}</span>
+          ${url
+            ? `<a class="feature-link" href="${url}" target="_blank" rel="noopener noreferrer">Fungua <i class="fa-solid fa-arrow-up-right-from-square"></i></a>`
+            : `<span class="muted" style="font-size:10px">Bado haijadeploy</span>`
+          }
+        </div>
+      </article>`;
+  }).join("");
+}
+
+async function loadProjects() {
+  const grid = $("#projectGrid");
+  const message = $("#projectsMessage");
+
+  if (grid) {
+    grid.innerHTML =
+      '<div class="empty-state"><i class="fa-solid fa-spinner fa-spin"></i>Inapakia...</div>';
+  }
+
+  if (message) message.innerHTML = "";
+
+  try {
+    const data = await apiRequest("/projects");
+    const projects = extractProjects(data);
+
+    renderProjects(projects);
+
+    const badge = $("#projectsApiStatus");
+    if (badge) {
+      badge.className = "api-status ok";
+      badge.textContent = "Miradi imepakuliwa";
+    }
+  } catch (error) {
+    if (grid) {
+      grid.innerHTML =
+        '<div class="empty-state">' +
+        '<i class="fa-solid fa-triangle-exclamation"></i>' +
+        escapeHTML(error.message) +
+        '</div>';
+    }
+
+    const badge = $("#projectsApiStatus");
+    if (badge) {
+      badge.className = "api-status bad";
+      badge.textContent = "Imeshindwa kupakia";
+    }
+
+    showNotice(message, error.message, "error");
+  }
+}
+
+$("#refreshProjects")?.addEventListener("click", loadProjects);
+
+/* Create project draft using existing API */
+async function createProject({name, framework, description}, resultTarget) {
+  const target = typeof resultTarget === "string"
+    ? $(resultTarget)
+    : resultTarget;
+
+  if (!name.trim()) {
+    showNotice(target, "Tafadhali weka jina la project.", "error");
+    return;
+  }
+
+  if (name.length > 100 || description.length > 3000) {
+    showNotice(target, "Jina au maelezo ni marefu kupita kiasi.", "error");
+    return;
+  }
+
+  const buttons = target?.parentElement?.querySelectorAll("button");
+  buttons?.forEach((button) => button.disabled = true);
+
+  showNotice(target, "Inahifadhi project kupitia API...", "info");
+
+  try {
+    const data = await apiRequest("/projects", {
+      method: "POST",
+      body: JSON.stringify({
+        name: name.trim(),
+        framework,
+        description: description.trim(),
+        status: "draft"
+      })
+    });
+
+    showNotice(
+      target,
+      data.message || "API imepokea ombi la kuunda project. Kagua orodha kuthibitisha.",
+      "success"
+    );
+
+    await loadProjects();
+  } catch (error) {
+    showNotice(
+      target,
+      "Project haikuhifadhiwa: " + error.message +
+      ". Hakikisha muundo wa POST unaendana na backend yako.",
+      "error"
+    );
+  } finally {
+    buttons?.forEach((button) => button.disabled = false);
+  }
+}
+
+$("#createFromAI")?.addEventListener("click", async () => {
+  const name = $("#aiProjectName").value.trim();
+  const framework = $("#aiProjectType").value;
+  const description = $("#aiPrompt").value.trim();
+  const button = $("#createFromAI");
+
+  if (!name || !description) {
+    showNotice("#aiResult", "Weka jina la project na maelezo yake.", "error");
+    return;
+  }
+
+  button.disabled = true;
+
+  try {
+    await createProject(
+      {name, framework, description},
+      "#aiResult"
+    );
+  } finally {
+    button.disabled = false;
+  }
+});
+
+/* Browser-only HTML editor and preview */
+const editor = $("#htmlEditor");
+const previewFrame = $("#previewFrame");
+const LOCAL_HTML_KEY = "lucasnode.editor.html.v1";
+
+function runPreview() {
+  const code = editor.value;
+
+  /*
+   * iframe sandbox deliberately excludes allow-same-origin.
+   * The preview runs separately from the main page.
+   */
+  previewFrame.srcdoc = code;
+  showNotice(
+    "#editorMessage",
+    "Preview imeandaliwa kwenye iframe. Hii haimaanishi kuwa project imechapishwa mtandaoni.",
+    "success"
+  );
+}
+
+$("#runPreview")?.addEventListener("click", runPreview);
+
+$("#saveLocal")?.addEventListener("click", () => {
+  try {
+    localStorage.setItem(LOCAL_HTML_KEY, editor.value);
+    showNotice(
+      "#editorMessage",
+      "Code imehifadhiwa kwenye browser hii pekee.",
+      "success"
+    );
+  } catch {
+    showNotice(
+      "#editorMessage",
+      "Browser imeshindwa kuhifadhi code kwenye localStorage.",
+      "error"
+    );
+  }
+});
+
+$("#downloadHTML")?.addEventListener("click", () => {
+  const blob = new Blob([editor.value], {type:"text/html;charset=utf-8"});
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+
+  anchor.href = url;
+  anchor.download = "lucasnode-project.html";
+  document.body.appendChild(anchor);
+  anchor.click();
+  anchor.remove();
+
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+  showNotice(
+    "#editorMessage",
+    "Faili la HTML limeandaliwa kwa kupakuliwa.",
+    "success"
+  );
+});
+
+try {
+  const savedHTML = localStorage.getItem(LOCAL_HTML_KEY);
+  if (savedHTML) editor.value = savedHTML;
+} catch (error) {
+  console.warn("Local storage haipatikani.");
+}
+
+runPreview();
+
+/* Domain RDAP lookup */
+function validateDomain(domain) {
+  const value = domain.trim().toLowerCase();
+
+  if (value.length > 253 || value.length < 4 || !value.includes(".")) {
+    return false;
+  }
+
+  if (value.includes("://") || value.includes("/") || value.includes(" ")) {
+    return false;
+  }
+
+  return value.split(".").every((label) =>
+    /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/.test(label)
+  );
+}
+
+$("#checkDomain")?.addEventListener("click", async () => {
+  const input = $("#domainInput");
+  const button = $("#checkDomain");
+  const domain = input.value.trim().toLowerCase();
+
+  if (!validateDomain(domain)) {
+    showNotice(
+      "#domainResult",
+      "Weka domain kamili, kwa mfano lucasnode.com.",
+      "error"
+    );
+    return;
+  }
+
+  button.disabled = true;
+  showNotice("#domainResult", "Inatafuta taarifa za domain...", "info");
+
+  try {
+    const result = await apiRequest(
+      "/domains/check?domain=" + encodeURIComponent(domain)
+    );
+
+    const summary = result.message ||
+      result.status ||
+      result.result ||
+      "API imerudisha majibu.";
+
+    showNotice(
+      "#domainResult",
+      "Majibu ya API: " + String(summary) +
+      ". Taarifa za RDAP si uthibitisho wa mwisho wa upatikanaji wa domain kwa ununuzi.",
+      "info"
+    );
+
+    const pre = document.createElement("pre");
+    pre.style.cssText =
+      "white-space:pre-wrap;overflow-wrap:anywhere;font-size:11px;" +
+      "padding:12px;background:#f8fafc;border-radius:10px;margin-top:10px;";
+    pre.textContent = JSON.stringify(result, null, 2);
+    $("#domainResult").appendChild(pre);
+  } catch (error) {
+    showNotice(
+      "#domainResult",
+      "Ukaguzi wa domain umeshindwa: " + error.message,
+      "error"
+    );
+  } finally {
+    button.disabled = false;
+  }
+});
+
+$("#domainInput")?.addEventListener("keydown", (event) => {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    $("#checkDomain").click();
+  }
+});
+
+/* Contact form: opens email client, does not pretend to send to backend */
+$("#contactForm")?.addEventListener("submit", (event) => {
+  event.preventDefault();
+
+  const name = $("#contactName").value.trim();
+  const email = $("#contactEmail").value.trim();
+  const subject = $("#contactSubject").value.trim();
+  const message = $("#contactMessage").value.trim();
+
+  if (!name || !email || !subject || !message) {
+    showNotice("#contactResult", "Jaza sehemu zote za fomu.", "error");
+    return;
+  }
+
+  const body = [
+    "Jina: " + name,
+    "Barua pepe: " + email,
+    "",
+    message
+  ].join("\n");
+
+  /*
+   * No recipient address is invented.
+   * This lets the user choose an email destination manually.
+   */
+  const mailto =
+    "mailto:?subject=" + encodeURIComponent("[LucasNode] " + subject) +
+    "&body=" + encodeURIComponent(body);
+
+  showNotice(
+    "#contactResult",
+    "Programu ya barua pepe itafunguliwa. Chagua anwani ya mpokeaji kabla ya kutuma.",
+    "info"
+  );
+
+  window.location.href = mailto;
+});
+
+/* Initial loading */
+checkAPIHealth();
+loadProjects();
+</script>
+</body>
+</html>
