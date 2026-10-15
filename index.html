@@ -4,2872 +4,1985 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#ffffff">
-<meta name="description" content="LucasNode — Jenga, jaribu, host na deploy miradi yako ya kidijitali kwenye jukwaa moja.">
+<meta name="description" content="LucasNode — Domain, Hosting, Deployment and Cloud Platform">
 <title>LucasNode — Cloud Platform</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
 :root {
-  --navy:#0b1739;
-  --navy2:#142751;
-  --green:#10b981;
-  --green2:#059669;
-  --blue:#3b82f6;
-  --gold:#fbbf24;
-  --bg:#f5f7fb;
-  --white:#ffffff;
-  --text:#15213b;
-  --muted:#75819a;
-  --border:#e6eaf2;
-  --shadow:0 15px 45px rgba(15,35,75,.09);
-  --radius:18px;
+  --navy: #10243a;
+  --blue: #1769ff;
+  --teal: #16b8a6;
+  --text: #182b40;
+  --muted: #728196;
+  --border: #e5ebf2;
+  --background: #f5f8fc;
+  --white: #ffffff;
+  --success: #119b72;
+  --shadow: 0 12px 32px rgba(19, 44, 76, .07);
 }
 
 * {
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
+  box-sizing: border-box;
 }
 
 html {
-  scroll-behavior:smooth;
-  scroll-padding-top:90px;
+  scroll-behavior: smooth;
 }
 
 body {
-  font-family:'Inter',sans-serif;
-  color:var(--text);
-  background:#fff;
-  line-height:1.65;
-  overflow-x:hidden;
+  margin: 0;
+  font-family: Inter, sans-serif;
+  color: var(--text);
+  background: var(--background);
 }
 
-button,input,textarea,select {
-  font:inherit;
-}
-
-button,a {
-  -webkit-tap-highlight-color:transparent;
+button, input, select, textarea {
+  font: inherit;
 }
 
 button {
-  cursor:pointer;
+  cursor: pointer;
 }
 
 a {
-  color:inherit;
-  text-decoration:none;
+  color: inherit;
+  text-decoration: none;
 }
 
-.container {
-  width:min(1160px,92%);
-  margin:auto;
-}
-
-section {
-  padding:90px 0;
-}
-
-.section-heading {
-  max-width:720px;
-  margin:0 auto 45px;
-  text-align:center;
-}
-
-.section-heading .eyebrow {
-  margin-bottom:12px;
-}
-
-.eyebrow {
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  color:var(--green2);
-  background:#eafbf4;
-  border:1px solid #d2f6e5;
-  padding:7px 13px;
-  border-radius:30px;
-  font-size:12px;
-  font-weight:800;
-  letter-spacing:.5px;
-  text-transform:uppercase;
-}
-
-.section-heading h2 {
-  font-size:clamp(28px,4vw,43px);
-  line-height:1.2;
-  letter-spacing:-1.4px;
-  color:var(--navy);
-  margin:15px 0;
-}
-
-.section-heading p {
-  color:var(--muted);
-  font-size:15px;
-}
-
-.btn {
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  gap:10px;
-  padding:13px 20px;
-  border-radius:12px;
-  border:1px solid transparent;
-  font-weight:750;
-  font-size:14px;
-  transition:.25s;
-  cursor:pointer;
-}
-
-.btn:hover {
-  transform:translateY(-2px);
-}
-
-.btn-primary {
-  color:#fff;
-  background:linear-gradient(135deg,var(--green),var(--green2));
-  box-shadow:0 8px 22px rgba(16,185,129,.2);
-}
-
-.btn-primary:hover {
-  box-shadow:0 12px 28px rgba(16,185,129,.3);
-}
-
-.btn-outline {
-  color:var(--navy);
-  border-color:var(--border);
-  background:#fff;
-}
-
-.btn-outline:hover {
-  border-color:var(--green);
-  color:var(--green2);
-}
-
-.btn-dark {
-  color:#fff;
-  background:var(--navy);
-}
-
-.btn-small {
-  padding:9px 13px;
-  font-size:12px;
-  border-radius:9px;
-}
-
-.muted {
-  color:var(--muted);
+svg {
+  display: inline-block;
+  vertical-align: middle;
+  flex-shrink: 0;
 }
 
 .topbar {
-  background:var(--navy);
-  color:#fff;
-  text-align:center;
-  padding:8px 12px;
-  font-size:12px;
-}
-
-.topbar strong {
-  color:#6ee7b7;
-}
-
-.navbar {
-  position:sticky;
-  top:0;
-  z-index:1000;
-  background:rgba(255,255,255,.95);
-  backdrop-filter:blur(15px);
-  border-bottom:1px solid rgba(230,234,242,.9);
-}
-
-.nav-inner {
-  min-height:76px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:25px;
+  height: 76px;
+  padding: 0 5%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
 .brand {
-  display:inline-flex;
-  align-items:center;
-  gap:11px;
-  flex-shrink:0;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--navy);
+  white-space: nowrap;
 }
 
-.brand-icon {
-  display:grid;
-  place-items:center;
-  width:43px;
-  height:43px;
-  color:#fff;
-  border-radius:13px;
-  font-size:23px;
-  font-weight:900;
-  background:linear-gradient(135deg,#34d399,#059669);
-  box-shadow:0 7px 18px rgba(16,185,129,.25);
+.brand-mark {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  color: white;
+  border-radius: 13px;
+  font-size: 25px;
+  font-weight: 800;
+  background: linear-gradient(135deg, #1769ff, #16b8a6);
+  box-shadow: 0 6px 15px #1769ff35;
 }
 
-.brand-name {
-  color:var(--navy);
-  font-size:23px;
-  font-weight:900;
-  letter-spacing:-1px;
+.brand span:last-child {
+  color: var(--blue);
 }
 
-.brand-name span {
-  color:var(--green2);
+.main-nav {
+  display: flex;
+  align-items: center;
+  gap: 27px;
+  color: #5f7085;
+  font-size: 13px;
+  font-weight: 600;
 }
 
-.nav-links {
-  display:flex;
-  align-items:center;
-  gap:23px;
+.main-nav a:hover {
+  color: var(--blue);
 }
 
-.nav-links a {
-  font-size:13px;
-  font-weight:650;
-  color:#5c6881;
-  transition:.2s;
+.top-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
-.nav-links a:hover {
-  color:var(--green2);
+.icon-button {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: white;
+  color: var(--navy);
 }
 
-.nav-actions {
-  display:flex;
-  align-items:center;
-  gap:9px;
+.primary-button,
+.secondary-button {
+  min-height: 43px;
+  border-radius: 11px;
+  padding: 0 17px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  border: 0;
+  font-size: 13px;
+  font-weight: 700;
 }
 
-.menu-toggle {
-  display:none;
-  width:43px;
-  height:43px;
-  border:1px solid var(--border);
-  background:#fff;
-  color:var(--navy);
-  border-radius:11px;
-  font-size:20px;
+.primary-button {
+  color: white;
+  background: var(--blue);
+  box-shadow: 0 5px 14px #1769ff25;
+}
+
+.primary-button:hover {
+  background: #0758e8;
+}
+
+.secondary-button {
+  background: white;
+  color: var(--navy);
+  border: 1px solid var(--border);
+}
+
+.container {
+  width: min(1200px, 90%);
+  margin: auto;
 }
 
 .hero {
-  padding:75px 0 80px;
-  background:
-    radial-gradient(circle at 85% 20%,rgba(16,185,129,.11),transparent 28%),
-    radial-gradient(circle at 5% 75%,rgba(59,130,246,.07),transparent 28%),
-    linear-gradient(180deg,#fff,#fbfcff);
+  padding: 65px 0 35px;
+  display: grid;
+  grid-template-columns: 1.1fr .9fr;
+  align-items: center;
+  gap: 50px;
 }
 
-.hero-grid {
-  display:grid;
-  grid-template-columns:1.03fr .97fr;
-  align-items:center;
-  gap:55px;
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--success);
+  background: #e7f8f2;
+  border-radius: 30px;
+  padding: 8px 12px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .5px;
 }
 
 .hero h1 {
-  margin:22px 0 20px;
-  max-width:650px;
-  font-size:clamp(36px,5.3vw,62px);
-  line-height:1.09;
-  letter-spacing:-2.5px;
-  color:var(--navy);
+  font-size: clamp(34px, 4.4vw, 57px);
+  line-height: 1.12;
+  letter-spacing: -2px;
+  margin: 21px 0;
+  color: var(--navy);
 }
 
 .hero h1 span {
-  color:var(--green2);
+  color: var(--blue);
 }
 
-.hero-copy {
-  max-width:590px;
-  color:var(--muted);
-  font-size:16px;
-  line-height:1.85;
+.hero p {
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.9;
+  max-width: 570px;
 }
 
 .hero-buttons {
-  display:flex;
-  flex-wrap:wrap;
-  gap:12px;
-  margin-top:28px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 27px;
 }
 
 .hero-points {
-  display:flex;
-  flex-wrap:wrap;
-  gap:13px 20px;
-  margin-top:25px;
+  display: flex;
+  gap: 19px;
+  flex-wrap: wrap;
+  margin-top: 24px;
+  color: #65768b;
+  font-size: 11px;
+  font-weight: 600;
 }
 
 .hero-points span {
-  display:flex;
-  align-items:center;
-  gap:8px;
-  font-size:12px;
-  color:#56637a;
-  font-weight:650;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
-.hero-points i {
-  color:var(--green2);
+.hero-points svg {
+  color: var(--success);
 }
 
-.dashboard-shell {
-  position:relative;
-  padding:15px;
-  border:1px solid #e8edf5;
-  background:rgba(255,255,255,.92);
-  border-radius:25px;
-  box-shadow:0 28px 75px rgba(15,35,75,.13);
+.preview-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  padding: 22px;
+  box-shadow: var(--shadow);
 }
 
-.dashboard-window {
-  border:1px solid var(--border);
-  border-radius:17px;
-  overflow:hidden;
-  background:#fff;
+.preview-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 21px;
 }
 
-.window-bar {
-  padding:13px 16px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  background:#fbfcfe;
-  border-bottom:1px solid var(--border);
+.preview-head strong {
+  font-size: 14px;
 }
 
-.window-dots {
-  display:flex;
-  gap:5px;
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 30px;
+  padding: 7px 10px;
+  font-size: 10px;
+  font-weight: 800;
+  background: #e9f9f1;
+  color: #11865f;
 }
 
-.window-dots span {
-  width:8px;
-  height:8px;
-  border-radius:50%;
-  background:#d1d9e6;
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
 }
 
-.window-dots span:first-child {
-  background:#fb7185;
+.preview-screen {
+  background: #10243a;
+  border-radius: 15px;
+  padding: 20px;
+  color: white;
+  min-height: 190px;
 }
 
-.window-dots span:nth-child(2) {
-  background:#fbbf24;
+.screen-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 26px;
+  font-size: 11px;
+  color: #aabbd0;
 }
 
-.window-dots span:nth-child(3) {
-  background:#34d399;
+.screen-lights {
+  display: flex;
+  gap: 5px;
 }
 
-.window-label {
-  color:var(--muted);
-  font-size:11px;
-  font-weight:700;
+.screen-lights i {
+  width: 7px;
+  height: 7px;
+  background: #16b8a6;
+  border-radius: 50%;
 }
 
-.preview-content {
-  padding:20px;
+.screen-lights i:nth-child(2) {
+  background: #f6bd4f;
 }
 
-.preview-welcome {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:10px;
-  margin-bottom:17px;
+.screen-lights i:nth-child(3) {
+  background: #f16d75;
 }
 
-.preview-welcome h3 {
-  font-size:17px;
-  color:var(--navy);
+.screen-code {
+  color: #c5d8f2;
+  font-family: monospace;
+  font-size: 12px;
+  line-height: 2;
 }
 
-.preview-welcome p {
-  color:var(--muted);
-  font-size:11px;
+.screen-code .blue {
+  color: #70aaff;
 }
 
-.live-pill {
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-  padding:5px 9px;
-  color:#047857;
-  background:#e8fbf3;
-  border-radius:20px;
-  font-size:10px;
-  font-weight:800;
+.screen-code .green {
+  color: #56dfbd;
 }
 
-.live-pill i {
-  font-size:7px;
+.screen-code .yellow {
+  color: #ffd27b;
 }
 
-.preview-balance {
-  padding:22px;
-  border-radius:17px;
-  color:#fff;
-  background:linear-gradient(135deg,#10244c,#087d66);
-  position:relative;
-  overflow:hidden;
+.preview-bottom {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 18px;
+  color: var(--muted);
+  font-size: 11px;
 }
 
-.preview-balance:after {
-  content:"";
-  position:absolute;
-  width:180px;
-  height:180px;
-  border-radius:50%;
-  background:rgba(255,255,255,.06);
-  right:-50px;
-  top:-85px;
+.section {
+  padding: 38px 0;
 }
 
-.balance-top {
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
-  font-size:11px;
-  color:#d8f7eb;
+.section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 20px;
+  margin-bottom: 22px;
 }
 
-.balance-value {
-  font-size:27px;
-  font-weight:850;
-  margin:10px 0;
-  letter-spacing:-.6px;
+.section-heading h2 {
+  margin: 0 0 8px;
+  font-size: 24px;
+  color: var(--navy);
+  letter-spacing: -.7px;
 }
 
-.balance-foot {
-  display:flex;
-  gap:8px;
-  align-items:center;
-  color:#d8f7eb;
-  font-size:10px;
+.section-heading p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--muted);
 }
 
-.preview-stats {
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:10px;
-  margin:14px 0;
+.text-link {
+  color: var(--blue);
+  font-size: 12px;
+  font-weight: 700;
 }
 
-.preview-stat {
-  padding:13px 10px;
-  border:1px solid var(--border);
-  border-radius:13px;
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
 }
 
-.preview-stat i {
-  color:var(--green2);
-  margin-bottom:9px;
+.stat-card,
+.panel,
+.feature-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 16px;
 }
 
-.preview-stat strong {
-  display:block;
-  color:var(--navy);
-  font-size:17px;
+.stat-card {
+  padding: 19px;
 }
 
-.preview-stat span {
-  color:var(--muted);
-  font-size:10px;
+.stat-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 19px;
 }
 
-.preview-project-title {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin:20px 0 10px;
-  color:var(--navy);
-  font-weight:800;
-  font-size:12px;
+.stat-icon,
+.feature-icon {
+  display: grid;
+  place-items: center;
+  width: 43px;
+  height: 43px;
+  border-radius: 13px;
+  background: #edf4ff;
+  color: var(--blue);
 }
 
-.preview-project {
-  display:flex;
-  align-items:center;
-  gap:11px;
-  padding:12px 0;
-  border-top:1px solid #eef1f6;
+.stat-icon.teal,
+.feature-icon.teal {
+  background: #e7f9f6;
+  color: #079987;
+}
+
+.stat-icon.orange,
+.feature-icon.orange {
+  background: #fff4e6;
+  color: #e18a22;
+}
+
+.stat-icon.purple,
+.feature-icon.purple {
+  background: #f2edff;
+  color: #8259db;
+}
+
+.stat-card h3 {
+  margin: 0;
+  font-size: 27px;
+  color: var(--navy);
+}
+
+.stat-card p {
+  margin: 7px 0 0;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.content-grid {
+  display: grid;
+  grid-template-columns: 1.25fr .75fr;
+  gap: 20px;
+}
+
+.panel {
+  padding: 23px;
+}
+
+.panel-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.panel-title h3 {
+  font-size: 15px;
+  margin: 0;
+  color: var(--navy);
+}
+
+.project-list {
+  display: grid;
+  gap: 11px;
+}
+
+.project-row {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 13px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .project-symbol {
-  display:grid;
-  place-items:center;
-  width:36px;
-  height:36px;
-  border-radius:10px;
-  color:#047857;
-  background:#e7fbf2;
-}
-
-.preview-project:nth-of-type(2) .project-symbol {
-  color:#2563eb;
-  background:#eaf1ff;
-}
-
-.preview-project:nth-of-type(3) .project-symbol {
-  color:#b45309;
-  background:#fff4dc;
-}
-
-.preview-project-info {
-  flex:1;
-  min-width:0;
-}
-
-.preview-project-info strong {
-  display:block;
-  color:var(--navy);
-  font-size:11px;
-}
-
-.preview-project-info span {
-  display:block;
-  color:var(--muted);
-  font-size:10px;
-}
-
-.floating-note {
-  position:absolute;
-  right:-20px;
-  bottom:55px;
-  padding:13px 15px;
-  border:1px solid #e7f8ef;
-  border-radius:14px;
-  background:#fff;
-  box-shadow:var(--shadow);
-  display:flex;
-  align-items:center;
-  gap:10px;
-  animation:float 4s ease-in-out infinite;
-}
-
-.floating-note .note-icon {
-  width:36px;
-  height:36px;
-  display:grid;
-  place-items:center;
-  border-radius:11px;
-  color:var(--green2);
-  background:#e8fbf3;
-}
-
-.floating-note strong {
-  display:block;
-  font-size:11px;
-  color:var(--navy);
-}
-
-.floating-note span {
-  display:block;
-  font-size:10px;
-  color:var(--muted);
-}
-
-@keyframes float {
-  0%,100% {transform:translateY(0)}
-  50% {transform:translateY(-8px)}
-}
-
-.trust-strip {
-  padding:25px 0;
-  border-top:1px solid var(--border);
-  border-bottom:1px solid var(--border);
-  background:#fff;
-}
-
-.trust-inner {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:20px;
-  flex-wrap:wrap;
-}
-
-.trust-title {
-  color:var(--muted);
-  font-size:12px;
-  font-weight:700;
-}
-
-.trust-item {
-  display:flex;
-  align-items:center;
-  gap:9px;
-  color:#485772;
-  font-size:13px;
-  font-weight:750;
-}
-
-.trust-item i {
-  color:var(--green2);
-  font-size:17px;
-}
-
-.features-section {
-  background:var(--bg);
-}
-
-.features-grid {
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:18px;
-}
-
-.feature-card {
-  padding:25px 22px;
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  background:#fff;
-  transition:.25s;
-}
-
-.feature-card:hover {
-  transform:translateY(-5px);
-  box-shadow:var(--shadow);
-  border-color:#c9f2df;
-}
-
-.feature-icon {
-  width:49px;
-  height:49px;
-  display:grid;
-  place-items:center;
-  border-radius:14px;
-  color:var(--green2);
-  background:#e9fbf3;
-  font-size:21px;
-  margin-bottom:19px;
-}
-
-.feature-card:nth-child(2) .feature-icon {
-  color:#2563eb;
-  background:#eaf1ff;
-}
-
-.feature-card:nth-child(3) .feature-icon {
-  color:#7c3aed;
-  background:#f1eaff;
-}
-
-.feature-card:nth-child(4) .feature-icon {
-  color:#b45309;
-  background:#fff4dc;
-}
-
-.feature-card h3 {
-  color:var(--navy);
-  font-size:16px;
-  margin-bottom:10px;
-}
-
-.feature-card p {
-  color:var(--muted);
-  font-size:13px;
-  line-height:1.8;
-}
-
-.feature-link {
-  display:inline-flex;
-  gap:7px;
-  align-items:center;
-  color:var(--green2);
-  font-size:12px;
-  font-weight:800;
-  margin-top:17px;
-}
-
-.how-section {
-  background:var(--navy);
-  color:#fff;
-  position:relative;
-  overflow:hidden;
-}
-
-.how-section:before {
-  content:"";
-  position:absolute;
-  width:420px;
-  height:420px;
-  border-radius:50%;
-  background:rgba(16,185,129,.09);
-  top:-200px;
-  right:-100px;
-}
-
-.how-section .section-heading h2 {
-  color:#fff;
-}
-
-.how-section .section-heading p {
-  color:#bdc9dd;
-}
-
-.how-section .eyebrow {
-  background:rgba(16,185,129,.12);
-  border-color:rgba(110,231,183,.15);
-  color:#6ee7b7;
-}
-
-.steps-grid {
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:20px;
-  position:relative;
-}
-
-.step-card {
-  padding:25px 20px;
-  border:1px solid rgba(255,255,255,.12);
-  border-radius:17px;
-  background:rgba(255,255,255,.045);
-}
-
-.step-number {
-  width:42px;
-  height:42px;
-  display:grid;
-  place-items:center;
-  border-radius:12px;
-  background:rgba(16,185,129,.17);
-  color:#6ee7b7;
-  font-size:16px;
-  font-weight:900;
-  margin-bottom:20px;
-}
-
-.step-card h3 {
-  font-size:16px;
-  margin-bottom:10px;
-}
-
-.step-card p {
-  color:#b9c6da;
-  font-size:13px;
-  line-height:1.8;
-}
-
-.builder-section {
-  background:#fff;
-}
-
-.builder-grid {
-  display:grid;
-  grid-template-columns:.9fr 1.1fr;
-  align-items:center;
-  gap:45px;
-}
-
-.builder-copy h2 {
-  color:var(--navy);
-  font-size:clamp(28px,4vw,42px);
-  line-height:1.2;
-  letter-spacing:-1.4px;
-  margin:17px 0;
-}
-
-.builder-copy p {
-  color:var(--muted);
-  font-size:14px;
-  line-height:1.9;
-}
-
-.builder-list {
-  list-style:none;
-  display:grid;
-  gap:14px;
-  margin:23px 0;
-}
-
-.builder-list li {
-  display:flex;
-  align-items:flex-start;
-  gap:11px;
-  color:#46546c;
-  font-size:13px;
-}
-
-.builder-list i {
-  color:var(--green2);
-  margin-top:4px;
-}
-
-.editor-mock {
-  padding:17px;
-  border:1px solid var(--border);
-  border-radius:21px;
-  box-shadow:var(--shadow);
-  background:#fff;
-}
-
-.editor-top {
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  padding:3px 2px 15px;
-  border-bottom:1px solid var(--border);
-}
-
-.editor-top strong {
-  color:var(--navy);
-  font-size:13px;
-}
-
-.editor-top span {
-  color:var(--muted);
-  font-size:11px;
-}
-
-.editor-workspace {
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
-  padding-top:14px;
-}
-
-.editor-pane {
-  min-width:0;
-  border:1px solid var(--border);
-  border-radius:13px;
-  overflow:hidden;
-}
-
-.pane-title {
-  padding:10px 12px;
-  color:#536078;
-  background:#f8fafc;
-  border-bottom:1px solid var(--border);
-  font-size:11px;
-  font-weight:800;
-}
-
-.code-lines {
-  padding:15px 12px;
-  min-height:200px;
-  background:#0f1b37;
-  color:#b9f4dc;
-  font-family:monospace;
-  font-size:11px;
-  line-height:2;
-  white-space:pre-wrap;
-  overflow-wrap:anywhere;
-}
-
-.preview-demo {
-  padding:15px;
-  min-height:200px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  text-align:center;
-  background:#f8fafc;
-}
-
-.preview-demo-inner i {
-  font-size:30px;
-  color:var(--green2);
-  margin-bottom:12px;
-}
-
-.preview-demo-inner h3 {
-  color:var(--navy);
-  font-size:16px;
-  margin-bottom:6px;
-}
-
-.preview-demo-inner p {
-  color:var(--muted);
-  font-size:11px;
-}
-
-.pricing-section {
-  background:var(--bg);
-}
-
-.pricing-grid {
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:20px;
-  align-items:stretch;
-}
-
-.price-card {
-  position:relative;
-  padding:30px 26px;
-  border:1px solid var(--border);
-  border-radius:20px;
-  background:#fff;
-}
-
-.price-card.popular {
-  border:2px solid var(--green);
-  box-shadow:0 15px 45px rgba(16,185,129,.12);
-}
-
-.popular-label {
-  position:absolute;
-  top:-14px;
-  left:50%;
-  transform:translateX(-50%);
-  background:var(--green2);
-  color:#fff;
-  border-radius:20px;
-  padding:5px 13px;
-  white-space:nowrap;
-  font-size:10px;
-  font-weight:850;
-}
-
-.price-card h3 {
-  color:var(--navy);
-  font-size:19px;
-}
-
-.price-card .price-desc {
-  color:var(--muted);
-  font-size:12px;
-  margin:8px 0 20px;
-}
-
-.price-value {
-  font-size:34px;
-  font-weight:900;
-  letter-spacing:-1.2px;
-  color:var(--navy);
-}
-
-.price-value small {
-  font-size:12px;
-  font-weight:600;
-  letter-spacing:0;
-  color:var(--muted);
-}
-
-.price-card .btn {
-  width:100%;
-  margin:19px 0;
-}
-
-.price-features {
-  list-style:none;
-  display:grid;
-  gap:12px;
-  margin-top:12px;
-}
-
-.price-features li {
-  display:flex;
-  gap:9px;
-  color:#536078;
-  font-size:12px;
-}
-
-.price-features i {
-  color:var(--green2);
-  margin-top:4px;
-}
-
-.security-section {
-  background:#fff;
-}
-
-.security-grid {
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:20px;
-}
-
-.security-card {
-  display:flex;
-  align-items:flex-start;
-  gap:15px;
-  padding:23px;
-  border:1px solid var(--border);
-  border-radius:17px;
-  background:#fff;
-}
-
-.security-card > i {
-  display:grid;
-  place-items:center;
-  flex-shrink:0;
-  width:44px;
-  height:44px;
-  border-radius:13px;
-  color:var(--green2);
-  background:#e9fbf3;
-  font-size:18px;
-}
-
-.security-card h3 {
-  color:var(--navy);
-  font-size:14px;
-  margin-bottom:7px;
-}
-
-.security-card p {
-  color:var(--muted);
-  font-size:12px;
-  line-height:1.8;
-}
-/* ===== CSS CONTINUED ===== */
-
-.cta-section {
-  padding:70px 0;
-  background:var(--bg);
-}
-
-.cta-box {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:30px;
-  padding:45px;
-  border-radius:24px;
-  background:linear-gradient(120deg,#0b1739,#123d50);
-  color:#fff;
-}
-
-.cta-box h2 {
-  font-size:clamp(25px,4vw,38px);
-  line-height:1.2;
-  margin-bottom:12px;
-}
-
-.cta-box p {
-  color:#c7d5e7;
-  font-size:14px;
-  max-width:600px;
-}
-
-.contact-section {
-  background:#fff;
-}
-
-.contact-grid {
-  display:grid;
-  grid-template-columns:.85fr 1.15fr;
-  gap:40px;
-}
-
-.contact-info h2 {
-  font-size:32px;
-  color:var(--navy);
-  line-height:1.2;
-  margin:15px 0;
-}
-
-.contact-info p {
-  color:var(--muted);
-  font-size:14px;
-}
-
-.contact-item {
-  display:flex;
-  align-items:center;
-  gap:13px;
-  margin-top:20px;
-}
-
-.contact-item i {
-  width:42px;
-  height:42px;
-  display:grid;
-  place-items:center;
-  color:var(--green2);
-  background:#e9fbf3;
-  border-radius:12px;
-}
-
-.contact-item strong {
-  display:block;
-  font-size:13px;
-  color:var(--navy);
-}
-
-.contact-item span {
-  color:var(--muted);
-  font-size:12px;
-}
-
-.contact-form {
-  display:grid;
-  gap:14px;
-  padding:28px;
-  border:1px solid var(--border);
-  border-radius:20px;
-  box-shadow:var(--shadow);
-}
-
-.form-row {
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:14px;
-}
-
-.field {
-  display:grid;
-  gap:7px;
-}
-
-.field label {
-  color:var(--navy);
-  font-size:12px;
-  font-weight:750;
-}
-
-.field input,
-.field textarea,
-.field select {
-  width:100%;
-  min-width:0;
-  border:1px solid #dfe5ef;
-  border-radius:10px;
-  padding:12px 13px;
-  outline:none;
-  background:#fff;
-  color:var(--text);
-  font-size:13px;
-}
-
-.field input:focus,
-.field textarea:focus,
-.field select:focus {
-  border-color:var(--green);
-  box-shadow:0 0 0 3px rgba(16,185,129,.1);
-}
-
-.field textarea {
-  resize:vertical;
-  min-height:120px;
-}
-
-.footer {
-  background:#09132e;
-  color:#fff;
-  padding:55px 0 20px;
-}
-
-.footer-grid {
-  display:grid;
-  grid-template-columns:1.5fr 1fr 1fr 1fr;
-  gap:35px;
-  padding-bottom:35px;
-}
-
-.footer .brand-name {
-  color:#fff;
-}
-
-.footer-about {
-  color:#aab8cf;
-  font-size:13px;
-  margin-top:17px;
-  max-width:310px;
-}
-
-.footer h4 {
-  margin-bottom:15px;
-  font-size:13px;
-}
-
-.footer-links {
-  display:grid;
-  gap:10px;
-}
-
-.footer-links a {
-  color:#aab8cf;
-  font-size:12px;
-}
-
-.footer-links a:hover {
-  color:#6ee7b7;
-}
-
-.footer-bottom {
-  display:flex;
-  justify-content:space-between;
-  gap:15px;
-  flex-wrap:wrap;
-  padding-top:20px;
-  border-top:1px solid rgba(255,255,255,.12);
-  color:#98a8c2;
-  font-size:11px;
-}
-
-.notice {
-  padding:13px 15px;
-  border-radius:11px;
-  font-size:12px;
-  line-height:1.7;
-  margin:12px 0;
-  overflow-wrap:anywhere;
-}
-
-.notice-info {
-  color:#1d4ed8;
-  background:#eff6ff;
-  border:1px solid #dbeafe;
-}
-
-.notice-success {
-  color:#047857;
-  background:#ecfdf5;
-  border:1px solid #d1fae5;
-}
-
-.notice-error {
-  color:#b91c1c;
-  background:#fef2f2;
-  border:1px solid #fee2e2;
-}
-
-.status-text {
-  font-size:12px;
-  color:var(--muted);
-  margin-top:10px;
-  overflow-wrap:anywhere;
-}
-
-.api-status {
-  display:inline-flex;
-  align-items:center;
-  gap:7px;
-  font-size:11px;
-  font-weight:750;
-  color:#64748b;
-}
-
-.api-status i {
-  font-size:8px;
-}
-
-.api-status.ok {
-  color:#059669;
-}
-
-.api-status.bad {
-  color:#dc2626;
-}
-
-.project-area {
-  padding:25px;
-  border:1px solid var(--border);
-  border-radius:18px;
-  background:#fff;
-  box-shadow:0 10px 35px rgba(15,35,75,.05);
-}
-
-.project-toolbar {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:15px;
-  flex-wrap:wrap;
-  margin-bottom:20px;
-}
-
-.project-toolbar h3 {
-  color:var(--navy);
-  font-size:19px;
-}
-
-.project-grid {
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:15px;
-}
-
-.project-card {
-  min-width:0;
-  padding:19px;
-  border:1px solid var(--border);
-  border-radius:15px;
-  background:#fff;
-}
-
-.project-card h4 {
-  color:var(--navy);
-  font-size:14px;
-  overflow-wrap:anywhere;
-}
-
-.project-card p {
-  color:var(--muted);
-  font-size:12px;
-  margin:9px 0;
-  overflow-wrap:anywhere;
-}
-
-.project-card .project-meta {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  flex-wrap:wrap;
-  gap:8px;
-  margin-top:14px;
-}
-
-.project-badge {
-  padding:5px 8px;
-  border-radius:20px;
-  background:#f1f5f9;
-  color:#475569;
-  font-size:10px;
-  font-weight:750;
+  width: 39px;
+  height: 39px;
+  display: grid;
+  place-items: center;
+  border-radius: 11px;
+  background: #edf4ff;
+  color: var(--blue);
+}
+
+.project-info {
+  min-width: 0;
+  flex: 1;
+}
+
+.project-info strong {
+  display: block;
+  font-size: 12px;
+  margin-bottom: 5px;
+  overflow-wrap: anywhere;
+}
+
+.project-info small {
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.project-status {
+  color: #b07a20;
+  background: #fff5df;
+  border-radius: 30px;
+  padding: 6px 8px;
+  font-size: 9px;
+  font-weight: 800;
 }
 
 .empty-state {
-  padding:30px 12px;
-  text-align:center;
-  color:var(--muted);
-  font-size:13px;
-  grid-column:1/-1;
+  text-align: center;
+  padding: 28px 10px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.8;
 }
 
-.empty-state i {
-  display:block;
-  color:#9aa8bd;
-  font-size:28px;
-  margin-bottom:12px;
+.empty-state svg {
+  display: block;
+  margin: 0 auto 12px;
+  color: #a2b1c3;
 }
 
-.app-section {
-  background:#fff;
+.quick-actions {
+  display: grid;
+  gap: 11px;
 }
 
-.app-grid {
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:22px;
+.quick-action {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 13px;
+  text-align: left;
+  color: var(--text);
+  background: white;
 }
 
-.app-panel {
-  padding:24px;
-  border:1px solid var(--border);
-  border-radius:18px;
-  background:#fff;
-  box-shadow:0 10px 35px rgba(15,35,75,.05);
-  min-width:0;
+.quick-action:hover {
+  border-color: #b7d0ff;
+  background: #f8fbff;
 }
 
-.app-panel h3 {
-  font-size:18px;
-  color:var(--navy);
-  margin-bottom:7px;
+.quick-action .quick-copy {
+  flex: 1;
 }
 
-.app-panel > p {
-  color:var(--muted);
-  font-size:12px;
-  margin-bottom:18px;
+.quick-copy strong {
+  display: block;
+  font-size: 12px;
+  margin-bottom: 5px;
 }
 
-.editor-textarea {
-  display:block;
-  width:100%;
-  min-height:270px;
-  padding:15px;
-  border-radius:12px;
-  border:1px solid #dce3ef;
-  background:#0f1b37;
-  color:#c9f7e3;
-  font-family:monospace;
-  font-size:12px;
-  line-height:1.7;
-  resize:vertical;
-  outline:none;
-  tab-size:2;
+.quick-copy small {
+  color: var(--muted);
+  font-size: 10px;
 }
 
-.editor-textarea:focus {
-  border-color:var(--green);
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
 }
 
-.editor-actions {
-  display:flex;
-  flex-wrap:wrap;
-  gap:9px;
-  margin-top:13px;
+.feature-card {
+  padding: 21px;
+  transition: transform .2s, box-shadow .2s;
 }
 
-.preview-frame {
-  width:100%;
-  height:330px;
-  border:1px solid var(--border);
-  border-radius:12px;
-  background:#fff;
+.feature-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow);
 }
 
-.builder-prompt {
-  width:100%;
-  min-height:130px;
-  resize:vertical;
-  padding:13px;
-  border:1px solid #dfe5ef;
-  border-radius:11px;
-  font:inherit;
-  font-size:13px;
-  outline:none;
+.feature-card h3 {
+  margin: 16px 0 9px;
+  color: var(--navy);
+  font-size: 14px;
 }
 
-.domain-row {
-  display:flex;
-  gap:10px;
+.feature-card p {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.8;
+  margin: 0 0 15px;
 }
 
-.domain-row input {
-  flex:1;
-  min-width:0;
+.feature-card a {
+  color: var(--blue);
+  font-size: 11px;
+  font-weight: 800;
 }
 
-.domain-result {
-  margin-top:15px;
+.workspace {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
 }
 
-.mini-table {
-  width:100%;
-  border-collapse:collapse;
-  font-size:12px;
+.editor {
+  background: #10243a;
+  border-radius: 15px;
+  overflow: hidden;
+  color: white;
 }
 
-.mini-table th,
-.mini-table td {
-  text-align:left;
-  padding:12px 9px;
-  border-bottom:1px solid var(--border);
+.editor-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 13px 16px;
+  border-bottom: 1px solid #263e58;
+  font-size: 11px;
 }
 
-.mini-table th {
-  color:var(--muted);
-  font-weight:750;
-  background:#f8fafc;
+.editor textarea {
+  display: block;
+  width: 100%;
+  min-height: 230px;
+  padding: 17px;
+  resize: vertical;
+  color: #c9e1ff;
+  background: #10243a;
+  border: 0;
+  outline: 0;
+  font: 12px/1.8 monospace;
 }
 
-@media(max-width:1000px) {
-  .nav-links {
-    gap:13px;
-  }
-
-  .nav-links a {
-    font-size:12px;
-  }
-
-  .hero-grid {
-    gap:30px;
-  }
-
-  .features-grid {
-    grid-template-columns:repeat(2,1fr);
-  }
-
-  .steps-grid {
-    grid-template-columns:repeat(2,1fr);
-  }
-
-  .footer-grid {
-    grid-template-columns:repeat(2,1fr);
-  }
+.output {
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  overflow: hidden;
+  background: white;
 }
 
-@media(max-width:760px) {
-  section {
-    padding:65px 0;
-  }
+.output-head {
+  padding: 14px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+  font-size: 11px;
+}
 
-  .topbar {
-    font-size:10px;
-  }
+.output iframe {
+  display: block;
+  width: 100%;
+  height: 230px;
+  border: 0;
+  background: white;
+}
 
-  .nav-inner {
-    min-height:68px;
-  }
+.domain-box {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 17px;
+  padding: 24px;
+}
 
-  .brand-name {
-    font-size:20px;
-  }
+.domain-form {
+  display: flex;
+  gap: 10px;
+  margin-top: 17px;
+}
 
-  .brand-icon {
-    width:39px;
-    height:39px;
-  }
+.domain-form input {
+  flex: 1;
+  min-width: 0;
+  height: 47px;
+  padding: 0 14px;
+  border: 1px solid #dce5ef;
+  border-radius: 11px;
+  outline: none;
+}
 
-  .menu-toggle {
-    display:block;
-  }
+.domain-form input:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px #1769ff14;
+}
 
-  .nav-actions .nav-login {
-    display:none;
-  }
+.result-message {
+  margin-top: 14px;
+  font-size: 12px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
 
-  .nav-links {
-    display:none;
-    position:absolute;
-    top:68px;
-    left:0;
-    right:0;
-    padding:18px 5%;
-    background:#fff;
-    border-bottom:1px solid var(--border);
-    box-shadow:0 15px 25px rgba(15,35,75,.07);
-    align-items:stretch;
-    gap:0;
-  }
+.cta {
+  margin: 30px 0 55px;
+  padding: 37px;
+  border-radius: 22px;
+  color: white;
+  background: linear-gradient(120deg, #10243a, #174a82);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 25px;
+}
 
-  .nav-links.open {
-    display:flex;
-    flex-direction:column;
-  }
+.cta h2 {
+  font-size: 26px;
+  margin: 0 0 9px;
+}
 
-  .nav-links a {
-    padding:12px 0;
-    border-bottom:1px solid #f0f2f7;
-    font-size:14px;
+.cta p {
+  margin: 0;
+  color: #c0d0e3;
+  font-size: 12px;
+  line-height: 1.8;
+}
+
+.cta .primary-button {
+  background: var(--teal);
+  white-space: nowrap;
+}
+
+footer {
+  background: white;
+  border-top: 1px solid var(--border);
+  padding: 28px 5% 90px;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.footer-brand {
+  color: var(--navy);
+  font-weight: 800;
+  font-size: 15px;
+}
+
+.mobile-nav {
+  display: none;
+}
+
+.modal-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: #07172bb8;
+  z-index: 200;
+  padding: 20px;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-backdrop.open {
+  display: flex;
+}
+
+.modal {
+  background: white;
+  border-radius: 19px;
+  width: min(460px, 100%);
+  padding: 25px;
+  box-shadow: 0 20px 80px #0003;
+}
+
+.modal-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.modal-head h3 {
+  margin: 0;
+  color: var(--navy);
+}
+
+.modal label {
+  display: block;
+  margin: 14px 0 7px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.modal input,
+.modal select {
+  width: 100%;
+  height: 45px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0 12px;
+  background: white;
+}
+
+.modal .primary-button {
+  width: 100%;
+  margin-top: 20px;
+}
+
+@media (max-width: 1000px) {
+  .main-nav {
+    gap: 14px;
   }
 
   .hero {
-    padding:55px 0;
+    gap: 25px;
   }
 
-  .hero-grid,
-  .builder-grid,
-  .contact-grid,
-  .app-grid {
-    grid-template-columns:1fr;
-  }
-
-  .hero h1 {
-    font-size:42px;
-    letter-spacing:-1.7px;
-  }
-
-  .hero-copy {
-    font-size:14px;
-  }
-
-  .dashboard-shell {
-    margin:8px 8px 0 0;
-  }
-
-  .floating-note {
-    right:-8px;
-    bottom:20px;
-  }
-
-  .trust-inner {
-    justify-content:center;
-  }
-
-  .trust-title {
-    width:100%;
-    text-align:center;
-  }
-
-  .project-grid {
-    grid-template-columns:repeat(2,1fr);
-  }
-
-  .pricing-grid,
-  .security-grid {
-    grid-template-columns:1fr;
-    gap:20px;
-  }
-
-  .cta-box {
-    padding:30px 23px;
-    flex-direction:column;
-    align-items:flex-start;
-  }
-
-  .contact-form {
-    padding:20px;
-  }
-
-  .editor-workspace {
-    grid-template-columns:1fr;
+  .features-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
-@media(max-width:480px) {
-  .container {
-    width:91%;
+@media (max-width: 760px) {
+  .topbar {
+    height: 66px;
+    padding: 0 5%;
+  }
+
+  .main-nav,
+  .top-actions .icon-button {
+    display: none;
+  }
+
+  .brand {
+    font-size: 19px;
+  }
+
+  .brand-mark {
+    width: 37px;
+    height: 37px;
+  }
+
+  .top-actions .primary-button {
+    padding: 0 11px;
+    font-size: 11px;
+  }
+
+  .hero {
+    grid-template-columns: 1fr;
+    padding-top: 42px;
+    gap: 30px;
   }
 
   .hero h1 {
-    font-size:36px;
+    letter-spacing: -1.2px;
   }
 
-  .hero-buttons .btn {
-    width:100%;
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 11px;
   }
 
-  .preview-content {
-    padding:13px;
+  .stat-card {
+    padding: 15px;
   }
 
-  .preview-balance {
-    padding:17px;
+  .stat-card h3 {
+    font-size: 23px;
   }
 
-  .balance-value {
-    font-size:23px;
+  .content-grid,
+  .workspace {
+    grid-template-columns: 1fr;
   }
 
-  .preview-stats {
-    gap:6px;
+  .features-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 11px;
   }
 
-  .preview-stat {
-    padding:10px 7px;
+  .feature-card {
+    padding: 16px;
   }
 
-  .preview-stat strong {
-    font-size:14px;
+  .section-heading h2 {
+    font-size: 21px;
   }
 
-  .preview-stat span {
-    font-size:9px;
+  .cta {
+    display: block;
+    padding: 26px;
   }
 
-  .features-grid,
-  .steps-grid,
-  .project-grid,
-  .footer-grid,
-  .form-row {
-    grid-template-columns:1fr;
+  .cta .primary-button {
+    margin-top: 20px;
   }
 
-  .project-area,
-  .app-panel {
-    padding:17px;
+  .mobile-nav {
+    position: fixed;
+    z-index: 90;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    padding: 10px 6px calc(10px + env(safe-area-inset-bottom));
+    background: #ffffffed;
+    backdrop-filter: blur(15px);
+    border-top: 1px solid var(--border);
   }
 
-  .domain-row {
-    flex-direction:column;
+  .mobile-nav a {
+    text-align: center;
+    color: #6b7d91;
+    font-size: 9px;
+    font-weight: 700;
   }
 
-  .floating-note {
-    position:relative;
-    right:auto;
-    bottom:auto;
-    margin:12px 0 0 auto;
-    width:max-content;
-    max-width:100%;
+  .mobile-nav svg {
+    display: block;
+    margin: 0 auto 5px;
   }
 
-  .footer-bottom {
-    flex-direction:column;
+  footer {
+    padding-bottom: 100px;
+  }
+}
+
+@media (max-width: 380px) {
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-buttons .primary-button,
+  .hero-buttons .secondary-button {
+    width: 100%;
   }
 }
 </style>
 </head>
 
 <body>
-<div class="topbar">
-  <i class="fa-solid fa-cloud"></i>
-  <strong>LucasNode</strong> — Jenga, jaribu na peleka miradi yako mtandaoni.
-</div>
 
-<header class="navbar">
-  <div class="container nav-inner">
-    <a href="#home" class="brand" aria-label="LucasNode mwanzo">
-      <span class="brand-icon">L</span>
-      <span class="brand-name">Lucas<span>Node</span></span>
-    </a>
+<!-- ICON LIBRARY: ICONS ZOTE HAPA NI SVG, HAZIHITAJI PICHA ZA NJE -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+  <symbol id="i-bell" viewBox="0 0 24 24">
+    <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path>
+    <path d="M10 21h4"></path>
+  </symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24">
+    <path d="M12 5v14M5 12h14"></path>
+  </symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24">
+    <rect x="3" y="3" width="7" height="7" rx="1"></rect>
+    <rect x="14" y="3" width="7" height="7" rx="1"></rect>
+    <rect x="3" y="14" width="7" height="7" rx="1"></rect>
+    <rect x="14" y="14" width="7" height="7" rx="1"></rect>
+  </symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="10"></circle>
+    <path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"></path>
+  </symbol>
+  <symbol id="i-code" viewBox="0 0 24 24">
+    <path d="m8 17-5-5 5-5M16 7l5 5-5 5M14 4l-4 16"></path>
+  </symbol>
+  <symbol id="i-cloud" viewBox="0 0 24 24">
+    <path d="M20 16.5A4.5 4.5 0 0 0 18 8h-1.2A7 7 0 1 0 5 17h15"></path>
+  </symbol>
+  <symbol id="i-credit" viewBox="0 0 24 24">
+    <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+    <path d="M2 10h20M6 15h4"></path>
+  </symbol>
+  <symbol id="i-database" viewBox="0 0 24 24">
+    <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+    <path d="M3 5v14c0 1.7 4 3 9 3s9-1.3 9-3V5M3 12c0 1.7 4 3 9 3s9-1.3 9-3"></path>
+  </symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24">
+    <path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11Z"></path>
+    <path d="m9 12 2 2 4-4"></path>
+  </symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24">
+    <path d="M3 3v18h18M8 16v-4M13 16V6M18 16v-7"></path>
+  </symbol>
+  <symbol id="i-harddrive" viewBox="0 0 24 24">
+    <rect x="3" y="4" width="18" height="16" rx="2"></rect>
+    <path d="M3 14h18M7 17h.01M11 17h.01"></path>
+  </symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24">
+    <path d="M5 12h14M12 5l7 7-7 7"></path>
+  </symbol>
+  <symbol id="i-check" viewBox="0 0 24 24">
+    <path d="m5 12 4 4L19 6"></path>
+  </symbol>
+  <symbol id="i-sparkles" viewBox="0 0 24 24">
+    <path d="m12 3 1.9 5.8L20 11l-6.1 2.2L12 19l-2-5.8L4 11l6-2.2L12 3Z"></path>
+    <path d="m19 14 1.2 2.8L23 18l-2.8 1.2L19 22l-1.2-2.8L15 18l2.8-1.2L19 14Z"></path>
+  </symbol>
+  <symbol id="i-rocket" viewBox="0 0 24 24">
+    <path d="M4.5 16.5c-1.5 1.3-2 4-2 4s2.7-.5 4-2"></path>
+    <path d="M12 15 9 12c1.5-5 5-8 11-9 0 6-4 9.5-8 12Z"></path>
+    <path d="m9 12-4 1-2 4 5-1M12 15l-1 4 4 2 1-5"></path>
+    <circle cx="15" cy="8" r="1.5"></circle>
+  </symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24">
+    <path d="M3 6h18M3 12h18M3 18h18"></path>
+  </symbol>
+  <symbol id="i-x" viewBox="0 0 24 24">
+    <path d="m18 6-12 12M6 6l12 12"></path>
+  </symbol>
+</svg>
 
-    <nav class="nav-links" id="navLinks">
-      <a href="#home">Mwanzo</a>
-      <a href="#features">Huduma</a>
-      <a href="#projects">Miradi</a>
-      <a href="#builder">AI Builder</a>
-      <a href="#domains">Domains</a>
-      <a href="#pricing">Bei</a>
-    </nav>
+<header class="topbar">
+  <a href="#home" class="brand" aria-label="LucasNode home">
+    <span class="brand-mark">L</span>
+    <span>LucasNode</span>
+  </a>
 
-    <div class="nav-actions">
-      <a href="#projects" class="btn btn-outline btn-small nav-login">Dashboard</a>
-      <a href="#get-started" class="btn btn-primary btn-small">Anza sasa <i class="fa-solid fa-arrow-right"></i></a>
-      <button class="menu-toggle" id="menuToggle" aria-label="Fungua menyu" aria-expanded="false">
-        <i class="fa-solid fa-bars"></i>
-      </button>
-    </div>
+  <nav class="main-nav">
+    <a href="#dashboard">Dashboard</a>
+    <a href="#features">Huduma</a>
+    <a href="#workspace">Code Editor</a>
+    <a href="#domains">Domains</a>
+  </nav>
+
+  <div class="top-actions">
+    <button class="icon-button" type="button" aria-label="Notifications" title="Notifications">
+      <svg width="19" height="19" stroke="currentColor" fill="none" stroke-width="1.8">
+        <use href="#i-bell"></use>
+      </svg>
+    </button>
+    <button class="primary-button" type="button" onclick="openProjectModal()">
+      <svg width="17" height="17" stroke="currentColor" fill="none" stroke-width="2">
+        <use href="#i-plus"></use>
+      </svg>
+      Create Project
+    </button>
   </div>
 </header>
 
 <main>
-<section class="hero" id="home">
-  <div class="container hero-grid">
+  <section class="container hero" id="home">
     <div>
-      <span class="eyebrow"><i class="fa-solid fa-bolt"></i> Jukwaa la kidijitali</span>
-      <h1>Jenga. Jaribu.<br><span>Deploy.</span> Kila kitu sehemu moja.</h1>
-      <p class="hero-copy">
-        LucasNode inakupa nafasi ya kuandaa miradi yako, kuhariri code,
-        kuona preview na kuandaa hatua za kuipeleka mtandaoni.
-        Lengo ni kurahisisha safari kutoka wazo hadi huduma inayopatikana mtandaoni.
+      <div class="eyebrow">
+        <svg width="15" height="15" stroke="currentColor" fill="none" stroke-width="2">
+          <use href="#i-sparkles"></use>
+        </svg>
+        YOUR CLOUD. YOUR PROJECTS.
+      </div>
+
+      <h1>Jenga, deploy na<br><span>host</span> kwa urahisi.</h1>
+
+      <p>
+        LucasNode ni jukwaa la kusimamia miradi, kuandaa tovuti,
+        kuunganisha domain na kuandaa deployment kutoka sehemu moja.
+        Anza na mradi wako na uone preview kabla ya kuendelea.
       </p>
 
       <div class="hero-buttons">
-        <a href="#get-started" class="btn btn-primary">
-          <i class="fa-solid fa-rocket"></i> Anza kujenga
-        </a>
-        <a href="#features" class="btn btn-outline">
-          <i class="fa-solid fa-circle-play"></i> Gundua huduma
+        <button class="primary-button" type="button" onclick="openProjectModal()">
+          <svg width="17" height="17" stroke="currentColor" fill="none" stroke-width="2">
+            <use href="#i-plus"></use>
+          </svg>
+          Anza Mradi
+        </button>
+
+        <a class="secondary-button" href="#features">
+          Chunguza Huduma
+          <svg width="16" height="16" stroke="currentColor" fill="none" stroke-width="2">
+            <use href="#i-arrow"></use>
+          </svg>
         </a>
       </div>
 
       <div class="hero-points">
-        <span><i class="fa-solid fa-circle-check"></i> Code Editor</span>
-        <span><i class="fa-solid fa-circle-check"></i> Live Preview</span>
-        <span><i class="fa-solid fa-circle-check"></i> Cloud Projects</span>
-      </div>
-
-      <div class="status-text">
-        <span class="api-status" id="apiStatus">
-          <i class="fa-solid fa-circle"></i> API: inakaguliwa...
-        </span>
+        <span><svg width="15" height="15" stroke="currentColor" fill="none" stroke-width="2"><use href="#i-check"></use></svg> Muonekano rahisi</span>
+        <span><svg width="15" height="15" stroke="currentColor" fill="none" stroke-width="2"><use href="#i-check"></use></svg> Preview ya haraka</span>
+        <span><svg width="15" height="15" stroke="currentColor" fill="none" stroke-width="2"><use href="#i-check"></use></svg> Cloud platform</span>
       </div>
     </div>
 
-    <div class="dashboard-shell">
-      <div class="dashboard-window">
-        <div class="window-bar">
-          <div class="window-dots"><span></span><span></span><span></span></div>
-          <span class="window-label">LucasNode Workspace</span>
-          <i class="fa-solid fa-ellipsis" style="color:#8491a8"></i>
+    <div class="preview-card">
+      <div class="preview-head">
+        <strong>LucasNode Workspace</strong>
+        <span class="status"><i class="status-dot"></i> Workspace</span>
+      </div>
+
+      <div class="preview-screen">
+        <div class="screen-top">
+          <span class="screen-lights"><i></i><i></i><i></i></span>
+          <span>index.html</span>
+          <span>HTML</span>
         </div>
 
-        <div class="preview-content">
-          <div class="preview-welcome">
-            <div>
-              <h3>Workspace yako</h3>
-              <p>Mahali pa kusimamia miradi yako</p>
-            </div>
-            <span class="live-pill"><i class="fa-solid fa-circle"></i> Workspace</span>
-          </div>
-
-          <div class="preview-balance">
-            <div class="balance-top">
-              <span>LucasNode Cloud</span>
-              <i class="fa-solid fa-cloud"></i>
-            </div>
-            <div class="balance-value">Build your future.</div>
-            <div class="balance-foot">
-              <i class="fa-solid fa-shield-halved"></i>
-              Jenga kwa mpangilio, hatua kwa hatua.
-            </div>
-          </div>
-
-          <div class="preview-stats">
-            <div class="preview-stat">
-              <i class="fa-solid fa-folder-open"></i>
-              <strong id="heroProjectCount">—</strong>
-              <span>Miradi ya API</span>
-            </div>
-            <div class="preview-stat">
-              <i class="fa-solid fa-code"></i>
-              <strong>HTML</strong>
-              <span>Code Editor</span>
-            </div>
-            <div class="preview-stat">
-              <i class="fa-solid fa-globe"></i>
-              <strong>DNS</strong>
-              <span>Domains</span>
-            </div>
-          </div>
-
-          <div class="preview-project-title">
-            <span>Miradi ya LucasNode</span>
-            <a href="#projects" style="color:var(--green2)">Angalia <i class="fa-solid fa-arrow-right"></i></a>
-          </div>
-
-          <div class="preview-project">
-            <div class="project-symbol"><i class="fa-solid fa-code"></i></div>
-            <div class="preview-project-info">
-              <strong>Code Editor</strong>
-              <span>Andaa HTML, CSS na JavaScript</span>
-            </div>
-          </div>
-
-          <div class="preview-project">
-            <div class="project-symbol"><i class="fa-solid fa-eye"></i></div>
-            <div class="preview-project-info">
-              <strong>Live Preview</strong>
-              <span>Jaribu muonekano kabla ya deploy</span>
-            </div>
-          </div>
-
-          <div class="preview-project">
-            <div class="project-symbol"><i class="fa-solid fa-cloud-arrow-up"></i></div>
-            <div class="preview-project-info">
-              <strong>Hosting & Deployment</strong>
-              <span>Inahitaji huduma ya deployment</span>
-            </div>
-          </div>
+        <div class="screen-code">
+          <div><span class="blue">&lt;section</span> class=<span class="green">"app"</span><span class="blue">&gt;</span></div>
+          <div>&nbsp;&nbsp;<span class="blue">&lt;h1&gt;</span>LucasNode<span class="blue">&lt;/h1&gt;</span></div>
+          <div>&nbsp;&nbsp;<span class="blue">&lt;p&gt;</span>Build your project<span class="blue">&lt;/p&gt;</span></div>
+          <div><span class="blue">&lt;/section&gt;</span></div>
+          <div><span class="yellow">// Build. Preview. Deploy.</span></div>
         </div>
       </div>
 
-      <div class="floating-note">
-        <div class="note-icon"><i class="fa-solid fa-code-branch"></i></div>
-        <div>
-          <strong>Project Workspace</strong>
-          <span>Jenga kwa hatua</span>
-        </div>
+      <div class="preview-bottom">
+        <span>HTML · CSS · JavaScript</span>
+        <span>Project workspace</span>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<div class="trust-strip">
-  <div class="container trust-inner">
-    <span class="trust-title">Zana za safari yako ya kidijitali</span>
-    <span class="trust-item"><i class="fa-solid fa-code"></i> Code Editor</span>
-    <span class="trust-item"><i class="fa-solid fa-eye"></i> Preview</span>
-    <span class="trust-item"><i class="fa-solid fa-globe"></i> Domains</span>
-    <span class="trust-item"><i class="fa-solid fa-cloud"></i> Cloud Projects</span>
-  </div>
-</div>
-
-<section class="features-section" id="features">
-  <div class="container">
+  <section class="container section" id="dashboard">
     <div class="section-heading">
-      <span class="eyebrow">Huduma za LucasNode</span>
-      <h2>Zana muhimu za kujenga bidhaa yako</h2>
-      <p>Muundo mmoja unaounganisha kuandika code, kuandaa miradi na kupanga huduma za cloud.</p>
+      <div>
+        <h2>Dashboard Overview</h2>
+        <p>Muhtasari wa data inayopatikana kwenye mfumo.</p>
+      </div>
+      <a class="text-link" href="#projects">Angalia miradi →</a>
+    </div>
+
+    <div class="stats-grid">
+      <article class="stat-card">
+        <div class="stat-top">
+          <span class="stat-icon">
+            <svg width="21" height="21" stroke="currentColor" fill="none" stroke-width="1.8"><use href="#i-grid"></use></svg>
+          </span>
+          <span class="status">Projects</span>
+        </div>
+        <h3 id="projectCount">—</h3>
+        <p>Miradi iliyopatikana</p>
+      </article>
+
+      <article class="stat-card">
+        <div class="stat-top">
+          <span class="stat-icon teal">
+            <svg width="21" height="21" stroke="currentColor" fill="none" stroke-width="1.8"><use href="#i-cloud"></use></svg>
+          </span>
+          <span class="status">Hosting</span>
+        </div>
+        <h3 id="hostingCount">—</h3>
+        <p>Huduma za hosting zilizothibitishwa</p>
+      </article>
+
+      <article class="stat-card">
+        <div class="stat-top">
+          <span class="stat-icon orange">
+            <svg width="21" height="21" stroke="currentColor" fill="none" stroke-width="1.8"><use href="#i-globe"></use></svg>
+          </span>
+          <span class="status">Domains</span>
+        </div>
+        <h3 id="domainCount">—</h3>
+        <p>Domains zilizounganishwa</p>
+      </article>
+
+      <article class="stat-card">
+        <div class="stat-top">
+          <span class="stat-icon purple">
+            <svg width="21" height="21" stroke="currentColor" fill="none" stroke-width="1.8"><use href="#i-rocket"></use></svg>
+          </span>
+          <span class="status">Deploy</span>
+        </div>
+        <h3 id="deployCount">—</h3>
+        <p>Deployments zilizothibitishwa</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="container section" id="projects">
+    <div class="section-heading">
+      <div>
+        <h2>Miradi Yako</h2>
+        <p>Miradi inayorejeshwa na backend itaonekana hapa.</p>
+      </div>
+      <button class="secondary-button" type="button" onclick="loadProjects()">
+        ↻ Refresh
+      </button>
+    </div>
+
+    <div class="content-grid">
+      <div class="panel">
+        <div class="panel-title">
+          <h3>Recent Projects</h3>
+          <span id="apiStatus" class="status">Inakagua API...</span>
+        </div>
+
+        <div class="project-list" id="projectList">
+          <div class="empty-state">
+            <svg width="35" height="35" stroke="currentColor" fill="none" stroke-width="1.5"><use href="#i-grid"></use></svg>
+            Inapakia miradi kutoka backend...
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">
+          <h3>Quick Actions</h3>
+        </div>
+
+        <div class="quick-actions">
+          <button class="quick-action" type="button" onclick="openProjectModal()">
+            <span class="project-symbol">
+              <svg width="19" height="19" stroke="currentColor" fill="none" stroke-width="1.8"><use href="#i-plus"></use></svg>
+            </span>
+            <span class="quick-copy">
+              <strong>Create Project</strong>
+              <small>Unda rekodi ya mradi</small>
+            </span>
+            <svg width="16" height="16" stroke="currentColor" fill="none" stroke-width="1.8"><use href="#i-arrow"></use></svg>
+          </button>
+
+          <a class="quick-action" href="#workspace">
+            <span class="project-symbol">
+              <svg width="19" height="19" stroke="currentColor" fill="none" stroke-width="1.8"><use href="#i-code"></use></svg>
+            </span>
+            <span class="quick-copy">
+              <strong>Code Editor</strong>
+              <small>Andika na ujaribu HTML</small>
+            </span>
+            <svg width="16" height="16" stroke="currentColor" fill="none" stroke-width="1.8"><use href="#i-arrow"></use></svg>
+          </a>
+
+          <a class="quick-action" href="#domains">
+            <span class="project-symbol">
+              <svg width="19" height="19" stroke="currentColor" fill="none" stroke-width="1.8"><use href="#i-globe"></use></svg>
+            </span>
+            <span class="quick-copy">
+              <strong>Check Domain</strong>
+              <small>Angalia taarifa za domain</small>
+            </span>
+            <svg width="16" height="16" stroke="currentColor" fill="none" stroke-width="1.8"><use href="#i-arrow"></use></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="container section" id="features">
+    <div class="section-heading">
+      <div>
+        <h2>LucasNode Platform</h2>
+        <p>Huduma kuu za mfumo katika mpangilio mmoja.</p>
+      </div>
     </div>
 
     <div class="features-grid">
       <article class="feature-card">
-        <div class="feature-icon"><i class="fa-solid fa-folder-open"></i></div>
-        <h3>Projects Dashboard</h3>
-        <p>Unda na angalia miradi yako iliyohifadhiwa kwenye API iliyopo.</p>
-        <a class="feature-link" href="#projects">Fungua miradi <i class="fa-solid fa-arrow-right"></i></a>
-      </article>
-
-      <article class="feature-card">
-        <div class="feature-icon"><i class="fa-solid fa-code"></i></div>
-        <h3>Code Editor</h3>
-        <p>Andika au rekebisha HTML, CSS na JavaScript moja kwa moja kwenye browser.</p>
-        <a class="feature-link" href="#editor">Jaribu editor <i class="fa-solid fa-arrow-right"></i></a>
-      </article>
-
-      <article class="feature-card">
-        <div class="feature-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
-        <h3>AI App Builder</h3>
-        <p>Sehemu ya kuandika maelezo ya app. AI halisi itahitaji kuunganishwa na huduma ya AI.</p>
-        <a class="feature-link" href="#builder">Fungua builder <i class="fa-solid fa-arrow-right"></i></a>
-      </article>
-
-      <article class="feature-card">
-        <div class="feature-icon"><i class="fa-solid fa-eye"></i></div>
-        <h3>Live Preview</h3>
-        <p>Angalia HTML yako kwenye iframe salama kabla ya kuhifadhi au kuandaa deployment.</p>
-        <a class="feature-link" href="#editor">Fungua preview <i class="fa-solid fa-arrow-right"></i></a>
-      </article>
-
-      <article class="feature-card">
-        <div class="feature-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
-        <h3>Hosting & Deploy</h3>
-        <p>Sehemu ya kupanga uchapishaji wa miradi. Deployment halisi inahitaji endpoint na build/hosting service.</p>
-        <a class="feature-link" href="#deployment">Jifunze zaidi <i class="fa-solid fa-arrow-right"></i></a>
-      </article>
-
-      <article class="feature-card">
-        <div class="feature-icon"><i class="fa-solid fa-globe"></i></div>
+        <span class="feature-icon">
+          <svg width="22" height="22" stroke="currentColor" fill="none" stroke-width="1.8"><use href="#i-globe"></use></svg>
+        </span>
         <h3>Domains & DNS</h3>
-        <p>Angalia taarifa za domain kupitia RDAP. Kununua domain kunahitaji registrar integration.</p>
-        <a class="feature-link" href="#domains">Angalia domain <i class="fa-solid fa-arrow-right"></i></a>
+        <p>Chunguza domain na panga muunganisho wa DNS. Ununuzi unahitaji registrar integration.</p>
+        <a href="#domains">Chunguza domain →</a>
       </article>
 
       <article class="feature-card">
-        <div class="feature-icon"><i class="fa-solid fa-credit-card"></i></div>
+        <span class="feature-icon teal">
+          <svg width="22" height="22" stroke="currentColor" fill="none" stroke-width="1.8"><use href="#i-cloud"></use></svg>
+        </span>
+        <h3>Hosting</h3>
+        <p>Sehemu ya kuandaa tovuti na kupanga huduma za hosting.</p>
+        <a href="#workspace">Fungua workspace →</a>
+      </article>
+
+      <article class="feature-card">
+        <span class="feature-icon orange">
+          <svg width="22" height="22" stroke="currentColor" fill="none" stroke-width="1.8"><use href="#i-code"></use></svg>
+        </span>
+        <h3>Code Editor</h3>
+        <p>Andika HTML na uone preview kwenye kivinjari chako.</p>
+        <a href="#workspace">Fungua editor →</a>
+      </article>
+
+      <article class="feature-card">
+        <span class="feature-icon purple">
+          <svg width="22" height="22" stroke="currentColor" fill="none" stroke-width="1.8"><use href="#i-sparkles"></use></svg>
+        </span>
+        <h3>AI App Builder</h3>
+        <p>Sehemu ya kujenga kwa msaada wa AI. Inahitaji AI API kabla ya kufanya kazi halisi.</p>
+        <a href="#workspace">Angalia workspace →</a>
+      </article>
+
+      <article class="feature-card">
+        <span class="feature-icon teal">
+          <svg width="22" height="22" stroke="currentColor" fill="none" stroke-width="1.8"><use href="#i-rocket"></use></svg>
+        </span>
+        <h3>Deploy & Hosting</h3>
+        <p>Mpangilio wa deployment; build na uchapishaji wa moja kwa moja vinahitaji backend integration.</p>
+        <a href="#workspace">Tayarisha code →</a>
+      </article>
+
+      <article class="feature-card">
+        <span class="feature-icon orange">
+          <svg width="22" height="22" stroke="currentColor" fill="none" stroke-width="1.8"><use href="#i-credit"></use></svg>
+        </span>
         <h3>Payments & Billing</h3>
-        <p>Sehemu ya mipango na malipo. Malipo halisi yanahitaji gateway, webhook na uthibitishaji wa server.</p>
-        <a class="feature-link" href="#pricing">Angalia mipango <i class="fa-solid fa-arrow-right"></i></a>
+        <p>Sehemu ya malipo na bili; malipo halisi yanahitaji gateway na webhook.</p>
+        <a href="#billing">Taarifa za malipo →</a>
       </article>
 
       <article class="feature-card">
-        <div class="feature-icon"><i class="fa-solid fa-shield-halved"></i></div>
-        <h3>Security & Database</h3>
-        <p>Muundo wa huduma za usalama, database, monitoring na backup kwa hatua zinazofuata.</p>
-        <a class="feature-link" href="#security">Taarifa zaidi <i class="fa-solid fa-arrow-right"></i></a>
+        <span class="feature-icon purple">
+          <svg width="22" height="22" stroke="currentColor" fill="none" stroke-width="1.8"><use href="#i-database"></use></svg>
+        </span>
+        <h3>Cloud Database</h3>
+        <p>Muunganisho wa data ya miradi kupitia backend iliyosanidiwa.</p>
+        <a href="#projects">Angalia miradi →</a>
+      </article>
+
+      <article class="feature-card">
+        <span class="feature-icon teal">
+          <svg width="22" height="22" stroke="currentColor" fill="none" stroke-width="1.8"><use href="#i-shield"></use></svg>
+        </span>
+        <h3>Security & Backup</h3>
+        <p>Usalama, ufuatiliaji na recovery vinahitaji mipangilio na huduma halisi za backend.</p>
+        <a href="#security">Usalama wa mfumo →</a>
       </article>
     </div>
-  </div>
-</section>
+  </section>
 
-<section class="how-section" id="workflow">
-  <div class="container">
+  <section class="container section" id="workspace">
     <div class="section-heading">
-      <span class="eyebrow">Workflow</span>
-      <h2>Kuanzia wazo hadi deployment</h2>
-      <p>Hatua za msingi za kuandaa na kupeleka mradi wako mtandaoni.</p>
-    </div>
-
-    <div class="steps-grid">
-      <article class="step-card">
-        <div class="step-number">01</div>
-        <h3>Unda Project</h3>
-        <p>Weka jina, aina ya project na maelezo yake ili iandaliwe kwenye workspace.</p>
-      </article>
-
-      <article class="step-card">
-        <div class="step-number">02</div>
-        <h3>Andika Code</h3>
-        <p>Tumia editor kuandika HTML, CSS na JavaScript za tovuti yako.</p>
-      </article>
-
-      <article class="step-card">
-        <div class="step-number">03</div>
-        <h3>Jaribu Preview</h3>
-        <p>Kagua muonekano na tabia ya code kabla ya kuamua kuendelea.</p>
-      </article>
-
-      <article class="step-card">
-        <div class="step-number">04</div>
-        <h3>Deploy & Connect</h3>
-        <p>Deployment ya umma, malipo na domain vitahitaji huduma husika ziwe zimeunganishwa.</p>
-      </article>
-    </div>
-  </div>
-</section>
-
-<section class="builder-section" id="builder">
-  <div class="container builder-grid">
-    <div class="builder-copy">
-      <span class="eyebrow"><i class="fa-solid fa-wand-magic-sparkles"></i> AI App Builder</span>
-      <h2>Eleza wazo lako. Andaa msingi wa app yako.</h2>
-      <p>
-        Andika maelezo ya app unayotaka kuunda. Sehemu hii ni kiolesura cha kuandaa ombi;
-        haitazalisha code kwa AI mpaka API ya AI iwe imeunganishwa.
-      </p>
-
-      <ul class="builder-list">
-        <li><i class="fa-solid fa-circle-check"></i><span>Eleza lengo na kazi kuu za app.</span></li>
-        <li><i class="fa-solid fa-circle-check"></i><span>Chagua aina ya mradi unaotaka kuandaa.</span></li>
-        <li><i class="fa-solid fa-circle-check"></i><span>Hifadhi ombi kama project draft kupitia API iliyopo.</span></li>
-      </ul>
-
-      <div class="notice notice-info">
-        <strong>Hali ya sasa:</strong> Hii ni fomu ya kuandaa project. AI generation yenyewe bado inahitaji AI API.
+      <div>
+        <h2>Code Editor & Preview</h2>
+        <p>Jaribu HTML kabla ya kuiunganisha na huduma za deployment.</p>
       </div>
     </div>
 
-    <div class="editor-mock">
-      <div class="editor-top">
-        <strong><i class="fa-solid fa-wand-magic-sparkles"></i> Andaa project</strong>
-        <span>LucasNode</span>
-      </div>
-
-      <div style="padding-top:18px">
-        <div class="field">
-          <label for="aiProjectName">Jina la project</label>
-          <input id="aiProjectName" type="text" placeholder="Mfano: Duka langu mtandaoni">
+    <div class="workspace">
+      <div class="editor">
+        <div class="editor-head">
+          <span>index.html</span>
+          <span>HTML</span>
         </div>
-
-        <div class="field" style="margin-top:14px">
-          <label for="aiProjectType">Aina ya project</label>
-          <select id="aiProjectType">
-            <option value="HTML / CSS / JS">HTML / CSS / JavaScript</option>
-            <option value="Static Website">Static Website</option>
-            <option value="Web Application">Web Application</option>
-            <option value="AI App">AI App</option>
-          </select>
-        </div>
-
-        <div class="field" style="margin-top:14px">
-          <label for="aiPrompt">Eleza app yako</label>
-          <textarea id="aiPrompt" class="builder-prompt" placeholder="App itafanya nini? Itatumiwa na nani? Ina kurasa au vipengele gani?"></textarea>
-        </div>
-
-        <button class="btn btn-primary" style="width:100%;margin-top:15px" id="createFromAI">
-          <i class="fa-solid fa-folder-plus"></i> Hifadhi kama Project Draft
-        </button>
-        <div id="aiResult" aria-live="polite"></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="app-section" id="projects">
-  <div class="container">
-    <div class="section-heading">
-      <span class="eyebrow">Workspace yako</span>
-      <h2>Projects Dashboard</h2>
-      <p>Angalia miradi inayorudishwa na API ya LucasNode au unda project mpya.</p>
-      <div class="status-text">
-        API: <span class="api-status" id="projectsApiStatus">Inasubiri...</span>
-      </div>
-    </div>
-
-    <div class="project-area">
-      <div class="project-toolbar">
-        <div>
-          <h3>Miradi yako</h3>
-          <p class="muted" style="font-size:12px">Taarifa hupakiwa kutoka API; ownership na login zinahitaji uthibitisho wa backend.</p>
-        </div>
-        <button class="btn btn-outline btn-small" id="refreshProjects">
-          <i class="fa-solid fa-rotate"></i> Pakia upya
-        </button>
-      </div>
-
-      <div id="projectsMessage" aria-live="polite"></div>
-      <div class="project-grid" id="projectGrid">
-        <div class="empty-state"><i class="fa-solid fa-spinner fa-spin"></i>Inapakia miradi kutoka API...</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="app-section" id="editor">
-  <div class="container">
-    <div class="section-heading">
-      <span class="eyebrow">Code Editor</span>
-      <h2>Andika code na uone preview yake</h2>
-      <p>Editor hii inaendesha HTML ndani ya iframe. Code haipakiwi kwenye cloud moja kwa moja.</p>
-    </div>
-
-    <div class="app-grid">
-      <div class="app-panel">
-        <h3><i class="fa-solid fa-code" style="color:var(--green2)"></i> HTML Editor</h3>
-        <p>Badilisha code hii au futa na uandike yako.</p>
-
-        <textarea id="htmlEditor" class="editor-textarea" spellcheck="false" aria-label="HTML code editor"><!DOCTYPE html>
-<html lang="sw">
+        <textarea id="htmlEditor" spellcheck="false"><!DOCTYPE html>
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<style>
-body {
-  font-family: Arial, sans-serif;
-  padding: 25px;
-  color: #15213b;
-  background: #f5f7fb;
-}
-.card {
-  padding: 25px;
-  border-radius: 16px;
-  background: white;
-  box-shadow: 0 10px 30px #15213b12;
-}
-button {
-  padding: 10px 15px;
-  border: 0;
-  border-radius: 8px;
-  background: #059669;
-  color: white;
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>My LucasNode Project</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 30px;
+      color: #10243a;
+    }
+    h1 { color: #1769ff; }
+  </style>
 </head>
 <body>
-<div class="card">
-  <h1>Karibu LucasNode!</h1>
-  <p>Hii ni preview ya HTML yako.</p>
-  <button onclick="document.getElementById('msg').textContent='Inafanya kazi!'">Jaribu</button>
-  <p id="msg"></p>
-</div>
+  <h1>Karibu kwenye mradi wangu!</h1>
+  <p>Hii ni preview ya HTML ndani ya LucasNode.</p>
 </body>
 </html></textarea>
-
-        <div class="editor-actions">
-          <button class="btn btn-primary btn-small" id="runPreview">
-            <i class="fa-solid fa-play"></i> Run Preview
-          </button>
-          <button class="btn btn-outline btn-small" id="saveLocal">
-            <i class="fa-solid fa-floppy-disk"></i> Hifadhi kwenye browser
-          </button>
-          <button class="btn btn-outline btn-small" id="downloadHTML">
-            <i class="fa-solid fa-download"></i> Pakua HTML
-          </button>
-        </div>
-        <div id="editorMessage" aria-live="polite"></div>
       </div>
 
-      <div class="app-panel">
-        <h3><i class="fa-solid fa-eye" style="color:var(--green2)"></i> Live Preview</h3>
-        <p>Preview inaonyesha HTML uliyoiendesha. Iko kwenye iframe iliyotengwa.</p>
-        <iframe
-          id="previewFrame"
-          class="preview-frame"
-          title="HTML live preview"
-          sandbox="allow-scripts"
-          referrerpolicy="no-referrer"
-        ></iframe>
-        <div class="notice notice-info">
-          Hifadhi kwenye browser ni localStorage ya kifaa hiki. Haibadilishi cloud database na haifanyi deployment ya umma.
+      <div class="output">
+        <div class="output-head">
+          <strong>Live Preview</strong>
+          <button class="secondary-button" type="button" onclick="updatePreview()">▶ Run</button>
         </div>
+        <iframe id="previewFrame" title="HTML preview" sandbox="allow-scripts"></iframe>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<section class="app-section" id="domains" style="background:var(--bg)">
-  <div class="container">
+  <section class="container section" id="domains">
     <div class="section-heading">
-      <span class="eyebrow">Domains</span>
-      <h2>Chunguza domain unayotaka</h2>
-      <p>Utafutaji huu hutumia RDAP kupata taarifa za domain. Matokeo ya RDAP pekee hayahakikishi kuwa domain inaweza kununuliwa.</p>
-    </div>
-
-    <div class="app-panel" style="max-width:800px;margin:auto">
-      <h3><i class="fa-solid fa-globe" style="color:var(--green2)"></i> Domain Lookup</h3>
-      <p>Ingiza jina kamili la domain, kwa mfano lucasnode.com.</p>
-
-      <div class="domain-row">
-        <div class="field" style="flex:1">
-          <label for="domainInput">Jina la domain</label>
-          <input id="domainInput" type="text" placeholder="mfano.com" autocomplete="off">
-        </div>
-        <button class="btn btn-primary" id="checkDomain" style="align-self:end">
-          <i class="fa-solid fa-magnifying-glass"></i> Kagua
-        </button>
-      </div>
-
-      <div id="domainResult" class="domain-result" aria-live="polite"></div>
-      <div class="notice notice-info">
-        Ununuzi wa domain, DNS, SSL na renewal utahitaji registrar na huduma za DNS kuunganishwa.
-      </div>
-    </div>
-  </div>
-</section>
-
-<section id="deployment">
-  <div class="container">
-    <div class="section-heading">
-      <span class="eyebrow">Hosting & Deployment</span>
-      <h2>Andaa mradi wako kwa kuchapishwa</h2>
-      <p>LucasNode itahitaji build/deploy service ili project draft iwe tovuti halisi yenye public URL.</p>
-    </div>
-
-    <div class="security-grid">
-      <article class="security-card">
-        <i class="fa-solid fa-file-code"></i>
-        <div>
-          <h3>Static Websites</h3>
-          <p>HTML, CSS, JavaScript na picha zinahitaji upload, storage na njia ya kuzihudumia kwa public URL.</p>
-        </div>
-      </article>
-
-      <article class="security-card">
-        <i class="fa-solid fa-gears"></i>
-        <div>
-          <h3>Build Applications</h3>
-          <p>React na framework nyingine zinahitaji build process, kuhifadhi build output na deployment pipeline.</p>
-        </div>
-      </article>
-
-      <article class="security-card">
-        <i class="fa-solid fa-cubes"></i>
-        <div>
-          <h3>Node.js & Containers</h3>
-          <p>App zinazohitaji server ya kudumu zinahitaji runtime au container infrastructure inayoweza kuziendesha.</p>
-        </div>
-      </article>
-    </div>
-
-    <div class="notice notice-info" style="max-width:800px;margin:25px auto 0">
-      <strong>Hali ya sasa:</strong> Sehemu hii ni maelezo ya workflow. Hakuna kitufe cha deploy cha uongo; deployment haitatangazwa kuwa imefanikiwa mpaka backend iwe na endpoint na ithibitishe matokeo.
-    </div>
-  </div>
-</section>
-
-<section class="pricing-section" id="pricing">
-  <div class="container">
-    <div class="section-heading">
-      <span class="eyebrow">Mipango</span>
-      <h2>Mipango ya LucasNode</h2>
-      <p>Bei hapa ni muundo wa kuonyesha mipango tu. Sio bei zilizothibitishwa na mfumo wa billing.</p>
-    </div>
-
-    <div class="pricing-grid">
-      <article class="price-card">
-        <h3>Starter</h3>
-        <p class="price-desc">Kwa kuanza kujifunza na kuandaa miradi.</p>
-        <div class="price-value">Bure <small>/ kuanza</small></div>
-        <a href="#get-started" class="btn btn-outline">Anza kujaribu</a>
-        <ul class="price-features">
-          <li><i class="fa-solid fa-check"></i> Code Editor ya browser</li>
-          <li><i class="fa-solid fa-check"></i> HTML Live Preview</li>
-          <li><i class="fa-solid fa-check"></i> Kuandaa project draft</li>
-          <li><i class="fa-solid fa-check"></i> Local browser save</li>
-        </ul>
-      </article>
-
-      <article class="price-card popular">
-        <span class="popular-label">Mpango wa baadaye</span>
-        <h3>Developer</h3>
-        <p class="price-desc">Kwa watengenezaji wanaohitaji cloud workflow.</p>
-        <div class="price-value">TBD <small>/ mwezi</small></div>
-        <a href="#get-started" class="btn btn-primary">Chunguza huduma</a>
-        <ul class="price-features">
-          <li><i class="fa-solid fa-check"></i> Cloud project storage</li>
-          <li><i class="fa-solid fa-check"></i> Build na deployment</li>
-          <li><i class="fa-solid fa-check"></i> Custom domains</li>
-          <li><i class="fa-solid fa-check"></i> Billing integration</li>
-        </ul>
-      </article>
-
-      <article class="price-card">
-        <h3>Business</h3>
-        <p class="price-desc">Kwa timu na miradi ya biashara.</p>
-        <div class="price-value">TBD <small>/ mwezi</small></div>
-        <a href="#contact" class="btn btn-outline">Wasiliana</a>
-        <ul class="price-features">
-          <li><i class="fa-solid fa-check"></i> Roles na access control</li>
-          <li><i class="fa-solid fa-check"></i> Monitoring</li>
-          <li><i class="fa-solid fa-check"></i> Backup & recovery</li>
-          <li><i class="fa-solid fa-check"></i> Team workflows</li>
-        </ul>
-      </article>
-    </div>
-
-    <div class="notice notice-info" style="max-width:800px;margin:25px auto 0">
-      Malipo halisi bado yanahitaji payment gateway, webhook verification, invoice na entitlement checks kwenye backend.
-    </div>
-  </div>
-</section>
-
-<section class="security-section" id="security">
-  <div class="container">
-    <div class="section-heading">
-      <span class="eyebrow">Usalama na uaminifu</span>
-      <h2>Msingi wa platform inayoweza kukua</h2>
-      <p>Vipengele hivi vinapaswa kutekelezwa na kuthibitishwa kwenye backend na miundombinu.</p>
-    </div>
-
-    <div class="security-grid">
-      <article class="security-card">
-        <i class="fa-solid fa-lock"></i>
-        <div>
-          <h3>Authentication & Access</h3>
-          <p>Login, user ownership, ruhusa za admin na ukaguzi wa kila request kwenye server.</p>
-        </div>
-      </article>
-
-      <article class="security-card">
-        <i class="fa-solid fa-database"></i>
-        <div>
-          <h3>Cloud Database</h3>
-          <p>Database yenye schema, access policies, validation na backup iliyopangwa.</p>
-        </div>
-      </article>
-
-      <article class="security-card">
-        <i class="fa-solid fa-chart-line"></i>
-        <div>
-          <h3>Monitoring & Recovery</h3>
-          <p>Logs, metrics, alerts, backup verification na taratibu za kurejesha huduma.</p>
-        </div>
-      </article>
-    </div>
-  </div>
-</section>
-
-<section class="cta-section" id="get-started">
-  <div class="container">
-    <div class="cta-box">
       <div>
-        <h2>Wazo lako linaweza kuanza hapa.</h2>
-        <p>Unda project draft, andika code na ujaribu preview. Baada ya hapo, hatua zinazohitaji cloud deployment zitaunganishwa na backend husika.</p>
-      </div>
-      <a href="#projects" class="btn btn-primary">
-        <i class="fa-solid fa-rocket"></i> Fungua Projects
-      </a>
-    </div>
-  </div>
-</section>
-
-<section class="contact-section" id="contact">
-  <div class="container contact-grid">
-    <div class="contact-info">
-      <span class="eyebrow">Wasiliana nasi</span>
-      <h2>Tuambie kuhusu mradi wako</h2>
-      <p>Fomu hii itafungua programu ya barua pepe ya kifaa chako. Kutuma ujumbe moja kwa moja kunahitaji contact endpoint.</p>
-
-      <div class="contact-item">
-        <i class="fa-solid fa-globe"></i>
-        <div>
-          <strong>Tovuti</strong>
-          <span>lucasnode.com</span>
-        </div>
-      </div>
-
-      <div class="contact-item">
-        <i class="fa-solid fa-server"></i>
-        <div>
-          <strong>API</strong>
-          <span>api.lucasnode.com</span>
-        </div>
-      </div>
-
-      <div class="contact-item">
-        <i class="fa-solid fa-shield-halved"></i>
-        <div>
-          <strong>Jenga kwa usalama</strong>
-          <span>Usiweke API secrets kwenye frontend.</span>
-        </div>
+        <h2>Domain Lookup</h2>
+        <p>Angalia taarifa za domain kwa kutumia API inayopatikana.</p>
       </div>
     </div>
 
-    <form class="contact-form" id="contactForm">
-      <div class="form-row">
-        <div class="field">
-          <label for="contactName">Jina</label>
-          <input id="contactName" name="name" required maxlength="100" placeholder="Jina lako">
-        </div>
+    <div class="domain-box">
+      <strong>Je, unataka kuchunguza domain?</strong>
+      <form class="domain-form" id="domainForm">
+        <input id="domainInput" type="text" placeholder="mfano.com" autocomplete="off" required>
+        <button class="primary-button" type="submit">
+          <svg width="17" height="17" stroke="currentColor" fill="none" stroke-width="2"><use href="#i-globe"></use></svg>
+          Check
+        </button>
+      </form>
+      <div class="result-message" id="domainResult" aria-live="polite"></div>
+    </div>
+  </section>
 
-        <div class="field">
-          <label for="contactEmail">Barua pepe</label>
-          <input id="contactEmail" name="email" type="email" required maxlength="200" placeholder="wewe@example.com">
-        </div>
+  <section class="container section" id="billing">
+    <div class="section-heading">
+      <div>
+        <h2>Payments & Billing</h2>
+        <p>Maelezo ya malipo yataunganishwa baada ya gateway na webhook kusanidiwa.</p>
       </div>
-
-      <div class="field">
-        <label for="contactSubject">Mada</label>
-        <input id="contactSubject" name="subject" required maxlength="150" placeholder="Unahitaji msaada gani?">
+    </div>
+    <div class="panel">
+      <div class="quick-action">
+        <span class="project-symbol">
+          <svg width="20" height="20" stroke="currentColor" fill="none" stroke-width="1.8"><use href="#i-credit"></use></svg>
+        </span>
+        <span class="quick-copy">
+          <strong>Billing integration</strong>
+          <small>Hakuna malipo yanayothibitishwa na ukurasa huu pekee.</small>
+        </span>
       </div>
+    </div>
+  </section>
 
-      <div class="field">
-        <label for="contactMessage">Ujumbe</label>
-        <textarea id="contactMessage" name="message" required maxlength="3000" placeholder="Andika ujumbe wako..."></textarea>
+  <section class="container section" id="security">
+    <div class="section-heading">
+      <div>
+        <h2>Security, Monitoring & Backup</h2>
+        <p>Vipengele hivi vitahitaji mipangilio ya ziada ya backend na huduma husika.</p>
       </div>
+    </div>
 
-      <button type="submit" class="btn btn-primary">
-        <i class="fa-solid fa-envelope"></i> Andaa barua pepe
-      </button>
-      <div id="contactResult" aria-live="polite"></div>
-    </form>
-  </div>
-</section>
+    <div class="features-grid">
+      <article class="feature-card">
+        <span class="feature-icon teal">
+          <svg width="22" height="22" stroke="currentColor" fill="none" stroke-width="1.8"><use href="#i-shield"></use></svg>
+        </span>
+        <h3>Security</h3>
+        <p>Usimamizi wa ruhusa, uthibitishaji na ulinzi wa API.</p>
+      </article>
+
+      <article class="feature-card">
+        <span class="feature-icon">
+          <svg width="22" height="22" stroke="currentColor" fill="none" stroke-width="1.8"><use href="#i-chart"></use></svg>
+        </span>
+        <h3>Monitoring</h3>
+        <p>Ufuatiliaji wa huduma na makosa baada ya integration.</p>
+      </article>
+
+      <article class="feature-card">
+        <span class="feature-icon orange">
+          <svg width="22" height="22" stroke="currentColor" fill="none" stroke-width="1.8"><use href="#i-harddrive"></use></svg>
+        </span>
+        <h3>Backup</h3>
+        <p>Mpango wa kuhifadhi na kurejesha data.</p>
+      </article>
+
+      <article class="feature-card">
+        <span class="feature-icon purple">
+          <svg width="22" height="22" stroke="currentColor" fill="none" stroke-width="1.8"><use href="#i-database"></use></svg>
+        </span>
+        <h3>Cloud Database</h3>
+        <p>Data itaendelea kusimamiwa kupitia backend salama.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="container cta">
+    <div>
+      <h2>Jenga mradi wako na LucasNode.</h2>
+      <p>Anza kwa kuunda mradi, kuandika HTML na kuangalia preview.</p>
+    </div>
+    <button class="primary-button" type="button" onclick="openProjectModal()">
+      <svg width="17" height="17" stroke="currentColor" fill="none" stroke-width="2"><use href="#i-plus"></use></svg>
+      Create Project
+    </button>
+  </section>
 </main>
 
-<footer class="footer">
-  <div class="container">
-    <div class="footer-grid">
-      <div>
-        <a href="#home" class="brand">
-          <span class="brand-icon">L</span>
-          <span class="brand-name">Lucas<span>Node</span></span>
-        </a>
-        <p class="footer-about">
-          Jukwaa la kuandaa miradi, kuandika code, kujaribu preview na kuelekea deployment ya huduma za kidijitali.
-        </p>
-      </div>
-
-      <div>
-        <h4>Jukwaa</h4>
-        <div class="footer-links">
-          <a href="#features">Huduma</a>
-          <a href="#projects">Projects</a>
-          <a href="#editor">Code Editor</a>
-          <a href="#builder">AI Builder</a>
-        </div>
-      </div>
-
-      <div>
-        <h4>Cloud</h4>
-        <div class="footer-links">
-          <a href="#domains">Domains</a>
-          <a href="#deployment">Hosting & Deploy</a>
-          <a href="#pricing">Billing</a>
-          <a href="#security">Security</a>
-        </div>
-      </div>
-
-      <div>
-        <h4>Msaada</h4>
-        <div class="footer-links">
-          <a href="#contact">Wasiliana nasi</a>
-          <a href="#workflow">Jinsi inavyofanya kazi</a>
-          <a href="#home">Rudi juu</a>
-        </div>
-      </div>
-    </div>
-
-    <div class="footer-bottom">
-      <span>© <span id="currentYear"></span> LucasNode. Haki zote zimehifadhiwa.</span>
-      <span>Jenga kwa mpangilio. Jaribu kwa uangalifu.</span>
-    </div>
+<footer>
+  <div>
+    <div class="footer-brand">LucasNode</div>
+    <p>Domain · Hosting · Deployment · Cloud</p>
   </div>
+  <div>© <span id="currentYear"></span> LucasNode. Haki zote zimehifadhiwa.</div>
 </footer>
+
+<nav class="mobile-nav" aria-label="Mobile navigation">
+  <a href="#dashboard">
+    <svg width="20" height="20" stroke="currentColor" fill="none" stroke-width="1.8"><use href="#i-grid"></use></svg>
+    Dashboard
+  </a>
+  <a href="#projects">
+    <svg width="20" height="20" stroke="currentColor" fill="none" stroke-width="1.8"><use href="#i-cloud"></use></svg>
+    Projects
+  </a>
+  <a href="#workspace">
+    <svg width="20" height="20" stroke="currentColor" fill="none" stroke-width="1.8"><use href="#i-code"></use></svg>
+    Editor
+  </a>
+  <a href="#domains">
+    <svg width="20" height="20" stroke="currentColor" fill="none" stroke-width="1.8"><use href="#i-globe"></use></svg>
+    Domains
+  </a>
+</nav>
+
+<div class="modal-backdrop" id="projectModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="modalTitle">Create New Project</h3>
+      <button class="icon-button" type="button" onclick="closeProjectModal()" aria-label="Close">
+        <svg width="19" height="19" stroke="currentColor" fill="none" stroke-width="1.8"><use href="#i-x"></use></svg>
+      </button>
+    </div>
+
+    <form id="projectForm">
+      <label for="projectName">Jina la mradi</label>
+      <input id="projectName" type="text" placeholder="Mfano: My Website" required maxlength="100">
+
+      <label for="projectFramework">Aina ya mradi</label>
+      <select id="projectFramework">
+        <option value="html">HTML / CSS / JavaScript</option>
+        <option value="react">React</option>
+        <option value="nextjs">Next.js</option>
+        <option value="node">Node.js</option>
+        <option value="other">Other</option>
+      </select>
+
+      <label for="projectDescription">Maelezo ya mradi</label>
+      <input id="projectDescription" type="text" placeholder="Mradi huu unafanya nini?" maxlength="250">
+
+      <button class="primary-button" type="submit" id="createProjectButton">
+        <svg width="17" height="17" stroke="currentColor" fill="none" stroke-width="2"><use href="#i-plus"></use></svg>
+        Create Project
+      </button>
+
+      <div class="result-message" id="projectResult" aria-live="polite"></div>
+    </form>
+  </div>
+</div>
 
 <script>
 "use strict";
 
-/*
- * LucasNode frontend configuration.
- * Do not put Supabase service-role keys or payment secrets here.
- */
-const API_BASE = "https://api.lucasnode.com/api/v1";
+/* =========================================
+   LUCASNODE — FRONTEND CONFIGURATION
+   ========================================= */
 
-const $ = (selector) => document.querySelector(selector);
+const LUCASNODE_API = "https://api.lucasnode.com/api/v1";
 
-function escapeHTML(value) {
-  return String(value ?? "").replace(/[&<>"']/g, (char) => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#39;"
-  })[char]);
-}
+const $ = (id) => document.getElementById(id);
 
-function showNotice(target, message, type = "info") {
-  const element = typeof target === "string" ? $(target) : target;
+
+/* =========================================
+   GENERAL HELPERS
+   ========================================= */
+
+function showMessage(element, message, type = "info") {
   if (!element) return;
 
-  element.innerHTML =
-    '<div class="notice notice-' + escapeHTML(type) + '">' +
-    escapeHTML(message) +
-    '</div>';
+  element.textContent = message;
+
+  const colors = {
+    success: "#11865f",
+    error: "#c0392b",
+    info: "#64748b"
+  };
+
+  element.style.color = colors[type] || colors.info;
 }
 
 async function apiRequest(path, options = {}) {
-  const response = await fetch(API_BASE + path, {
+  const response = await fetch(`${LUCASNODE_API}${path}`, {
     ...options,
     headers: {
       "Accept": "application/json",
-      ...(options.body ? {"Content-Type": "application/json"} : {}),
+      ...(options.body ? { "Content-Type": "application/json" } : {}),
       ...(options.headers || {})
     }
   });
 
-  const text = await response.text();
-  let data = {};
+  const raw = await response.text();
+
+  let data;
 
   try {
-    data = text ? JSON.parse(text) : {};
+    data = raw ? JSON.parse(raw) : {};
   } catch {
-    throw new Error("API imerudisha majibu yasiyo JSON.");
+    throw new Error("API imerudisha majibu yasiyo katika JSON.");
   }
 
   if (!response.ok) {
     throw new Error(
       data.error ||
       data.message ||
-      "Ombi halikufaulu. HTTP " + response.status
+      `Ombi limeshindwa. HTTP ${response.status}`
     );
   }
 
   return data;
 }
 
-/* Mobile navigation */
-const menuToggle = $("#menuToggle");
-const navLinks = $("#navLinks");
-
-menuToggle?.addEventListener("click", () => {
-  const open = navLinks.classList.toggle("open");
-  menuToggle.setAttribute("aria-expanded", String(open));
-  menuToggle.innerHTML = open
-    ? '<i class="fa-solid fa-xmark"></i>'
-    : '<i class="fa-solid fa-bars"></i>';
-});
-
-navLinks?.querySelectorAll("a").forEach((link) => {
-  link.addEventListener("click", () => {
-    navLinks.classList.remove("open");
-    menuToggle?.setAttribute("aria-expanded", "false");
-    if (menuToggle) {
-      menuToggle.innerHTML = '<i class="fa-solid fa-bars"></i>';
-    }
-  });
-});
-
-$("#currentYear").textContent = new Date().getFullYear();
-
-/* Health check */
-async function checkAPIHealth() {
-  const badges = [$("#apiStatus"), $("#projectsApiStatus")].filter(Boolean);
-
-  badges.forEach((badge) => {
-    badge.className = "api-status";
-    badge.textContent = "Inakaguliwa...";
-  });
-
-  try {
-    await apiRequest("/health");
-
-    badges.forEach((badge) => {
-      badge.className = "api-status ok";
-      badge.innerHTML = '<i class="fa-solid fa-circle"></i> API inajibu';
-    });
-  } catch (error) {
-    badges.forEach((badge) => {
-      badge.className = "api-status bad";
-      badge.innerHTML = '<i class="fa-solid fa-circle"></i> API haijathibitishwa';
-    });
-    console.warn("LucasNode API health check:", error.message);
-  }
-}
-
-/* Projects dashboard */
-function extractProjects(data) {
+function getList(data) {
   if (Array.isArray(data)) return data;
   if (Array.isArray(data.projects)) return data.projects;
   if (Array.isArray(data.data)) return data.data;
-  if (data.data && Array.isArray(data.data.projects)) return data.data.projects;
+  if (Array.isArray(data.sites)) return data.sites;
+  if (Array.isArray(data.results)) return data.results;
+
   return [];
 }
 
-function renderProjects(projects) {
-  const grid = $("#projectGrid");
-  if (!grid) return;
+function makeSvgIcon(symbol, size = 20) {
+  const svg = document.createElementNS(
+    "http://www.w3.org/2000/svg",
+    "svg"
+  );
 
-  $("#heroProjectCount").textContent = String(projects.length);
+  svg.setAttribute("width", size);
+  svg.setAttribute("height", size);
+  svg.setAttribute("viewBox", "0 0 24 24");
+  svg.setAttribute("fill", "none");
+  svg.setAttribute("stroke", "currentColor");
+  svg.setAttribute("stroke-width", "1.8");
+  svg.setAttribute("stroke-linecap", "round");
+  svg.setAttribute("stroke-linejoin", "round");
+  svg.setAttribute("aria-hidden", "true");
 
-  if (!projects.length) {
-    grid.innerHTML =
-      '<div class="empty-state">' +
-      '<i class="fa-solid fa-folder-open"></i>' +
-      'Hakuna miradi iliyorudishwa na API kwa sasa.' +
-      '</div>';
-    return;
-  }
+  const use = document.createElementNS(
+    "http://www.w3.org/2000/svg",
+    "use"
+  );
 
-  grid.innerHTML = projects.map((project) => {
-    const name = escapeHTML(project.name || "Project isiyo na jina");
-    const description = escapeHTML(project.description || "Hakuna maelezo.");
-    const framework = escapeHTML(project.framework || "Haijaainishwa");
-    const status = escapeHTML(project.status || "draft");
-    const slug = escapeHTML(project.slug || "");
-    const url = project.production_url
-      ? escapeHTML(project.production_url)
-      : "";
+  use.setAttribute("href", `#${symbol}`);
+  svg.appendChild(use);
 
-    return `
-      <article class="project-card">
-        <h4><i class="fa-solid fa-folder" style="color:var(--green2)"></i> ${name}</h4>
-        <p>${description}</p>
-        <p><strong>Aina:</strong> ${framework}</p>
-        ${slug ? `<p><strong>Slug:</strong> ${slug}</p>` : ""}
-        <div class="project-meta">
-          <span class="project-badge">${status}</span>
-          ${url
-            ? `<a class="feature-link" href="${url}" target="_blank" rel="noopener noreferrer">Fungua <i class="fa-solid fa-arrow-up-right-from-square"></i></a>`
-            : `<span class="muted" style="font-size:10px">Bado haijadeploy</span>`
-          }
-        </div>
-      </article>`;
-  }).join("");
+  return svg;
 }
 
-async function loadProjects() {
-  const grid = $("#projectGrid");
-  const message = $("#projectsMessage");
 
-  if (grid) {
-    grid.innerHTML =
-      '<div class="empty-state"><i class="fa-solid fa-spinner fa-spin"></i>Inapakia...</div>';
+/* =========================================
+   PROJECT MODAL
+   ========================================= */
+
+function openProjectModal() {
+  const modal = $("projectModal");
+
+  if (!modal) return;
+
+  modal.classList.add("open");
+
+  setTimeout(() => {
+    $("projectName")?.focus();
+  }, 100);
+}
+
+function closeProjectModal() {
+  $("projectModal")?.classList.remove("open");
+}
+
+$("projectModal")?.addEventListener("click", (event) => {
+  if (event.target === $("projectModal")) {
+    closeProjectModal();
   }
+});
 
-  if (message) message.innerHTML = "";
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") {
+    closeProjectModal();
+  }
+});
+
+
+/* =========================================
+   PROJECTS — LOAD FROM BACKEND
+   ========================================= */
+
+async function loadProjects() {
+  const list = $("projectList");
+  const status = $("apiStatus");
+
+  if (!list) return;
+
+  list.replaceChildren();
+
+  const loading = document.createElement("div");
+  loading.className = "empty-state";
+  loading.textContent = "Inapakia miradi kutoka LucasNode API...";
+  list.appendChild(loading);
+
+  if (status) {
+    status.textContent = "Inaunganisha...";
+  }
 
   try {
     const data = await apiRequest("/projects");
-    const projects = extractProjects(data);
+    const projects = getList(data);
 
-    renderProjects(projects);
-
-    const badge = $("#projectsApiStatus");
-    if (badge) {
-      badge.className = "api-status ok";
-      badge.textContent = "Miradi imepakuliwa";
-    }
-  } catch (error) {
-    if (grid) {
-      grid.innerHTML =
-        '<div class="empty-state">' +
-        '<i class="fa-solid fa-triangle-exclamation"></i>' +
-        escapeHTML(error.message) +
-        '</div>';
+    if (status) {
+      status.textContent = "API imejibu";
     }
 
-    const badge = $("#projectsApiStatus");
-    if (badge) {
-      badge.className = "api-status bad";
-      badge.textContent = "Imeshindwa kupakia";
+    $("projectCount").textContent = String(projects.length);
+
+    list.replaceChildren();
+
+    if (projects.length === 0) {
+      const empty = document.createElement("div");
+      empty.className = "empty-state";
+
+      empty.appendChild(makeSvgIcon("i-grid", 35));
+
+      const text = document.createElement("p");
+      text.textContent =
+        "Hakuna miradi iliyorejeshwa na API. Unaweza kuunda mradi mpya.";
+
+      empty.appendChild(text);
+      list.appendChild(empty);
+
+      return;
     }
 
-    showNotice(message, error.message, "error");
-  }
-}
+    projects.forEach((project) => {
+      const row = document.createElement("div");
+      row.className = "project-row";
 
-$("#refreshProjects")?.addEventListener("click", loadProjects);
+      const icon = document.createElement("span");
+      icon.className = "project-symbol";
+      icon.appendChild(makeSvgIcon("i-code", 19));
 
-/* Create project draft using existing API */
-async function createProject({name, framework, description}, resultTarget) {
-  const target = typeof resultTarget === "string"
-    ? $(resultTarget)
-    : resultTarget;
+      const info = document.createElement("div");
+      info.className = "project-info";
 
-  if (!name.trim()) {
-    showNotice(target, "Tafadhali weka jina la project.", "error");
-    return;
-  }
+      const name = document.createElement("strong");
+      name.textContent =
+        project.name ||
+        project.project_name ||
+        project.slug ||
+        "Mradi bila jina";
 
-  if (name.length > 100 || description.length > 3000) {
-    showNotice(target, "Jina au maelezo ni marefu kupita kiasi.", "error");
-    return;
-  }
+      const details = document.createElement("small");
 
-  const buttons = target?.parentElement?.querySelectorAll("button");
-  buttons?.forEach((button) => button.disabled = true);
+      const framework =
+        project.framework ||
+        project.type ||
+        project.language ||
+        "Project";
 
-  showNotice(target, "Inahifadhi project kupitia API...", "info");
+      const created =
+        project.created_at
+          ? new Date(project.created_at).toLocaleDateString("sw-TZ")
+          : "";
 
-  try {
-    const data = await apiRequest("/projects", {
-      method: "POST",
-      body: JSON.stringify({
-        name: name.trim(),
-        framework,
-        description: description.trim(),
-        status: "draft"
-      })
+      details.textContent = created
+        ? `${framework} · ${created}`
+        : framework;
+
+      info.append(name, details);
+
+      const badge = document.createElement("span");
+      badge.className = "project-status";
+
+      const projectStatus = String(project.status || "draft");
+
+      badge.textContent =
+        projectStatus.toLowerCase() === "live"
+          ? "LIVE"
+          : projectStatus.toUpperCase();
+
+      row.append(icon, info, badge);
+      list.appendChild(row);
     });
 
-    showNotice(
-      target,
-      data.message || "API imepokea ombi la kuunda project. Kagua orodha kuthibitisha.",
-      "success"
-    );
-
-    await loadProjects();
   } catch (error) {
-    showNotice(
-      target,
-      "Project haikuhifadhiwa: " + error.message +
-      ". Hakikisha muundo wa POST unaendana na backend yako.",
-      "error"
-    );
-  } finally {
-    buttons?.forEach((button) => button.disabled = false);
+    $("projectCount").textContent = "—";
+
+    if (status) {
+      status.textContent = "API haipatikani";
+    }
+
+    list.replaceChildren();
+
+    const empty = document.createElement("div");
+    empty.className = "empty-state";
+
+    empty.appendChild(makeSvgIcon("i-cloud", 35));
+
+    const text = document.createElement("p");
+    text.textContent =
+      "Imeshindikana kupakia miradi. Hakikisha API, CORS na endpoint ya /api/v1/projects vimewekwa sawa.";
+
+    const detail = document.createElement("small");
+    detail.textContent = error.message;
+
+    empty.append(text, detail);
+    list.appendChild(empty);
+
+    console.error("LucasNode loadProjects:", error);
   }
 }
 
-$("#createFromAI")?.addEventListener("click", async () => {
-  const name = $("#aiProjectName").value.trim();
-  const framework = $("#aiProjectType").value;
-  const description = $("#aiPrompt").value.trim();
-  const button = $("#createFromAI");
 
-  if (!name || !description) {
-    showNotice("#aiResult", "Weka jina la project na maelezo yake.", "error");
-    return;
-  }
+/* =========================================
+   CREATE PROJECT
+   ========================================= */
 
-  button.disabled = true;
-
-  try {
-    await createProject(
-      {name, framework, description},
-      "#aiResult"
-    );
-  } finally {
-    button.disabled = false;
-  }
-});
-
-/* Browser-only HTML editor and preview */
-const editor = $("#htmlEditor");
-const previewFrame = $("#previewFrame");
-const LOCAL_HTML_KEY = "lucasnode.editor.html.v1";
-
-function runPreview() {
-  const code = editor.value;
-
-  /*
-   * iframe sandbox deliberately excludes allow-same-origin.
-   * The preview runs separately from the main page.
-   */
-  previewFrame.srcdoc = code;
-  showNotice(
-    "#editorMessage",
-    "Preview imeandaliwa kwenye iframe. Hii haimaanishi kuwa project imechapishwa mtandaoni.",
-    "success"
-  );
-}
-
-$("#runPreview")?.addEventListener("click", runPreview);
-
-$("#saveLocal")?.addEventListener("click", () => {
-  try {
-    localStorage.setItem(LOCAL_HTML_KEY, editor.value);
-    showNotice(
-      "#editorMessage",
-      "Code imehifadhiwa kwenye browser hii pekee.",
-      "success"
-    );
-  } catch {
-    showNotice(
-      "#editorMessage",
-      "Browser imeshindwa kuhifadhi code kwenye localStorage.",
-      "error"
-    );
-  }
-});
-
-$("#downloadHTML")?.addEventListener("click", () => {
-  const blob = new Blob([editor.value], {type:"text/html;charset=utf-8"});
-  const url = URL.createObjectURL(blob);
-  const anchor = document.createElement("a");
-
-  anchor.href = url;
-  anchor.download = "lucasnode-project.html";
-  document.body.appendChild(anchor);
-  anchor.click();
-  anchor.remove();
-
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
-
-  showNotice(
-    "#editorMessage",
-    "Faili la HTML limeandaliwa kwa kupakuliwa.",
-    "success"
-  );
-});
-
-try {
-  const savedHTML = localStorage.getItem(LOCAL_HTML_KEY);
-  if (savedHTML) editor.value = savedHTML;
-} catch (error) {
-  console.warn("Local storage haipatikani.");
-}
-
-runPreview();
-
-/* Domain RDAP lookup */
-function validateDomain(domain) {
-  const value = domain.trim().toLowerCase();
-
-  if (value.length > 253 || value.length < 4 || !value.includes(".")) {
-    return false;
-  }
-
-  if (value.includes("://") || value.includes("/") || value.includes(" ")) {
-    return false;
-  }
-
-  return value.split(".").every((label) =>
-    /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/.test(label)
-  );
-}
-
-$("#checkDomain")?.addEventListener("click", async () => {
-  const input = $("#domainInput");
-  const button = $("#checkDomain");
-  const domain = input.value.trim().toLowerCase();
-
-  if (!validateDomain(domain)) {
-    showNotice(
-      "#domainResult",
-      "Weka domain kamili, kwa mfano lucasnode.com.",
-      "error"
-    );
-    return;
-  }
-
-  button.disabled = true;
-  showNotice("#domainResult", "Inatafuta taarifa za domain...", "info");
-
-  try {
-    const result = await apiRequest(
-      "/domains/check?domain=" + encodeURIComponent(domain)
-    );
-
-    const summary = result.message ||
-      result.status ||
-      result.result ||
-      "API imerudisha majibu.";
-
-    showNotice(
-      "#domainResult",
-      "Majibu ya API: " + String(summary) +
-      ". Taarifa za RDAP si uthibitisho wa mwisho wa upatikanaji wa domain kwa ununuzi.",
-      "info"
-    );
-
-    const pre = document.createElement("pre");
-    pre.style.cssText =
-      "white-space:pre-wrap;overflow-wrap:anywhere;font-size:11px;" +
-      "padding:12px;background:#f8fafc;border-radius:10px;margin-top:10px;";
-    pre.textContent = JSON.stringify(result, null, 2);
-    $("#domainResult").appendChild(pre);
-  } catch (error) {
-    showNotice(
-      "#domainResult",
-      "Ukaguzi wa domain umeshindwa: " + error.message,
-      "error"
-    );
-  } finally {
-    button.disabled = false;
-  }
-});
-
-$("#domainInput")?.addEventListener("keydown", (event) => {
-  if (event.key === "Enter") {
-    event.preventDefault();
-    $("#checkDomain").click();
-  }
-});
-
-/* Contact form: opens email client, does not pretend to send to backend */
-$("#contactForm")?.addEventListener("submit", (event) => {
+$("projectForm")?.addEventListener("submit", async (event) => {
   event.preventDefault();
 
-  const name = $("#contactName").value.trim();
-  const email = $("#contactEmail").value.trim();
-  const subject = $("#contactSubject").value.trim();
-  const message = $("#contactMessage").value.trim();
+  const button = $("createProjectButton");
+  const result = $("projectResult");
 
-  if (!name || !email || !subject || !message) {
-    showNotice("#contactResult", "Jaza sehemu zote za fomu.", "error");
+  const name = $("projectName")?.value.trim();
+  const framework = $("projectFramework")?.value;
+  const description = $("projectDescription")?.value.trim();
+
+  if (!name) {
+    showMessage(result, "Weka jina la mradi kwanza.", "error");
     return;
   }
 
-  const body = [
-    "Jina: " + name,
-    "Barua pepe: " + email,
-    "",
-    message
-  ].join("\n");
+  const originalText = button?.textContent || "Create Project";
 
-  /*
-   * No recipient address is invented.
-   * This lets the user choose an email destination manually.
-   */
-  const mailto =
-    "mailto:?subject=" + encodeURIComponent("[LucasNode] " + subject) +
-    "&body=" + encodeURIComponent(body);
+  if (button) {
+    button.disabled = true;
+    button.textContent = "Inaunda mradi...";
+  }
 
-  showNotice(
-    "#contactResult",
-    "Programu ya barua pepe itafunguliwa. Chagua anwani ya mpokeaji kabla ya kutuma.",
-    "info"
-  );
+  showMessage(result, "Inatuma taarifa kwenye backend...");
 
-  window.location.href = mailto;
+  try {
+    const payload = {
+      name,
+      framework,
+      description,
+      status: "draft"
+    };
+
+    const response = await apiRequest("/projects", {
+      method: "POST",
+      body: JSON.stringify(payload)
+    });
+
+    showMessage(
+      result,
+      response.message || "Ombi la kuunda mradi limefanikiwa.",
+      "success"
+    );
+
+    $("projectForm").reset();
+
+    await loadProjects();
+
+    setTimeout(() => {
+      closeProjectModal();
+    }, 900);
+
+  } catch (error) {
+    showMessage(
+      result,
+      `Mradi haukuundwa: ${error.message}`,
+      "error"
+    );
+
+    console.error("LucasNode createProject:", error);
+
+  } finally {
+    if (button) {
+      button.disabled = false;
+      button.textContent = originalText;
+    }
+  }
 });
 
-/* Initial loading */
-checkAPIHealth();
-loadProjects();
+
+/* =========================================
+   HTML EDITOR — LOCAL PREVIEW
+   ========================================= */
+
+function updatePreview() {
+  const editor = $("htmlEditor");
+  const frame = $("previewFrame");
+
+  if (!editor || !frame) return;
+
+  /*
+    Hii ni preview ya HTML ndani ya kivinjari.
+    Haichapishi tovuti kwenye internet na haihifadhi
+    code kwenye cloud yenyewe.
+  */
+
+  frame.srcdoc = editor.value;
+}
+
+$("htmlEditor")?.addEventListener("input", () => {
+  clearTimeout(window.lucasNodePreviewTimer);
+
+  window.lucasNodePreviewTimer = setTimeout(() => {
+    updatePreview();
+  }, 600);
+});
+
+
+/* =========================================
+   DOMAIN LOOKUP
+   ========================================= */
+
+$("domainForm")?.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  const input = $("domainInput");
+  const result = $("domainResult");
+  const button = $("domainForm")?.querySelector("button");
+
+  const domain = input?.value.trim().toLowerCase();
+
+  if (!domain) {
+    showMessage(result, "Andika domain unayotaka kuchunguza.", "error");
+    return;
+  }
+
+  /*
+    Ukaguzi huu ni wa msingi tu.
+    Haujathibitishi kwamba domain inaweza kununuliwa.
+  */
+
+  const domainPattern =
+    /^(?=.{1,253}$)(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}$/i;
+
+  if (!domainPattern.test(domain)) {
+    showMessage(
+      result,
+      "Muundo wa domain si sahihi. Mfano: mfano.com",
+      "error"
+    );
+    return;
+  }
+
+  const originalText = button?.textContent || "Check";
+
+  if (button) {
+    button.disabled = true;
+    button.textContent = "Inakagua...";
+  }
+
+  showMessage(
+    result,
+    "Inatafuta taarifa za domain kupitia API..."
+  );
+
+  try {
+    /*
+      Backend inatarajiwa kutoa endpoint:
+      GET /api/v1/domains/check?domain=mfano.com
+
+      Ikiwa endpoint hii haipo kwenye Worker,
+      ombi litashindwa hadi route iunganishwe.
+    */
+
+    const response = await apiRequest(
+      `/domains/check?domain=${encodeURIComponent(domain)}`
+    );
+
+    const message =
+      response.message ||
+      response.status ||
+      response.result ||
+      JSON.stringify(response);
+
+    showMessage(result, message, "success");
+
+  } catch (error) {
+    showMessage(
+      result,
+      `Ukaguzi haujakamilika: ${error.message}. Hakikisha backend ina endpoint /api/v1/domains/check.`,
+      "error"
+    );
+
+    console.error("LucasNode domain lookup:", error);
+
+  } finally {
+    if (button) {
+      button.disabled = false;
+      button.textContent = originalText;
+    }
+  }
+});
+
+
+/* =========================================
+   INITIAL PAGE SETUP
+   ========================================= */
+
+function initializeLucasNode() {
+  const year = $("currentYear");
+
+  if (year) {
+    year.textContent = String(new Date().getFullYear());
+  }
+
+  updatePreview();
+  loadProjects();
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener(
+    "DOMContentLoaded",
+    initializeLucasNode,
+    { once: true }
+  );
+} else {
+  initializeLucasNode();
+}
 </script>
+
 </body>
 </html>
