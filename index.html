@@ -3,1134 +3,1027 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#080d19">
-<meta name="description" content="LucasNode — Tengeneza, jaribu, deploy na simamia programu zako.">
-<title>LucasNode — App Builder & Cloud Platform</title>
+<meta name="theme-color" content="#ffffff">
+<meta name="description" content="LucasNode — Jenga, jaribu, host na deploy miradi yako ya kidijitali kwenye jukwaa moja.">
+<title>LucasNode — Cloud Platform</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
 <style>
-:root{
-  --bg:#080d19;
-  --panel:#101827;
-  --panel2:#141f32;
-  --line:#263449;
-  --text:#edf3ff;
-  --muted:#93a4bd;
-  --blue:#5485ff;
-  --cyan:#42d9ed;
-  --green:#32d69a;
-  --red:#ff647c;
-  --yellow:#ffd166;
-  --radius:16px;
-}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{
-  margin:0;background:var(--bg);color:var(--text);
-  font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
-  font-size:14px;line-height:1.55
-}
-button,input,textarea,select{font:inherit}
-button{cursor:pointer}
-button:disabled{opacity:.45;cursor:not-allowed}
-a{color:inherit;text-decoration:none}
-.app{min-height:100vh}
-.sidebar{
-  width:248px;position:fixed;inset:0 auto 0 0;
-  background:#0b1220;border-right:1px solid var(--line);
-  padding:22px 15px;display:flex;flex-direction:column;z-index:20;
-  overflow-y:auto
-}
-.brand{display:flex;align-items:center;gap:11px;padding:0 9px 25px}
-.logo{
-  width:43px;height:43px;border-radius:13px;
-  display:grid;place-items:center;font-weight:900;font-size:25px;
-  color:white;background:linear-gradient(135deg,#7b9cff,#3858e8 55%,#2635a5);
-  box-shadow:inset 0 2px 2px #ffffff55,0 6px 20px #3157e744
-}
-.brand-name{font-size:19px;font-weight:850;letter-spacing:-.6px}
-.brand-name span{color:#78a1ff}
-.brand small{display:block;color:var(--muted);font-size:11px}
-.nav-label{color:#647590;font-size:10px;font-weight:800;letter-spacing:1.5px;padding:16px 11px 8px}
-.nav-btn{
-  width:100%;display:flex;align-items:center;gap:12px;padding:11px 12px;
-  border:1px solid transparent;border-radius:10px;background:transparent;
-  color:#a9b8cf;text-align:left;margin:2px 0;transition:.2s
-}
-.nav-btn:hover,.nav-btn.active{background:#182844;border-color:#2b4368;color:white}
-.nav-btn.active{box-shadow:inset 3px 0 #6e95ff}
-.nav-icon{width:22px;text-align:center;font-size:17px}
-.nav-badge{margin-left:auto;font-size:10px;background:#263a5d;padding:2px 7px;border-radius:8px;color:#b9d0ff}
-.sidebar-bottom{margin-top:auto;padding:14px 8px 0}
-.plan-card{padding:14px;border:1px solid var(--line);border-radius:13px;background:#101a2c}
-.plan-card strong{display:block;margin-bottom:4px}
-.plan-card p{margin:0 0 12px;color:var(--muted);font-size:12px}
-.main{margin-left:248px;min-width:0}
-.topbar{
-  min-height:75px;border-bottom:1px solid var(--line);
-  display:flex;align-items:center;justify-content:space-between;gap:15px;
-  padding:15px 30px;background:#0a1120eF;position:sticky;top:0;z-index:10;
-  backdrop-filter:blur(15px)
-}
-.breadcrumb{color:var(--muted);font-size:12px}
-.breadcrumb strong{color:white;font-size:14px;margin-left:8px}
-.top-actions{display:flex;align-items:center;gap:10px}
-.api-status{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:11px}
-.dot{width:8px;height:8px;border-radius:50%;background:#8795a9;display:inline-block}
-.dot.ok{background:var(--green);box-shadow:0 0 10px #32d69a66}
-.dot.bad{background:var(--red)}
-.avatar{
-  width:35px;height:35px;border-radius:11px;background:#23375a;
-  display:grid;place-items:center;font-weight:800;color:#bcd0ff
-}
-.menu-toggle{display:none}
-.content{max-width:1500px;margin:auto;padding:29px 30px 60px}
-.view{display:none}
-.view.active{display:block}
-.hero{
-  position:relative;overflow:hidden;border:1px solid #2a436d;border-radius:20px;
-  background:radial-gradient(ellipse at 85% 15%,#3159a64c,transparent 42%),
-  linear-gradient(120deg,#14243f,#101a2d 60%,#10213a);
-  padding:30px;margin-bottom:24px
-}
-.hero:after{
-  content:"";position:absolute;width:210px;height:210px;border-radius:50%;
-  border:1px solid #5c86df30;right:4%;top:-95px;
-  box-shadow:0 0 0 25px #5c86df09,0 0 0 50px #5c86df07;
-  pointer-events:none
-}
-.eyebrow{color:#86aaff;font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase}
-.hero h1{font-size:clamp(25px,3vw,36px);line-height:1.2;letter-spacing:-1.2px;margin:10px 0}
-.hero p{color:#b3c3df;max-width:650px;margin:0 0 21px}
-.hero-actions{display:flex;gap:10px;flex-wrap:wrap}
-.btn{
-  display:inline-flex;align-items:center;justify-content:center;gap:8px;
-  border:1px solid var(--line);background:#172238;color:#e9f0ff;
-  padding:10px 15px;border-radius:10px;font-weight:700;transition:.2s
-}
-.btn:hover{filter:brightness(1.15);transform:translateY(-1px)}
-.btn-primary{background:linear-gradient(135deg,#668fff,#4165e9);border-color:#7395ff;color:white}
-.btn-success{background:#12382f;border-color:#21644f;color:#8bf0c7}
-.btn-danger{background:#3a1c2a;border-color:#693043;color:#ffadba}
-.btn-small{padding:7px 10px;font-size:12px}
-.btn-ghost{background:transparent}
-.grid{display:grid;gap:16px}
-.stats{grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:24px}
-.stat,.card{
-  background:var(--panel);border:1px solid var(--line);
-  border-radius:var(--radius);min-width:0
-}
-.stat{padding:19px}
-.stat-top{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:12px}
-.stat-icon{font-size:19px;width:37px;height:37px;border-radius:11px;background:#1d2b44;display:grid;place-items:center}
-.stat-value{font-size:29px;font-weight:850;letter-spacing:-1px;margin-top:13px}
-.stat-note{font-size:11px;color:var(--muted);margin-top:2px}
-.section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:26px 0 14px}
-.section-head h2{font-size:17px;margin:0;letter-spacing:-.3px}
-.section-head p{margin:3px 0 0;color:var(--muted);font-size:12px}
-.card{padding:20px}
-.project-list{display:grid;gap:11px}
-.project{
-  display:flex;align-items:center;gap:13px;padding:15px;
-  background:#0c1423;border:1px solid var(--line);border-radius:13px
-}
-.project-icon{
-  width:43px;height:43px;border-radius:12px;background:#1c2e4d;
-  display:grid;place-items:center;font-size:20px;flex-shrink:0
-}
-.project-info{min-width:0;flex:1}
-.project-info strong{display:block;overflow-wrap:anywhere}
-.project-info small{display:block;color:var(--muted);margin-top:3px;font-size:11px}
-.project-actions{display:flex;gap:7px;flex-wrap:wrap}
-.status{display:inline-flex;align-items:center;gap:5px;font-size:10px;border-radius:20px;padding:4px 8px;font-weight:800}
-.status-draft{background:#2b2d38;color:#b7c1d2}
-.status-live{background:#12382f;color:#78e8ba}
-.status-error{background:#421d2a;color:#ff9daf}
-.status-building{background:#3d3218;color:#ffdb83}
-.empty{text-align:center;padding:40px 15px;color:var(--muted)}
-.empty-icon{font-size:36px;margin-bottom:10px}
-.feature-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
-.feature{padding:20px}
-.feature-icon{font-size:24px;margin-bottom:12px}
-.feature h3{margin:0 0 7px;font-size:14px}
-.feature p{margin:0;color:var(--muted);font-size:12px}
-.tag{display:inline-block;font-size:10px;color:#9dbaff;background:#1a2b49;border-radius:6px;padding:4px 7px;margin-top:13px}
-.notice{padding:12px 14px;border-radius:11px;font-size:12px;margin:12px 0}
-.notice-info{background:#152844;border:1px solid #29476f;color:#bdd5ff}
-.notice-warning{background:#342b18;border:1px solid #6d5528;color:#ffe0a0}
-.notice-error{background:#391d28;border:1px solid #6e3040;color:#ffbac6}
-.notice-success{background:#123329;border:1px solid #23654f;color:#9bf1ce}
-.field{display:grid;gap:6px;margin-bottom:15px}
-.field label{font-size:12px;color:#c0cee3;font-weight:700}
-.input,.select,.textarea{
-  width:100%;background:#0a1220;border:1px solid #30415a;color:white;
-  padding:11px 12px;border-radius:10px;outline:none
-}
-.input:focus,.select:focus,.textarea:focus{border-color:#7297ff;box-shadow:0 0 0 3px #668bff1b}
-.textarea{resize:vertical;min-height:95px}
-.muted{color:var(--muted)}
-.small{font-size:11px}
-.editor-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:15px}
-.editor-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;flex-wrap:wrap}
-.editor-box{border:1px solid var(--line);border-radius:13px;overflow:hidden;background:#0a101c}
-.editor-bar{padding:10px 12px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;color:#9eb0cb;font-size:11px}
-.code{
-  display:block;width:100%;min-height:390px;resize:vertical;border:0;outline:none;
-  padding:15px;background:#080e18;color:#b9e2d3;
-  font-family:ui-monospace,SFMono-Regular,Consolas,monospace;
-  font-size:12px;line-height:1.7;tab-size:2
-}
-.preview-frame{width:100%;height:440px;background:white;border:0;display:block}
-.preview-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;background:#0c1423;border-bottom:1px solid var(--line)}
-.preview-head strong{font-size:12px}
-.preview-head span{color:var(--muted);font-size:10px}
-.domain-search{display:flex;gap:8px}
-.domain-search .input{flex:1;min-width:0}
-.domain-results{display:grid;gap:10px;margin-top:15px}
-.domain-row{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#0c1423;border:1px solid var(--line);border-radius:12px;padding:13px}
-.domain-row strong{overflow-wrap:anywhere}
-.domain-row small{display:block;color:var(--muted);font-size:11px}
-.domain-price{font-weight:800;white-space:nowrap}
-.table-wrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse;min-width:500px}
-th,td{text-align:left;padding:13px;border-bottom:1px solid var(--line);font-size:12px}
-th{color:var(--muted);font-weight:700}
-.modal-backdrop{
-  display:none;position:fixed;inset:0;background:#02050bd9;z-index:50;
-  padding:18px;overflow-y:auto;align-items:center;justify-content:center
-}
-.modal-backdrop.open{display:flex}
-.modal{width:min(100%,560px);max-height:95vh;overflow:auto;background:#101a2a;border:1px solid #33445f;border-radius:18px;padding:22px;box-shadow:0 25px 100px #0008}
-.modal-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px}
-.modal-head h2{font-size:19px;margin:0}
-.close-btn{width:34px;height:34px;border:1px solid var(--line);border-radius:9px;background:#172238;color:white;font-size:19px}
-.modal-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:18px;flex-wrap:wrap}
-.toast-wrap{position:fixed;right:18px;bottom:18px;z-index:100;display:grid;gap:9px;max-width:min(360px,calc(100vw - 36px))}
-.toast{padding:13px 15px;border-radius:12px;background:#17263d;border:1px solid #3a5377;box-shadow:0 10px 30px #0005;font-size:12px}
-.toast.error{border-color:#873b4e}
-.toast.success{border-color:#267457}
-.footer{border-top:1px solid var(--line);padding-top:18px;margin-top:30px;color:#72829a;font-size:11px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
-.hidden{display:none!important}
-@media(max-width:1100px){
-  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .feature-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-}
-@media(max-width:800px){
-  .sidebar{transform:translateX(-100%);transition:transform .25s;width:260px;box-shadow:none}
-  .sidebar.open{transform:translateX(0);box-shadow:15px 0 50px #0008}
-  .main{margin-left:0}
-  .menu-toggle{display:inline-flex}
-  .topbar{padding:12px 15px}
-  .content{padding:18px 15px 40px}
-  .hero{padding:23px}
-  .editor-layout{grid-template-columns:1fr}
-  .code{min-height:300px}
-  .preview-frame{height:400px}
-  .api-status .api-label{display:none}
-}
-@media(max-width:500px){
-  .stats{gap:10px}
-  .stat{padding:13px}
-  .stat-value{font-size:24px}
-  .feature-grid{grid-template-columns:1fr}
-  .project{align-items:flex-start;flex-wrap:wrap}
-  .project-actions{width:100%}
-  .hero h1{font-size:27px}
-  .domain-search{flex-direction:column}
-  .domain-row{align-items:flex-start;flex-wrap:wrap}
-  .top-actions{gap:7px}
-}
-</style>
-</head>
-
-<body>
-<div class="app">
-  <aside class="sidebar" id="sidebar">
-    <a class="brand" href="#dashboard" aria-label="LucasNode Dashboard">
-      <div class="logo">L</div>
-      <div>
-        <div class="brand-name">Lucas<span>Node</span></div>
-        <small>App Builder & Cloud Platform</small>
-      </div>
-    </a>
-
-    <div class="nav-label">WORKSPACE</div>
-    <button class="nav-btn active" data-view="dashboard"><span class="nav-icon">◫</span>Dashboard</button>
-    <button class="nav-btn" data-view="projects"><span class="nav-icon">▤</span>Projects</button>
-    <button class="nav-btn" data-view="editor"><span class="nav-icon">⌘</span>Code Editor <span class="nav-badge">HTML</span></button>
-    <button class="nav-btn" data-view="preview"><span class="nav-icon">▷</span>Live Preview</button>
-
-    <div class="nav-label">CLOUD PLATFORM</div>
-    <button class="nav-btn" data-view="hosting"><span class="nav-icon">▣</span>Hosting & Deploy</button>
-    <button class="nav-btn" data-view="domains"><span class="nav-icon">◎</span>Domains</button>
-    <button class="nav-btn" data-view="billing"><span class="nav-icon">◇</span>Billing & Payments</button>
-
-    <div class="nav-label">ACCOUNT</div>
-    <button class="nav-btn" data-view="settings"><span class="nav-icon">⚙</span>Settings</button>
-
-    <div class="sidebar-bottom">
-      <div class="plan-card">
-        <strong>LucasNode Cloud</strong>
-        <p>Jenga project yako, ijaribu, kisha ichapishe kwa kutumia huduma zinazoungwa mkono.</p>
-        <button class="btn btn-primary btn-small" style="width:100%" data-view="hosting">Angalia Hosting →</button>
-      </div>
-      <div class="small muted" style="padding:15px 5px 0">LucasNode © <span id="year"></span></div>
-    </div>
-  </aside>
-
-  <main class="main">
-    <header class="topbar">
-      <div style="display:flex;align-items:center;gap:12px">
-        <button class="btn btn-small menu-toggle" id="menuToggle" aria-label="Fungua menyu">☰</button>
-        <div class="breadcrumb">LucasNode <strong id="pageTitle">/ Dashboard</strong></div>
-      </div>
-      <div class="top-actions">
-        <div class="api-status"><span class="dot" id="apiDot"></span><span class="api-label" id="apiLabel">Inakagua API...</span></div>
-        <div class="avatar" title="LucasNode">LN</div>
-      </div>
-    </header>
-
-    <div class="content">
-      <!-- DASHBOARD -->
-      <section class="view active" id="view-dashboard">
-        <div class="hero">
-          <div class="eyebrow">YOUR CLOUD WORKSPACE</div>
-          <h1>Jenga. Jaribu. Chapisha.</h1>
-          <p>Tengeneza project yako, ijaribu kwenye Live Preview, na simamia hatua za kuiweka mtandaoni kupitia LucasNode.</p>
-          <div class="hero-actions">
-            <button class="btn btn-primary" id="newProjectHero">＋ Tengeneza Project</button>
-            <button class="btn" data-view="editor">⌘ Fungua Code Editor</button>
-          </div>
-        </div>
-
-        <div class="grid stats">
-          <div class="stat">
-            <div class="stat-top"><span>Projects</span><span class="stat-icon">▤</span></div>
-            <div class="stat-value" id="statProjects">—</div>
-            <div class="stat-note">Project zilizopatikana kwenye API</div>
-          </div>
-          <div class="stat">
-            <div class="stat-top"><span>Drafts</span><span class="stat-icon">◷</span></div>
-            <div class="stat-value" id="statDrafts">—</div>
-            <div class="stat-note">Projects ambazo hazijawekwa live</div>
-          </div>
-          <div class="stat">
-            <div class="stat-top"><span>Live Projects</span><span class="stat-icon">↗</span></div>
-            <div class="stat-value" id="statLive">—</div>
-            <div class="stat-note">Kulingana na taarifa za backend</div>
-          </div>
-          <div class="stat">
-            <div class="stat-top"><span>API Status</span><span class="stat-icon">⌁</span></div>
-            <div class="stat-value" id="statApi" style="font-size:21px">Inakagua</div>
-            <div class="stat-note">Muunganisho wa LucasNode API</div>
-          </div>
-        </div>
-
-        <div class="section-head">
-          <div><h2>Projects Zako</h2><p>Project za hivi karibuni zilizopatikana kwenye backend.</p></div>
-          <button class="btn btn-small" data-view="projects">Zote →</button>
-        </div>
-        <div class="card"><div id="dashboardProjects" class="project-list"></div></div>
-
-        <div class="section-head"><div><h2>Unachoweza kufanya</h2><p>Vipengele vya workspace ya LucasNode.</p></div></div>
-        <div class="grid feature-grid">
-          <div class="card feature"><div class="feature-icon">⌘</div><h3>Code Editor</h3><p>Andika HTML, CSS na JavaScript, kisha uhakiki mabadiliko yako.</p><span class="tag">HTML Preview</span></div>
-          <div class="card feature"><div class="feature-icon">▷</div><h3>Live Preview</h3><p>Fungua matokeo ya HTML ndani ya iframe iliyotengwa kwa majaribio.</p><span class="tag">Browser Sandbox</span></div>
-          <div class="card feature"><div class="feature-icon">☁</div><h3>Hosting & Deploy</h3><p>Angalia hatua za deployment. Kuchapisha kunahitaji deployment engine ya backend.</p><span class="tag">Backend Integration Required</span></div>
-          <div class="card feature"><div class="feature-icon">◎</div><h3>Domain</h3><p>Andaa jina la domain na ukague hatua za usajili na uunganishaji.</p><span class="tag">Registrar Integration Required</span></div>
-          <div class="card feature"><div class="feature-icon">◇</div><h3>Billing</h3><p>Muundo wa malipo utatumika baada ya payment gateway kuunganishwa na kuthibitishwa.</p><span class="tag">Secure Payment Flow Required</span></div>
-          <div class="card feature"><div class="feature-icon">✦</div><h3>AI App Builder</h3><p>Sehemu ya kuandaa maelekezo ya app. AI generation inahitaji AI backend na API key salama.</p><span class="tag">AI Backend Required</span></div>
-        </div>
-      </section>
-
-      <!-- PROJECTS -->
-      <section class="view" id="view-projects">
-        <div class="section-head" style="margin-top:0">
-          <div><h2>Projects</h2><p>Orodha kutoka LucasNode API.</p></div>
-          <button class="btn btn-primary" id="newProjectBtn">＋ Project Mpya</button>
-        </div>
-        <div class="notice notice-info">Project mpya itahifadhi metadata kupitia API. Code ya majaribio huhifadhiwa kwenye browser hii; haipandishwi kwenye cloud mpaka file-storage integration ijengwe.</div>
-        <div class="card"><div id="allProjects" class="project-list"></div></div>
-        <div style="margin-top:13px"><button class="btn btn-small" id="refreshProjects">↻ Sasisha Orodha</button></div>
-      </section>
-
-      <!-- EDITOR -->
-      <section class="view" id="view-editor">
-        <div class="section-head" style="margin-top:0">
-          <div><h2>Code Editor</h2><p>Andika HTML, CSS na JavaScript na ujaribu matokeo yake.</p></div>
-          <div class="project-actions">
-            <button class="btn btn-small" id="saveLocalCode">Hifadhi Code</button>
-            <button class="btn btn-primary btn-small" id="runCode">▷ Run Preview</button>
-          </div>
-        </div>
-        <div class="notice notice-info">Code inayoonekana hapa inahifadhiwa kwenye browser yako. Usihifadhi secret keys, nywila au taarifa binafsi ndani ya code ya frontend.</div>
-        <div class="field">
-          <label for="editorProject">Project ya kuhariri</label>
-          <select class="select" id="editorProject"><option value="">Chagua project...</option></select>
-        </div>
-        <div class="editor-layout">
-          <div class="editor-box">
-            <div class="editor-bar"><span>index.html</span><span id="codeSize">0 bytes</span></div>
-            <textarea id="codeEditor" class="code" spellcheck="false" aria-label="HTML code editor"></textarea>
-          </div>
-          <div class="editor-box">
-            <div class="preview-head"><strong>Live Preview</strong><span>Local browser preview</span></div>
-            <iframe id="previewFrame" class="preview-frame" title="HTML preview" sandbox="allow-scripts"></iframe>
-          </div>
-        </div>
-        <div class="notice notice-warning">Preview ni kwa majaribio kwenye browser. Hii si deployment ya public na haitoi URL ya hosting.</div>
-      </section>
-
-      <!-- PREVIEW -->
-      <section class="view" id="view-preview">
-        <div class="section-head" style="margin-top:0">
-          <div><h2>Live Preview</h2><p>Jaribu HTML ya project uliyochagua.</p></div>
-          <button class="btn btn-primary" id="refreshPreview">↻ Run Tena</button>
-        </div>
-        <div class="card" style="padding:0;overflow:hidden">
-          <div class="preview-head"><strong id="previewProjectName">Preview ya Project</strong><span>Local • Si public deployment</span></div>
-          <iframe id="largePreviewFrame" class="preview-frame" style="height:65vh;min-height:400px" title="Project preview" sandbox="allow-scripts"></iframe>
-        </div>
-      </section>
-
-      <!-- HOSTING -->
-      <section class="view" id="view-hosting">
-        <div class="section-head" style="margin-top:0"><div><h2>Hosting & Deployment</h2><p>Usimamizi wa hatua za kuchapisha project.</p></div></div>
-        <div class="notice notice-warning">Deployment haijathibitishwa kuwa imeunganishwa kwenye backend ya sasa. Usilipe kupitia ukurasa huu mpaka payment gateway na deployment engine ziunganishwe na kujaribiwa.</div>
-        <div class="grid feature-grid">
-          <div class="card feature"><div class="feature-icon">▣</div><h3>Static Website</h3><p>Hosting ya mafaili ya HTML, CSS, JavaScript na assets inahitaji upload/storage na public file-serving integration.</p><span class="tag">Needs Hosting Engine</span></div>
-          <div class="card feature"><div class="feature-icon">⚙</div><h3>React / Build</h3><p>React inahitaji build process na njia ya kuchapisha output yake.</p><span class="tag">Needs Build Runner</span></div>
-          <div class="card feature"><div class="feature-icon">▤</div><h3>Node.js Apps</h3><p>Node.js services zinahitaji runtime na miundombinu ya kuziendesha.</p><span class="tag">Needs App Runtime</span></div>
-        </div>
-        <div class="section-head"><div><h2>Chagua Project</h2><p>Angalia metadata ya project kabla ya deployment.</p></div></div>
-        <div class="card">
-          <div class="field"><label for="deployProject">Project</label><select id="deployProject" class="select"><option value="">Chagua project...</option></select></div>
-          <div class="field"><label for="deployPlan">Kifurushi unachopanga kutumia</label>
-            <select id="deployPlan" class="select">
-              <option value="static">Static Website Hosting</option>
-              <option value="react">React App Hosting</option>
-              <option value="node">Node.js App Hosting</option>
-            </select>
-          </div>
-          <div id="deployInfo" class="notice notice-info">Gharama halisi itaonyeshwa baada ya kuweka pricing na billing API ya backend. Hakuna malipo yatakayodaiwa na ukurasa huu.</div>
-          <button class="btn btn-primary" id="deployRequest">Angalia Deployment API</button>
-        </div>
-      </section>
-
-      <!-- DOMAINS -->
-      <section class="view" id="view-domains">
-        <div class="section-head" style="margin-top:0"><div><h2>Domains</h2><p>Tafuta jina la domain unalotaka kwa app yako.</p></div></div>
-        <div class="card">
-          <div class="field"><label for="domainInput">Jina la domain</label>
-            <div class="domain-search"><input id="domainInput" class="input" placeholder="mfano biashara.com" autocomplete="off"><button id="checkDomain" class="btn btn-primary">Tafuta</button></div>
-          </div>
-          <div class="notice notice-info">Matokeo ya RDAP ni taarifa za uchunguzi tu. Upatikanaji wa mwisho na ununuzi lazima uthibitishwe na registrar. LucasNode bado inahitaji registrar integration ili kununua domain moja kwa moja.</div>
-          <div id="domainResults" class="domain-results"></div>
-        </div>
-        <div class="section-head"><div><h2>Hatua za Domain</h2><p>Baada ya registrar kuunganishwa.</p></div></div>
-        <div class="grid feature-grid">
-          <div class="card feature"><div class="feature-icon">1</div><h3>Search</h3><p>Chunguza jina na taarifa za domain.</p></div>
-          <div class="card feature"><div class="feature-icon">2</div><h3>Register</h3><p>Lipa kupitia registrar aliyethibitishwa.</p></div>
-          <div class="card feature"><div class="feature-icon">3</div><h3>Connect</h3><p>Sanidi DNS, SSL na uunganishaji wa app.</p></div>
-        </div>
-      </section>
-
-      <!-- BILLING -->
-      <section class="view" id="view-billing">
-        <div class="section-head" style="margin-top:0"><div><h2>Billing & Payments</h2><p>Muundo wa sehemu ya malipo ya LucasNode.</p></div></div>
-        <div class="notice notice-warning">Hakuna malipo yatakayochukuliwa kupitia ukurasa huu. Payment gateway haipaswi kuwekewa alama ya malipo yaliyofanikiwa bila uthibitisho wa backend.</div>
-        <div class="grid feature-grid">
-          <div class="card feature"><div class="feature-icon">◇</div><h3>Mobile Money</h3><p>Mpango wa kuunganisha njia zinazoungwa mkono na payment gateway.</p></div>
-          <div class="card feature"><div class="feature-icon">▤</div><h3>Invoices</h3><p>Risiti na invoices zitahitaji rekodi za malipo zinazohifadhiwa kwenye backend.</p></div>
-          <div class="card feature"><div class="feature-icon">✓</div><h3>Payment Verification</h3><p>Webhook salama ndiyo itakayothibitisha malipo kabla ya deployment.</p></div>
-        </div>
-      </section>
-
-      <!-- SETTINGS -->
-      <section class="view" id="view-settings">
-        <div class="section-head" style="margin-top:0"><div><h2>Settings</h2><p>Mipangilio ya workspace hii.</p></div></div>
-        <div class="card">
-          <div class="field"><label for="apiBase">LucasNode API Base URL</label><input class="input" id="apiBase" value="https://api.lucasnode.com" spellcheck="false"></div>
-          <div class="notice notice-warning">Badilisha API URL ikiwa una sababu ya kiufundi. Usibandike service-role keys, passwords au secrets hapa. Mipangilio hii huhifadhiwa kwenye browser hii tu.</div>
-          <button class="btn btn-primary" id="saveSettings">Hifadhi Mipangilio</button>
-          <button class="btn" id="testApi" style="margin-left:6px">Jaribu API</button>
-        </div>
-        <div class="section-head"><div><h2>System Information</h2></div></div>
-        <div class="card">
-          <p><strong>Frontend:</strong> <span class="muted">LucasNode HTML workspace</span></p>
-          <p><strong>Projects API:</strong> <code>/api/v1/projects</code></p>
-          <p><strong>Health API:</strong> <code>/api/v1/health</code></p>
-          <p><strong>Code storage:</strong> <span class="muted">Browser localStorage kwa preview ya sasa</span></p>
-          <p><strong>Public deployment:</strong> <span class="muted">Inahitaji deployment engine</span></p>
-        </div>
-      </section>
-
-      <div class="footer"><span>LucasNode — App Builder & Cloud Platform</span><span>Build responsibly. Deploy securely.</span></div>
-    </div>
-  </main>
-</div>
-
-<!-- CREATE PROJECT MODAL -->
-<div class="modal-backdrop" id="projectModal" role="dialog" aria-modal="true" aria-labelledby="projectModalTitle">
-  <div class="modal">
-    <div class="modal-head"><h2 id="projectModalTitle">Tengeneza Project Mpya</h2><button class="close-btn" data-close-modal="projectModal" aria-label="Funga">×</button></div>
-    <form id="projectForm">
-      <div class="field"><label for="projectName">Jina la project *</label><input id="projectName" class="input" required maxlength="70" placeholder="Mfano: Biashara Yangu"></div>
-      <div class="field"><label for="projectType">Teknolojia</label>
-        <select id="projectType" class="select">
-          <option value="Static Website">Static Website (HTML)</option>
-          <option value="HTML / CSS / JS">HTML / CSS / JavaScript</option>
-          <option value="React">React</option>
-          <option value="Node.js">Node.js</option>
-        </select>
-      </div>
-      <div class="field"><label for="projectDescription">Maelezo mafupi (si lazima)</label><textarea id="projectDescription" class="textarea" maxlength="500" placeholder="Eleza lengo la project. Usiweke code hapa."></textarea></div>
-      <div class="notice notice-info">Project metadata itahifadhiwa kupitia API. Code ya HTML itahifadhiwa tofauti kwa majaribio kwenye browser hii.</div>
-      <div class="modal-actions"><button type="button" class="btn" data-close-modal="projectModal">Ghairi</button><button class="btn btn-primary" id="createProjectSubmit" type="submit">Tengeneza Project</button></div>
-    </form>
-  </div>
-</div>
-
-<!-- AI BUILDER MODAL -->
-<div class="modal-backdrop" id="aiModal" role="dialog" aria-modal="true" aria-labelledby="aiModalTitle">
-  <div class="modal">
-    <div class="modal-head"><h2 id="aiModalTitle">AI App Builder</h2><button class="close-btn" data-close-modal="aiModal" aria-label="Funga">×</button></div>
-    <div class="notice notice-warning">AI generation bado inahitaji backend route, AI provider na usimamizi salama wa API key. Form hii haitadai kuwa imetengeneza app bila huduma hiyo.</div>
-    <div class="field"><label for="aiPrompt">Eleza app unayotaka</label><textarea id="aiPrompt" class="textarea" style="min-height:150px" placeholder="Mfano: Nataka website ya duka yenye bidhaa na mawasiliano..."></textarea></div>
-    <div class="modal-actions"><button class="btn" data-close-modal="aiModal">Funga</button><button class="btn btn-primary" id="aiRequest">Angalia AI API</button></div>
-  </div>
-</div>
-
-<div class="toast-wrap" id="toastWrap" aria-live="polite"></div>
-
-<script>
-"use strict";
-
-/*
- * LucasNode Frontend
- * Existing API integration:
- *   GET  /api/v1/health
- *   GET  /api/v1/projects
- *   POST /api/v1/projects
- *
- * Public deployment, registrar purchases, payment processing and AI generation
- * are intentionally not simulated. They need authenticated backend integrations.
- */
-
-const DEFAULT_API = "https://api.lucasnode.com";
-const API_SETTING_KEY = "lucasnode_api_base";
-const CODE_KEY_PREFIX = "lucasnode_preview_code_";
-const SELECTED_KEY = "lucasnode_selected_project";
-
-const DEFAULT_HTML = `<!DOCTYPE html>
-<html lang="sw">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Project Yangu</title>
-<style>
-  * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    min-height: 100vh;
-    display: grid;
-    place-items: center;
-    padding: 24px;
-    font-family: Arial, sans-serif;
-    color: #18243a;
-    background: linear-gradient(135deg, #eef4ff, #dff8f1);
-  }
-  .box {
-    max-width: 560px;
-    padding: 38px;
-    border-radius: 22px;
-    background: white;
-    box-shadow: 0 20px 70px #263d641b;
-    text-align: center;
-  }
-  h1 { color: #315de8; }
-  p { line-height: 1.8; color: #53627b; }
-  button {
-    padding: 12px 20px; border: 0; border-radius: 10px;
-    background: #315de8; color: white; cursor: pointer;
-  }
-</style>
-</head>
-<body>
-  <main class="box">
-    <h1>Karibu LucasNode!</h1>
-    <p>Hii ni project yako ya kwanza. Badilisha HTML, CSS na JavaScript kisha bonyeza Run Preview.</p>
-    <button onclick="document.getElementById('result').textContent='JavaScript inafanya kazi!'">
-      Jaribu JavaScript
-    </button>
-    <p id="result" aria-live="polite"></p>
-  </main>
-</body>
-</html>`;
-
-const state = {
-  projects: [],
-  selectedId: "",
-  apiAvailable: false,
-  loadingProjects: false,
-  codeDirty: false
-};
-
-const $ = (selector) => document.querySelector(selector);
-const $$ = (selector) => [...document.querySelectorAll(selector)];
-
-function escapeHtml(value) {
-  return String(value ?? "").replace(/[&<>"']/g, (char) => ({
-    "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
-  })[char]);
+:root {
+  --navy:#0b1739;
+  --navy2:#142751;
+  --green:#10b981;
+  --green2:#059669;
+  --blue:#3b82f6;
+  --gold:#fbbf24;
+  --bg:#f5f7fb;
+  --white:#ffffff;
+  --text:#15213b;
+  --muted:#75819a;
+  --border:#e6eaf2;
+  --shadow:0 15px 45px rgba(15,35,75,.09);
+  --radius:18px;
 }
 
-function getApiBase() {
-  const saved = localStorage.getItem(API_SETTING_KEY);
-  return (saved || DEFAULT_API).trim().replace(/\/+$/, "");
+* {
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
 }
 
-async function apiRequest(path, options = {}) {
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 12000);
-  try {
-    const response = await fetch(getApiBase() + path, {
-      ...options,
-      signal: controller.signal,
-      headers: {
-        "Accept": "application/json",
-        ...(options.body ? {"Content-Type":"application/json"} : {}),
-        ...(options.headers || {})
-      }
-    });
-    const text = await response.text();
-    let data = {};
-    try { data = text ? JSON.parse(text) : {}; }
-    catch { data = {raw:text}; }
-    if (!response.ok) {
-      throw new Error(data.error || data.message || `HTTP ${response.status}`);
-    }
-    return data;
-  } finally {
-    clearTimeout(timeout);
-  }
+html {
+  scroll-behavior:smooth;
+  scroll-padding-top:90px;
 }
 
-function toast(message, type = "") {
-  const item = document.createElement("div");
-  item.className = "toast " + type;
-  item.textContent = message;
-  $("#toastWrap").appendChild(item);
-  setTimeout(() => item.remove(), 4500);
+body {
+  font-family:'Inter',sans-serif;
+  color:var(--text);
+  background:#fff;
+  line-height:1.65;
+  overflow-x:hidden;
 }
 
-function setApiStatus(ok, message) {
-  state.apiAvailable = ok;
-  $("#apiDot").className = "dot " + (ok ? "ok" : "bad");
-  $("#apiLabel").textContent = message;
-  $("#statApi").textContent = ok ? "Online" : "Offline";
-  $("#statApi").style.color = ok ? "var(--green)" : "var(--red)";
+button,input,textarea,select {
+  font:inherit;
 }
 
-function showView(name) {
-  const valid = ["dashboard","projects","editor","preview","hosting","domains","billing","settings"];
-  if (!valid.includes(name)) name = "dashboard";
-  $$(".view").forEach(el => el.classList.toggle("active", el.id === "view-" + name));
-  $$(".nav-btn[data-view]").forEach(btn => btn.classList.toggle("active", btn.dataset.view === name));
-  const titles = {
-    dashboard:"/ Dashboard", projects:"/ Projects", editor:"/ Code Editor",
-    preview:"/ Live Preview", hosting:"/ Hosting & Deploy", domains:"/ Domains",
-    billing:"/ Billing & Payments", settings:"/ Settings"
-  };
-  $("#pageTitle").textContent = titles[name];
-  $("#sidebar").classList.remove("open");
-  if (name === "editor") syncEditorSelection();
-  if (name === "preview") renderLargePreview();
-  if (name === "projects" || name === "dashboard") renderProjects();
+button,a {
+  -webkit-tap-highlight-color:transparent;
 }
 
-function openModal(id) {
-  $("#" + id).classList.add("open");
-}
-function closeModal(id) {
-  $("#" + id).classList.remove("open");
+button {
+  cursor:pointer;
 }
 
-function makeSlug(name) {
-  const base = String(name || "project")
-    .normalize("NFKD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "")
-    .slice(0,35) || "project";
-  return base + "-" + Math.random().toString(36).slice(2,8);
+a {
+  color:inherit;
+  text-decoration:none;
 }
 
-function getProjectCode(projectId) {
-  if (!projectId) return DEFAULT_HTML;
-  try {
-    return localStorage.getItem(CODE_KEY_PREFIX + projectId) || DEFAULT_HTML;
-  } catch {
-    return DEFAULT_HTML;
-  }
+.container {
+  width:min(1160px,92%);
+  margin:auto;
 }
 
-function storeProjectCode(projectId, code) {
-  if (!projectId) {
-    toast("Chagua project kwanza.", "error");
-    return false;
-  }
-  try {
-    localStorage.setItem(CODE_KEY_PREFIX + projectId, code);
-    state.codeDirty = false;
-    toast("Code imehifadhiwa kwenye browser hii.", "success");
-    return true;
-  } catch {
-    toast("Browser imeshindwa kuhifadhi code. Angalia nafasi ya storage.", "error");
-    return false;
-  }
+section {
+  padding:90px 0;
 }
 
-function selectedProject() {
-  return state.projects.find(project => String(project.id) === String(state.selectedId)) || null;
+.section-heading {
+  max-width:720px;
+  margin:0 auto 45px;
+  text-align:center;
 }
 
-function chooseProject(id, updateEditor = true) {
-  state.selectedId = String(id || "");
-  if (state.selectedId) localStorage.setItem(SELECTED_KEY, state.selectedId);
-  else localStorage.removeItem(SELECTED_KEY);
-
-  populateProjectSelects();
-  if (updateEditor) syncEditorSelection();
-  renderLargePreview();
-  renderProjects();
+.section-heading .eyebrow {
+  margin-bottom:12px;
 }
 
-function projectStatus(project) {
-  const raw = String(project.status || "draft").toLowerCase();
-  if (raw === "live" || raw === "deployed" || raw === "published") {
-    return {label:"LIVE", className:"status-live"};
-  }
-  if (raw === "building" || raw === "deploying") {
-    return {label:"BUILDING", className:"status-building"};
-  }
-  if (raw === "error" || raw === "failed") {
-    return {label:"ERROR", className:"status-error"};
-  }
-  return {label:"DRAFT", className:"status-draft"};
+.eyebrow {
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  color:var(--green2);
+  background:#eafbf4;
+  border:1px solid #d2f6e5;
+  padding:7px 13px;
+  border-radius:30px;
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:.5px;
+  text-transform:uppercase;
 }
 
-function projectIcon(project) {
-  const type = String(project.framework || "").toLowerCase();
-  if (type.includes("react")) return "⚛";
-  if (type.includes("node")) return "⬡";
-  if (type.includes("html") || type.includes("static")) return "🌐";
-  return "▤";
+.section-heading h2 {
+  font-size:clamp(28px,4vw,43px);
+  line-height:1.2;
+  letter-spacing:-1.4px;
+  color:var(--navy);
+  margin:15px 0;
 }
 
-function projectCard(project) {
-  const status = projectStatus(project);
-  const created = project.created_at
-    ? new Date(project.created_at).toLocaleDateString("sw-TZ")
-    : "Tarehe haipo";
-  return `
-    <div class="project">
-      <div class="project-icon">${projectIcon(project)}</div>
-      <div class="project-info">
-        <strong>${escapeHtml(project.name || "Project isiyo na jina")}</strong>
-        <small>${escapeHtml(project.framework || "Technology haijatajwa")} · ${escapeHtml(created)}</small>
-        <small>${escapeHtml(project.slug || "")}</small>
-        <div style="margin-top:7px"><span class="status ${status.className}">${status.label}</span></div>
-      </div>
-      <div class="project-actions">
-        <button class="btn btn-small" data-action="open-editor" data-id="${escapeHtml(project.id)}">Code / Preview</button>
-        <button class="btn btn-small" data-action="deploy" data-id="${escapeHtml(project.id)}">Deploy</button>
-      </div>
-    </div>`;
+.section-heading p {
+  color:var(--muted);
+  font-size:15px;
 }
 
-function renderProjects() {
-  const dashboard = $("#dashboardProjects");
-  const all = $("#allProjects");
-  const list = state.projects;
-
-  $("#statProjects").textContent = String(list.length);
-  $("#statDrafts").textContent = String(list.filter(p => projectStatus(p).label === "DRAFT").length);
-  $("#statLive").textContent = String(list.filter(p => projectStatus(p).label === "LIVE").length);
-
-  if (!list.length) {
-    const empty = `<div class="empty"><div class="empty-icon">▤</div><strong>Hakuna project iliyopatikana</strong><p>Unda project mpya ili uanze.</p><button class="btn btn-primary" data-action="new-project">＋ Project Mpya</button></div>`;
-    dashboard.innerHTML = empty;
-    all.innerHTML = empty;
-    return;
-  }
-
-  dashboard.innerHTML = list.slice(0,4).map(projectCard).join("");
-  all.innerHTML = list.map(projectCard).join("");
+.btn {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  padding:13px 20px;
+  border-radius:12px;
+  border:1px solid transparent;
+  font-weight:750;
+  font-size:14px;
+  transition:.25s;
+  cursor:pointer;
 }
 
-function populateProjectSelects() {
-  const selects = ["#editorProject","#deployProject"];
-  for (const selector of selects) {
-    const select = $(selector);
-    if (!select) continue;
-    const current = state.selectedId;
-    select.innerHTML = `<option value="">Chagua project...</option>` +
-      state.projects.map(p => `<option value="${escapeHtml(p.id)}">${escapeHtml(p.name || p.slug || p.id)}</option>`).join("");
-    select.value = state.projects.some(p => String(p.id) === current) ? current : "";
-  }
+.btn:hover {
+  transform:translateY(-2px);
 }
 
-async function loadProjects() {
-  if (state.loadingProjects) return;
-  state.loadingProjects = true;
-  $("#dashboardProjects").innerHTML = `<div class="empty">Inapakia projects...</div>`;
-  try {
-    const data = await apiRequest("/api/v1/projects");
-    let list = Array.isArray(data) ? data : (data.projects || data.data || []);
-    if (!Array.isArray(list)) list = [];
-    state.projects = list;
-
-    const previous = localStorage.getItem(SELECTED_KEY);
-    if (previous && list.some(p => String(p.id) === previous)) {
-      state.selectedId = previous;
-    } else if (!list.some(p => String(p.id) === state.selectedId)) {
-      state.selectedId = list.length ? String(list[0].id) : "";
-    }
-
-    populateProjectSelects();
-    renderProjects();
-    syncEditorSelection();
-    setApiStatus(true, "API imeunganishwa");
-  } catch (error) {
-    setApiStatus(false, "API haipatikani");
-    $("#dashboardProjects").innerHTML = `<div class="empty"><div class="empty-icon">⌁</div><strong>Imeshindwa kupata projects kutoka API</strong><p>${escapeHtml(error.message)}</p><button class="btn btn-small" data-action="retry-projects">Jaribu tena</button></div>`;
-    $("#allProjects").innerHTML = `<div class="empty">Orodha ya projects haipatikani mpaka API ijibu.</div>`;
-    toast("Imeshindwa kupakia projects. Angalia API na CORS.", "error");
-  } finally {
-    state.loadingProjects = false;
-  }
+.btn-primary {
+  color:#fff;
+  background:linear-gradient(135deg,var(--green),var(--green2));
+  box-shadow:0 8px 22px rgba(16,185,129,.2);
 }
 
-async function checkHealth() {
-  try {
-    await apiRequest("/api/v1/health");
-    setApiStatus(true, "API imeunganishwa");
-    return true;
-  } catch (error) {
-    setApiStatus(false, "API haipatikani");
-    return false;
-  }
+.btn-primary:hover {
+  box-shadow:0 12px 28px rgba(16,185,129,.3);
 }
 
-async function createProject(event) {
-  event.preventDefault();
-  const name = $("#projectName").value.trim();
-  const framework = $("#projectType").value;
-  const description = $("#projectDescription").value.trim();
-  if (!name) {
-    toast("Weka jina la project.", "error");
-    return;
-  }
-
-  const button = $("#createProjectSubmit");
-  button.disabled = true;
-  button.textContent = "Inaunda...";
-
-  try {
-    const body = {
-      name,
-      slug: makeSlug(name),
-      framework,
-      description,
-      status: "draft"
-    };
-    const data = await apiRequest("/api/v1/projects", {
-      method:"POST",
-      body:JSON.stringify(body)
-    });
-
-    const created = data.project || data.data || data;
-    if (!created || !created.id) {
-      await loadProjects();
-      closeModal("projectModal");
-      $("#projectForm").reset();
-      toast("Ombi limetumwa. Hakikisha project ipo kwenye orodha.", "success");
-      return;
-    }
-
-    state.projects.unshift(created);
-    state.selectedId = String(created.id);
-    localStorage.setItem(SELECTED_KEY, state.selectedId);
-    storeProjectCode(created.id, DEFAULT_HTML);
-    closeModal("projectModal");
-    $("#projectForm").reset();
-    populateProjectSelects();
-    renderProjects();
-    syncEditorSelection();
-    showView("editor");
-    toast("Project imeundwa. Anza kuhariri code yake.", "success");
-  } catch (error) {
-    toast("Project haikuundwa: " + error.message, "error");
-  } finally {
-    button.disabled = false;
-    button.textContent = "Tengeneza Project";
-  }
+.btn-outline {
+  color:var(--navy);
+  border-color:var(--border);
+  background:#fff;
 }
 
-function syncEditorSelection() {
-  const select = $("#editorProject");
-  if (!select) return;
-  select.value = state.selectedId || "";
-  const project = selectedProject();
-  if (!project) {
-    $("#codeEditor").value = DEFAULT_HTML;
-    $("#previewProjectName").textContent = "Preview ya Project";
-    updateCodeSize();
-    renderCodePreview();
-    return;
-  }
-  $("#codeEditor").value = getProjectCode(project.id);
-  $("#previewProjectName").textContent = project.name || "Project Preview";
-  state.codeDirty = false;
-  updateCodeSize();
-  renderCodePreview();
+.btn-outline:hover {
+  border-color:var(--green);
+  color:var(--green2);
 }
 
-function updateCodeSize() {
-  const code = $("#codeEditor").value || "";
-  $("#codeSize").textContent = new TextEncoder().encode(code).length + " bytes";
+.btn-dark {
+  color:#fff;
+  background:var(--navy);
 }
 
-function renderCodePreview() {
-  const code = $("#codeEditor").value || "";
-  // The sandbox intentionally excludes allow-same-origin.
-  $("#previewFrame").srcdoc = code;
+.btn-small {
+  padding:9px 13px;
+  font-size:12px;
+  border-radius:9px;
 }
 
-function renderLargePreview() {
-  const project = selectedProject();
-  $("#previewProjectName").textContent = project ? (project.name || "Project Preview") : "Preview ya Project";
-  $("#largePreviewFrame").srcdoc = project ? getProjectCode(project.id) : DEFAULT_HTML;
+.muted {
+  color:var(--muted);
 }
 
-function runPreview() {
-  renderCodePreview();
-  renderLargePreview();
-  toast("Preview imehuishwa kwenye browser hii.", "success");
+.topbar {
+  background:var(--navy);
+  color:#fff;
+  text-align:center;
+  padding:8px 12px;
+  font-size:12px;
 }
 
-function handleProjectAction(action, id) {
-  if (action === "new-project") {
-    openModal("projectModal");
-    return;
-  }
-  if (action === "retry-projects") {
-    loadProjects();
-    return;
-  }
-  const project = state.projects.find(p => String(p.id) === String(id));
-  if (!project) {
-    toast("Project haipatikani kwenye orodha.", "error");
-    return;
-  }
-  chooseProject(project.id);
-  if (action === "open-editor") {
-    showView("editor");
-  } else if (action === "deploy") {
-    showView("hosting");
-    $("#deployProject").value = String(project.id);
-    toast("Deployment halisi inahitaji backend deployment engine na uthibitisho wa malipo.", "error");
-  }
+.topbar strong {
+  color:#6ee7b7;
 }
 
-async function searchDomain() {
-  const input = $("#domainInput");
-  const domain = input.value.trim().toLowerCase();
-  const result = $("#domainResults");
-
-  if (!domain || !/^(?=.{1,253}$)([a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}$/.test(domain)) {
-    toast("Weka domain sahihi, mfano biashara.com.", "error");
-    return;
-  }
-
-  result.innerHTML = `<div class="notice notice-info">Inatafuta taarifa za RDAP za ${escapeHtml(domain)}...</div>`;
-  $("#checkDomain").disabled = true;
-
-  try {
-    const response = await fetch("https://rdap.org/domain/" + encodeURIComponent(domain), {
-      headers: {"Accept":"application/rdap+json, application/json"},
-      signal: AbortSignal.timeout(10000)
-    });
-
-    if (response.status === 404) {
-      result.innerHTML = `
-        <div class="domain-row">
-          <div><strong>${escapeHtml(domain)}</strong><small>RDAP haikupata rekodi ya domain hii. Hii si uthibitisho wa mwisho wa upatikanaji.</small></div>
-          <span class="status status-draft">Haijathibitishwa</span>
-        </div>
-        <div class="notice notice-warning">Hakuna ununuzi uliofanyika. Thibitisha kupitia registrar wa domain husika.</div>`;
-    } else if (response.ok) {
-      const info = await response.json();
-      const events = Array.isArray(info.events) ? info.events : [];
-      const expiration = events.find(e => e.eventAction === "expiration")?.eventDate;
-      result.innerHTML = `
-        <div class="domain-row">
-          <div><strong>${escapeHtml(info.ldhName || domain)}</strong><small>RDAP imepata rekodi ya domain.</small>${expiration ? `<small>Expiration: ${escapeHtml(expiration)}</small>` : ""}</div>
-          <span class="status status-live">Ina rekodi</span>
-        </div>
-        <div class="notice notice-info">Domain yenye rekodi mara nyingi tayari imesajiliwa. RDAP haiwezi kununua domain; usajili unahitaji registrar integration.</div>`;
-    } else {
-      result.innerHTML = `<div class="notice notice-warning">RDAP imerudisha HTTP ${response.status}. Hatuwezi kuthibitisha upatikanaji wa domain hii.</div>`;
-    }
-  } catch (error) {
-    result.innerHTML = `<div class="notice notice-warning">RDAP haikujibu au browser imezuia ombi. Jaribu tena baadaye au tumia registrar kuthibitisha domain.</div>`;
-  } finally {
-    $("#checkDomain").disabled = false;
-  }
+.navbar {
+  position:sticky;
+  top:0;
+  z-index:1000;
+  background:rgba(255,255,255,.95);
+  backdrop-filter:blur(15px);
+  border-bottom:1px solid rgba(230,234,242,.9);
 }
 
-async function checkBackendFeature(path, featureName) {
-  try {
-    const data = await apiRequest(path);
-    toast(featureName + ": backend imejibu ombi. Hii peke yake haithibitishi kuwa operesheni imekamilika.", "success");
-    console.info("LucasNode feature response", featureName, data);
-  } catch (error) {
-    toast(featureName + " haipatikani kwenye backend ya sasa: " + error.message, "error");
-  }
+.nav-inner {
+  min-height:76px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:25px;
 }
 
-function saveSettings() {
-  let value = $("#apiBase").value.trim().replace(/\/+$/, "");
-  try {
-    const parsed = new URL(value);
-    if (!["https:","http:"].includes(parsed.protocol)) throw new Error("URL si sahihi");
-    if (parsed.protocol === "http:" && parsed.hostname !== "localhost") {
-      throw new Error("Tumia HTTPS kwa API ya production.");
-    }
-    localStorage.setItem(API_SETTING_KEY, value);
-    toast("API URL imehifadhiwa kwenye browser hii.", "success");
-    checkHealth().then(ok => { if (ok) loadProjects(); });
-  } catch (error) {
-    toast("API URL si sahihi. Tumia URL kamili ya HTTPS.", "error");
-  }
+.brand {
+  display:inline-flex;
+  align-items:center;
+  gap:11px;
+  flex-shrink:0;
 }
 
-function loadSettings() {
-  $("#apiBase").value = getApiBase();
+.brand-icon {
+  display:grid;
+  place-items:center;
+  width:43px;
+  height:43px;
+  color:#fff;
+  border-radius:13px;
+  font-size:23px;
+  font-weight:900;
+  background:linear-gradient(135deg,#34d399,#059669);
+  box-shadow:0 7px 18px rgba(16,185,129,.25);
 }
 
-function installEvents() {
-  document.addEventListener("click", event => {
-    const viewButton = event.target.closest("[data-view]");
-    if (viewButton) {
-      showView(viewButton.dataset.view);
-      return;
-    }
-
-    const close = event.target.closest("[data-close-modal]");
-    if (close) {
-      closeModal(close.dataset.closeModal);
-      return;
-    }
-
-    const actionButton = event.target.closest("[data-action]");
-    if (actionButton) {
-      handleProjectAction(actionButton.dataset.action, actionButton.dataset.id);
-    }
-  });
-
-  $$(".modal-backdrop").forEach(backdrop => {
-    backdrop.addEventListener("click", event => {
-      if (event.target === backdrop) closeModal(backdrop.id);
-    });
-  });
-
-  document.addEventListener("keydown", event => {
-    if (event.key === "Escape") $$(".modal-backdrop.open").forEach(m => closeModal(m.id));
-    if ((event.ctrlKey || event.metaKey) && event.key === "Enter" && $("#view-editor").classList.contains("active")) {
-      runPreview();
-    }
-  });
-
-  $("#menuToggle").addEventListener("click", () => $("#sidebar").classList.toggle("open"));
-  $("#newProjectHero").addEventListener("click", () => openModal("projectModal"));
-  $("#newProjectBtn").addEventListener("click", () => openModal("projectModal"));
-  $("#projectForm").addEventListener("submit", createProject);
-  $("#refreshProjects").addEventListener("click", loadProjects);
-
-  $("#editorProject").addEventListener("change", event => {
-    if (state.codeDirty && !confirm("Una mabadiliko ambayo hayajahifadhiwa. Endelea kubadilisha project?")) {
-      event.target.value = state.selectedId;
-      return;
-    }
-    chooseProject(event.target.value, true);
-  });
-
-  $("#codeEditor").addEventListener("input", () => {
-    state.codeDirty = true;
-    updateCodeSize();
-  });
-
-  $("#saveLocalCode").addEventListener("click", () => {
-    if (storeProjectCode(state.selectedId, $("#codeEditor").value)) {
-      state.codeDirty = false;
-    }
-  });
-
-  $("#runCode").addEventListener("click", runPreview);
-  $("#refreshPreview").addEventListener("click", renderLargePreview);
-
-  $("#checkDomain").addEventListener("click", searchDomain);
-  $("#domainInput").addEventListener("keydown", event => {
-    if (event.key === "Enter") searchDomain();
-  });
-
-  $("#saveSettings").addEventListener("click", saveSettings);
-  $("#testApi").addEventListener("click", async () => {
-    const ok = await checkHealth();
-    if (ok) {
-      toast("Health endpoint imejibu.", "success");
-      await loadProjects();
-    } else {
-      toast("API haijajibu. Angalia Worker na CORS settings.", "error");
-    }
-  });
-
-  $("#deployRequest").addEventListener("click", () => {
-    const id = $("#deployProject").value;
-    if (!id) {
-      toast("Chagua project kwanza.", "error");
-      return;
-    }
-    toast("Deployment haijaanzishwa. Backend lazima iwe na build/deployment engine, pricing na payment verification.", "error");
-  });
-
-  $("#aiRequest").addEventListener("click", async () => {
-    const prompt = $("#aiPrompt").value.trim();
-    if (prompt.length < 10) {
-      toast("Eleza app unayotaka kwa maelezo zaidi.", "error");
-      return;
-    }
-    // Do not call a made-up route or pretend AI generated code.
-    toast("AI generation inahitaji endpoint ya backend na AI provider. Bado haijatekelezwa.", "error");
-  });
+.brand-name {
+  color:var(--navy);
+  font-size:23px;
+  font-weight:900;
+  letter-spacing:-1px;
 }
 
-function init() {
-  $("#year").textContent = new Date().getFullYear();
-  loadSettings();
-  installEvents();
-  $("#codeEditor").value = DEFAULT_HTML;
-  updateCodeSize();
-  renderCodePreview();
-  renderLargePreview();
-  checkHealth().then(ok => {
-    if (ok) loadProjects();
-  });
+.brand-name span {
+  color:var(--green2);
 }
 
-init();
-</script>
-</body>
-  </html>
+.nav-links {
+  display:flex;
+  align-items:center;
+  gap:23px;
+}
+
+.nav-links a {
+  font-size:13px;
+  font-weight:650;
+  color:#5c6881;
+  transition:.2s;
+}
+
+.nav-links a:hover {
+  color:var(--green2);
+}
+
+.nav-actions {
+  display:flex;
+  align-items:center;
+  gap:9px;
+}
+
+.menu-toggle {
+  display:none;
+  width:43px;
+  height:43px;
+  border:1px solid var(--border);
+  background:#fff;
+  color:var(--navy);
+  border-radius:11px;
+  font-size:20px;
+}
+
+.hero {
+  padding:75px 0 80px;
+  background:
+    radial-gradient(circle at 85% 20%,rgba(16,185,129,.11),transparent 28%),
+    radial-gradient(circle at 5% 75%,rgba(59,130,246,.07),transparent 28%),
+    linear-gradient(180deg,#fff,#fbfcff);
+}
+
+.hero-grid {
+  display:grid;
+  grid-template-columns:1.03fr .97fr;
+  align-items:center;
+  gap:55px;
+}
+
+.hero h1 {
+  margin:22px 0 20px;
+  max-width:650px;
+  font-size:clamp(36px,5.3vw,62px);
+  line-height:1.09;
+  letter-spacing:-2.5px;
+  color:var(--navy);
+}
+
+.hero h1 span {
+  color:var(--green2);
+}
+
+.hero-copy {
+  max-width:590px;
+  color:var(--muted);
+  font-size:16px;
+  line-height:1.85;
+}
+
+.hero-buttons {
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  margin-top:28px;
+}
+
+.hero-points {
+  display:flex;
+  flex-wrap:wrap;
+  gap:13px 20px;
+  margin-top:25px;
+}
+
+.hero-points span {
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:12px;
+  color:#56637a;
+  font-weight:650;
+}
+
+.hero-points i {
+  color:var(--green2);
+}
+
+.dashboard-shell {
+  position:relative;
+  padding:15px;
+  border:1px solid #e8edf5;
+  background:rgba(255,255,255,.92);
+  border-radius:25px;
+  box-shadow:0 28px 75px rgba(15,35,75,.13);
+}
+
+.dashboard-window {
+  border:1px solid var(--border);
+  border-radius:17px;
+  overflow:hidden;
+  background:#fff;
+}
+
+.window-bar {
+  padding:13px 16px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  background:#fbfcfe;
+  border-bottom:1px solid var(--border);
+}
+
+.window-dots {
+  display:flex;
+  gap:5px;
+}
+
+.window-dots span {
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:#d1d9e6;
+}
+
+.window-dots span:first-child {
+  background:#fb7185;
+}
+
+.window-dots span:nth-child(2) {
+  background:#fbbf24;
+}
+
+.window-dots span:nth-child(3) {
+  background:#34d399;
+}
+
+.window-label {
+  color:var(--muted);
+  font-size:11px;
+  font-weight:700;
+}
+
+.preview-content {
+  padding:20px;
+}
+
+.preview-welcome {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin-bottom:17px;
+}
+
+.preview-welcome h3 {
+  font-size:17px;
+  color:var(--navy);
+}
+
+.preview-welcome p {
+  color:var(--muted);
+  font-size:11px;
+}
+
+.live-pill {
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:5px 9px;
+  color:#047857;
+  background:#e8fbf3;
+  border-radius:20px;
+  font-size:10px;
+  font-weight:800;
+}
+
+.live-pill i {
+  font-size:7px;
+}
+
+.preview-balance {
+  padding:22px;
+  border-radius:17px;
+  color:#fff;
+  background:linear-gradient(135deg,#10244c,#087d66);
+  position:relative;
+  overflow:hidden;
+}
+
+.preview-balance:after {
+  content:"";
+  position:absolute;
+  width:180px;
+  height:180px;
+  border-radius:50%;
+  background:rgba(255,255,255,.06);
+  right:-50px;
+  top:-85px;
+}
+
+.balance-top {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  font-size:11px;
+  color:#d8f7eb;
+}
+
+.balance-value {
+  font-size:27px;
+  font-weight:850;
+  margin:10px 0;
+  letter-spacing:-.6px;
+}
+
+.balance-foot {
+  display:flex;
+  gap:8px;
+  align-items:center;
+  color:#d8f7eb;
+  font-size:10px;
+}
+
+.preview-stats {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin:14px 0;
+}
+
+.preview-stat {
+  padding:13px 10px;
+  border:1px solid var(--border);
+  border-radius:13px;
+}
+
+.preview-stat i {
+  color:var(--green2);
+  margin-bottom:9px;
+}
+
+.preview-stat strong {
+  display:block;
+  color:var(--navy);
+  font-size:17px;
+}
+
+.preview-stat span {
+  color:var(--muted);
+  font-size:10px;
+}
+
+.preview-project-title {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin:20px 0 10px;
+  color:var(--navy);
+  font-weight:800;
+  font-size:12px;
+}
+
+.preview-project {
+  display:flex;
+  align-items:center;
+  gap:11px;
+  padding:12px 0;
+  border-top:1px solid #eef1f6;
+}
+
+.project-symbol {
+  display:grid;
+  place-items:center;
+  width:36px;
+  height:36px;
+  border-radius:10px;
+  color:#047857;
+  background:#e7fbf2;
+}
+
+.preview-project:nth-of-type(2) .project-symbol {
+  color:#2563eb;
+  background:#eaf1ff;
+}
+
+.preview-project:nth-of-type(3) .project-symbol {
+  color:#b45309;
+  background:#fff4dc;
+}
+
+.preview-project-info {
+  flex:1;
+  min-width:0;
+}
+
+.preview-project-info strong {
+  display:block;
+  color:var(--navy);
+  font-size:11px;
+}
+
+.preview-project-info span {
+  display:block;
+  color:var(--muted);
+  font-size:10px;
+}
+
+.floating-note {
+  position:absolute;
+  right:-20px;
+  bottom:55px;
+  padding:13px 15px;
+  border:1px solid #e7f8ef;
+  border-radius:14px;
+  background:#fff;
+  box-shadow:var(--shadow);
+  display:flex;
+  align-items:center;
+  gap:10px;
+  animation:float 4s ease-in-out infinite;
+}
+
+.floating-note .note-icon {
+  width:36px;
+  height:36px;
+  display:grid;
+  place-items:center;
+  border-radius:11px;
+  color:var(--green2);
+  background:#e8fbf3;
+}
+
+.floating-note strong {
+  display:block;
+  font-size:11px;
+  color:var(--navy);
+}
+
+.floating-note span {
+  display:block;
+  font-size:10px;
+  color:var(--muted);
+}
+
+@keyframes float {
+  0%,100% {transform:translateY(0)}
+  50% {transform:translateY(-8px)}
+}
+
+.trust-strip {
+  padding:25px 0;
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+  background:#fff;
+}
+
+.trust-inner {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:20px;
+  flex-wrap:wrap;
+}
+
+.trust-title {
+  color:var(--muted);
+  font-size:12px;
+  font-weight:700;
+}
+
+.trust-item {
+  display:flex;
+  align-items:center;
+  gap:9px;
+  color:#485772;
+  font-size:13px;
+  font-weight:750;
+}
+
+.trust-item i {
+  color:var(--green2);
+  font-size:17px;
+}
+
+.features-section {
+  background:var(--bg);
+}
+
+.features-grid {
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:18px;
+}
+
+.feature-card {
+  padding:25px 22px;
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  background:#fff;
+  transition:.25s;
+}
+
+.feature-card:hover {
+  transform:translateY(-5px);
+  box-shadow:var(--shadow);
+  border-color:#c9f2df;
+}
+
+.feature-icon {
+  width:49px;
+  height:49px;
+  display:grid;
+  place-items:center;
+  border-radius:14px;
+  color:var(--green2);
+  background:#e9fbf3;
+  font-size:21px;
+  margin-bottom:19px;
+}
+
+.feature-card:nth-child(2) .feature-icon {
+  color:#2563eb;
+  background:#eaf1ff;
+}
+
+.feature-card:nth-child(3) .feature-icon {
+  color:#7c3aed;
+  background:#f1eaff;
+}
+
+.feature-card:nth-child(4) .feature-icon {
+  color:#b45309;
+  background:#fff4dc;
+}
+
+.feature-card h3 {
+  color:var(--navy);
+  font-size:16px;
+  margin-bottom:10px;
+}
+
+.feature-card p {
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.8;
+}
+
+.feature-link {
+  display:inline-flex;
+  gap:7px;
+  align-items:center;
+  color:var(--green2);
+  font-size:12px;
+  font-weight:800;
+  margin-top:17px;
+}
+
+.how-section {
+  background:var(--navy);
+  color:#fff;
+  position:relative;
+  overflow:hidden;
+}
+
+.how-section:before {
+  content:"";
+  position:absolute;
+  width:420px;
+  height:420px;
+  border-radius:50%;
+  background:rgba(16,185,129,.09);
+  top:-200px;
+  right:-100px;
+}
+
+.how-section .section-heading h2 {
+  color:#fff;
+}
+
+.how-section .section-heading p {
+  color:#bdc9dd;
+}
+
+.how-section .eyebrow {
+  background:rgba(16,185,129,.12);
+  border-color:rgba(110,231,183,.15);
+  color:#6ee7b7;
+}
+
+.steps-grid {
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:20px;
+  position:relative;
+}
+
+.step-card {
+  padding:25px 20px;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:17px;
+  background:rgba(255,255,255,.045);
+}
+
+.step-number {
+  width:42px;
+  height:42px;
+  display:grid;
+  place-items:center;
+  border-radius:12px;
+  background:rgba(16,185,129,.17);
+  color:#6ee7b7;
+  font-size:16px;
+  font-weight:900;
+  margin-bottom:20px;
+}
+
+.step-card h3 {
+  font-size:16px;
+  margin-bottom:10px;
+}
+
+.step-card p {
+  color:#b9c6da;
+  font-size:13px;
+  line-height:1.8;
+}
+
+.builder-section {
+  background:#fff;
+}
+
+.builder-grid {
+  display:grid;
+  grid-template-columns:.9fr 1.1fr;
+  align-items:center;
+  gap:45px;
+}
+
+.builder-copy h2 {
+  color:var(--navy);
+  font-size:clamp(28px,4vw,42px);
+  line-height:1.2;
+  letter-spacing:-1.4px;
+  margin:17px 0;
+}
+
+.builder-copy p {
+  color:var(--muted);
+  font-size:14px;
+  line-height:1.9;
+}
+
+.builder-list {
+  list-style:none;
+  display:grid;
+  gap:14px;
+  margin:23px 0;
+}
+
+.builder-list li {
+  display:flex;
+  align-items:flex-start;
+  gap:11px;
+  color:#46546c;
+  font-size:13px;
+}
+
+.builder-list i {
+  color:var(--green2);
+  margin-top:4px;
+}
+
+.editor-mock {
+  padding:17px;
+  border:1px solid var(--border);
+  border-radius:21px;
+  box-shadow:var(--shadow);
+  background:#fff;
+}
+
+.editor-top {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:3px 2px 15px;
+  border-bottom:1px solid var(--border);
+}
+
+.editor-top strong {
+  color:var(--navy);
+  font-size:13px;
+}
+
+.editor-top span {
+  color:var(--muted);
+  font-size:11px;
+}
+
+.editor-workspace {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  padding-top:14px;
+}
+
+.editor-pane {
+  min-width:0;
+  border:1px solid var(--border);
+  border-radius:13px;
+  overflow:hidden;
+}
+
+.pane-title {
+  padding:10px 12px;
+  color:#536078;
+  background:#f8fafc;
+  border-bottom:1px solid var(--border);
+  font-size:11px;
+  font-weight:800;
+}
+
+.code-lines {
+  padding:15px 12px;
+  min-height:200px;
+  background:#0f1b37;
+  color:#b9f4dc;
+  font-family:monospace;
+  font-size:11px;
+  line-height:2;
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+}
+
+.preview-demo {
+  padding:15px;
+  min-height:200px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  background:#f8fafc;
+}
+
+.preview-demo-inner i {
+  font-size:30px;
+  color:var(--green2);
+  margin-bottom:12px;
+}
+
+.preview-demo-inner h3 {
+  color:var(--navy);
+  font-size:16px;
+  margin-bottom:6px;
+}
+
+.preview-demo-inner p {
+  color:var(--muted);
+  font-size:11px;
+}
+
+.pricing-section {
+  background:var(--bg);
+}
+
+.pricing-grid {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:20px;
+  align-items:stretch;
+}
+
+.price-card {
+  position:relative;
+  padding:30px 26px;
+  border:1px solid var(--border);
+  border-radius:20px;
+  background:#fff;
+}
+
+.price-card.popular {
+  border:2px solid var(--green);
+  box-shadow:0 15px 45px rgba(16,185,129,.12);
+}
+
+.popular-label {
+  position:absolute;
+  top:-14px;
+  left:50%;
+  transform:translateX(-50%);
+  background:var(--green2);
+  color:#fff;
+  border-radius:20px;
+  padding:5px 13px;
+  white-space:nowrap;
+  font-size:10px;
+  font-weight:850;
+}
+
+.price-card h3 {
+  color:var(--navy);
+  font-size:19px;
+}
+
+.price-card .price-desc {
+  color:var(--muted);
+  font-size:12px;
+  margin:8px 0 20px;
+}
+
+.price-value {
+  font-size:34px;
+  font-weight:900;
+  letter-spacing:-1.2px;
+  color:var(--navy);
+}
+
+.price-value small {
+  font-size:12px;
+  font-weight:600;
+  letter-spacing:0;
+  color:var(--muted);
+}
+
+.price-card .btn {
+  width:100%;
+  margin:19px 0;
+}
+
+.price-features {
+  list-style:none;
+  display:grid;
+  gap:12px;
+  margin-top:12px;
+}
+
+.price-features li {
+  display:flex;
+  gap:9px;
+  color:#536078;
+  font-size:12px;
+}
+
+.price-features i {
+  color:var(--green2);
+  margin-top:4px;
+}
+
+.security-section {
+  background:#fff;
+}
+
+.security-grid {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:20px;
+}
+
+.security-card {
+  display:flex;
+  align-items:flex-start;
+  gap:15px;
+  padding:23px;
+  border:1px solid var(--border);
+  border-radius:17px;
+  background:#fff;
+}
+
+.security-card > i {
+  display:grid;
+  place-items:center;
+  flex-shrink:0;
+  width:44px;
+  height:44px;
+  border-radius:13px;
+  color:var(--green2);
+  background:#e9fbf3;
+  font-size:18px;
+}
+
+.security-card h3 {
+  color:var(--navy);
+  font-size:14px;
+  margin-bottom:7px;
+}
+
+.security-card p {
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.8;
+}
