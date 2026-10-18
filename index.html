@@ -368,7 +368,6 @@ tr:last-child td{border-bottom:0}
   </header>
 
   <main>
-    <!-- ========== HOME ========== -->
     <section id="page-home" class="page active">
       <div class="hero">
         <span class="badge"><span class="status-dot"></span> LucasNode Platform</span>
@@ -416,7 +415,6 @@ tr:last-child td{border-bottom:0}
       </div>
     </section>
 
-    <!-- ========== PROJECTS ========== -->
     <section id="page-projects" class="page">
       <div class="section-head">
         <div><div class="section-title">Projects</div><div class="section-sub">Projects zako zote zinasimamiwa hapa.</div></div>
@@ -431,7 +429,6 @@ tr:last-child td{border-bottom:0}
       <div id="projectsList" class="project-list" style="display:none"></div>
     </section>
 
-    <!-- ========== DEPLOY ========== -->
     <section id="page-deploy" class="page">
       <div class="hero">
         <span class="badge">🚀 Deployment Center</span>
@@ -472,7 +469,6 @@ tr:last-child td{border-bottom:0}
       </div>
     </section>
 
-    <!-- ========== DOMAINS ========== -->
     <section id="page-domains" class="page">
       <div class="hero">
         <span class="badge">🌐 Domain Center</span>
@@ -510,7 +506,6 @@ tr:last-child td{border-bottom:0}
       </div>
     </section>
 
-    <!-- ========== HOSTING ========== -->
     <section id="page-hosting" class="page">
       <div class="hero">
         <span class="badge">☁ Hosting</span>
@@ -546,7 +541,6 @@ tr:last-child td{border-bottom:0}
       </div>
     </section>
 
-    <!-- ========== PLATFORM ========== -->
     <section id="page-platform" class="page">
       <div class="hero">
         <span class="badge">⚡ LucasNode Platform</span>
@@ -575,7 +569,6 @@ tr:last-child td{border-bottom:0}
       </div>
     </section>
 
-    <!-- ========== PAYMENTS ========== -->
     <section id="page-payments" class="page">
       <div class="hero">
         <span class="badge">💳 Payments & Billing</span>
@@ -604,7 +597,6 @@ tr:last-child td{border-bottom:0}
       </div>
     </section>
 
-    <!-- ========== SECURITY ========== -->
     <section id="page-security" class="page">
       <div class="hero">
         <span class="badge">🛡️ Security Center</span>
@@ -633,7 +625,6 @@ tr:last-child td{border-bottom:0}
       </div>
     </section>
 
-    <!-- ========== MONITORING ========== -->
     <section id="page-monitoring" class="page">
       <div class="hero">
         <span class="badge">📈 Monitoring</span>
@@ -661,7 +652,6 @@ tr:last-child td{border-bottom:0}
       </div>
     </section>
 
-    <!-- ========== BACKUP ========== -->
     <section id="page-backup" class="page">
       <div class="hero">
         <span class="badge">💾 Backup & Recovery</span>
@@ -675,7 +665,6 @@ tr:last-child td{border-bottom:0}
       </div>
     </section>
 
-    <!-- ========== API KEYS ========== -->
     <section id="page-apikeys" class="page">
       <div class="section-head">
         <div><div class="section-title">API Keys</div><div class="section-sub">Keys za kuunganisha LucasNode na services nyingine.</div></div>
@@ -694,7 +683,6 @@ tr:last-child td{border-bottom:0}
       </div>
     </section>
 
-    <!-- ========== NOTIFICATIONS ========== -->
     <section id="page-notifications" class="page">
       <div class="section-head">
         <div><div class="section-title">Notifications</div><div class="section-sub">Taarifa muhimu za account na projects.</div></div>
@@ -706,7 +694,6 @@ tr:last-child td{border-bottom:0}
       </div>
     </section>
 
-    <!-- ========== SUPPORT ========== -->
     <section id="page-support" class="page">
       <div class="hero">
         <span class="badge">🆘 Support Center</span>
@@ -723,7 +710,6 @@ tr:last-child td{border-bottom:0}
       </div>
     </section>
 
-    <!-- ========== SETTINGS ========== -->
     <section id="page-settings" class="page">
       <div class="section-head">
         <div><div class="section-title">Settings</div><div class="section-sub">Simamia account na preferences zako.</div></div>
@@ -752,7 +738,6 @@ tr:last-child td{border-bottom:0}
       </div>
     </section>
 
-    <!-- ========== EDITOR ========== -->
     <section id="page-editor" class="page">
       <div class="hero">
         <span class="badge">👁️ Live Preview</span>
@@ -798,7 +783,6 @@ tr:last-child td{border-bottom:0}
   </nav>
 </div>
 
-<!-- DRAWER -->
 <div id="drawerOverlay" class="overlay" onclick="closeDrawer()">
   <div class="drawer" onclick="event.stopPropagation()">
     <div class="drawer-head">
@@ -829,7 +813,6 @@ tr:last-child td{border-bottom:0}
   </div>
 </div>
 
-<!-- MODAL: CREATE PROJECT -->
 <div id="createModal" class="modal-wrap">
   <div class="modal">
     <div class="modal-head">
@@ -867,7 +850,6 @@ tr:last-child td{border-bottom:0}
   </div>
 </div>
 
-<!-- MODAL: ADD DOMAIN -->
 <div id="domainModal" class="modal-wrap">
   <div class="modal">
     <div class="modal-head">
@@ -894,7 +876,6 @@ tr:last-child td{border-bottom:0}
   </div>
 </div>
 
-<!-- MODAL: SUPPORT -->
 <div id="supportModal" class="modal-wrap">
   <div class="modal">
     <div class="modal-head">
@@ -913,20 +894,16 @@ tr:last-child td{border-bottom:0}
 
 <div id="toast" class="toast"></div>
 
-<script>
+  <script>
 /* =========================================================
-   CONFIG — API HALISI
+   CONFIG
 ========================================================= */
 const API = "https://api.lucasnode.com";
 
-/* Token ya mtumiaji — itawekwa baada ya login.
-   Kwa sasa tunasoma localStorage; baadaye login page itaweka. */
 function getToken(){
-  try{ return localStorage.getItem("ln_token") || ""; }
-  catch(e){ return ""; }
+  try{ return localStorage.getItem("ln_token") || ""; }catch(e){ return ""; }
 }
 
-/* Headers zenye Authorization + apikey (kama backend inahitaji) */
 function authHeaders(extra){
   const h = Object.assign({
     "Content-Type": "application/json",
@@ -934,13 +911,13 @@ function authHeaders(extra){
   }, extra || {});
   const token = getToken();
   if(token) h["Authorization"] = "Bearer " + token;
-  // apikey inaweza kuwa tupu — backend inaamua
-  const apikey = localStorage.getItem("ln_apikey");
-  if(apikey) h["apikey"] = apikey;
+  try{
+    const apikey = localStorage.getItem("ln_apikey");
+    if(apikey) h["apikey"] = apikey;
+  }catch(e){}
   return h;
 }
 
-/* Helper: fanya fetch, toa JSON, toa error nzuri */
 async function apiFetch(path, opts){
   const url = API + path;
   const options = Object.assign({ method:"GET" }, opts || {});
@@ -970,23 +947,53 @@ async function apiFetch(path, opts){
 let projects = [];
 let domains = [];
 let deployments = [];
-let tickets = [];
+
+/* =========================================================
+   HELPERS
+========================================================= */
+function escapeHtml(value){
+  return String(value == null ? "" : value)
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+}
+function escapeAttr(value){ return escapeHtml(value); }
+function statusClass(status){
+  if(status === "live") return "status-live";
+  if(status === "building" || status === "deploying") return "status-build";
+  return "status-draft";
+}
+
+let toastTimer;
+function showToast(message, kind){
+  const toast = document.getElementById("toast");
+  if(!toast) return;
+  toast.textContent = message;
+  toast.className = "toast show" + (kind ? " " + kind : "");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){
+    toast.className = "toast";
+  }, 3200);
+}
 
 /* =========================================================
    NAVIGATION
 ========================================================= */
 function showPage(page){
-  document.querySelectorAll(".page").forEach(s => s.classList.remove("active"));
+  document.querySelectorAll(".page").forEach(function(s){ s.classList.remove("active"); });
   const target = document.getElementById("page-" + page);
   if(target){ target.classList.add("active"); }
-  else{ document.getElementById("page-home").classList.add("active"); page = "home"; }
-
-  document.querySelectorAll(".bottom-item[data-page]").forEach(btn => {
+  else{
+    document.getElementById("page-home").classList.add("active");
+    page = "home";
+  }
+  document.querySelectorAll(".bottom-item[data-page]").forEach(function(btn){
     btn.classList.toggle("active", btn.dataset.page === page);
   });
   window.scrollTo({top:0, behavior:"smooth"});
 }
-
 function navigateFromDrawer(page){
   showPage(page);
   closeDrawer();
@@ -1002,20 +1009,24 @@ function openDomainModal(){ fillProjectSelectors(); document.getElementById("dom
 function openSupportModal(){ document.getElementById("supportModal").classList.add("show"); }
 function closeModal(id){ document.getElementById(id).classList.remove("show"); }
 
-document.querySelectorAll(".modal-wrap").forEach(modal => {
-  modal.addEventListener("click", e => { if(e.target === modal) modal.classList.remove("show"); });
-});
-
-document.getElementById("projectFiles").addEventListener("change", function(){
-  const files = Array.from(this.files || []);
-  const output = document.getElementById("fileSelection");
-  output.textContent = files.length
-    ? files.length + " file(s) zimechaguliwa."
-    : "Hakuna files zilizochaguliwa.";
-});
+/* =========================================================
+   FILE INPUT
+========================================================= */
+function initFileInput(){
+  const input = document.getElementById("projectFiles");
+  if(!input) return;
+  input.addEventListener("change", function(){
+    const files = Array.from(this.files || []);
+    const output = document.getElementById("fileSelection");
+    if(!output) return;
+    output.textContent = files.length
+      ? files.length + " file(s) zimechaguliwa."
+      : "Hakuna files zilizochaguliwa.";
+  });
+}
 
 /* =========================================================
-   LOAD DATA KUTOKA BACKEND
+   LOAD DATA
 ========================================================= */
 async function loadProjects(){
   try{
@@ -1029,11 +1040,10 @@ async function loadProjects(){
   updateStats();
   fillProjectSelectors();
 }
-
 async function loadDomains(){
   try{
     const data = await apiFetch("/api/v1/domains");
-    domains = (data && (data.domains)) || [];
+    domains = (data && data.domains) || [];
   }catch(err){
     console.error("loadDomains:", err);
     domains = [];
@@ -1041,11 +1051,10 @@ async function loadDomains(){
   renderDomains();
   updateStats();
 }
-
 async function loadDeployments(){
   try{
     const data = await apiFetch("/api/v1/deployments");
-    deployments = (data && (data.deployments)) || [];
+    deployments = (data && data.deployments) || [];
   }catch(err){
     console.error("loadDeployments:", err);
     deployments = [];
@@ -1053,9 +1062,95 @@ async function loadDeployments(){
   renderDeployHistory();
   updateStats();
 }
-
 async function loadAll(){
   await Promise.all([loadProjects(), loadDomains(), loadDeployments()]);
+}
+
+/* =========================================================
+   SELECTORS
+========================================================= */
+function fillProjectSelectors(){
+  const ids = ["deployProject", "domainProject", "editorProject"];
+  ids.forEach(function(id){
+    const select = document.getElementById(id);
+    if(!select) return;
+    const previous = select.value;
+    select.innerHTML = '<option value="">Chagua project</option>';
+    projects.forEach(function(p){
+      const opt = document.createElement("option");
+      opt.value = p.id || "";
+      opt.textContent = p.name || p.id || "Project";
+      select.appendChild(opt);
+    });
+    if(previous) select.value = previous;
+  });
+}
+
+/* =========================================================
+   STATS
+========================================================= */
+function updateStats(){
+  const el = function(id){ return document.getElementById(id); };
+  const live = projects.filter(function(p){ return p.status === "live"; }).length;
+  if(el("statProjects")) el("statProjects").textContent = projects.length;
+  if(el("statLive")) el("statLive").textContent = live;
+  if(el("statDomains")) el("statDomains").textContent = domains.length;
+  if(el("statDeployments")) el("statDeployments").textContent = deployments.length;
+}
+
+/* =========================================================
+   RENDER PROJECTS
+========================================================= */
+function renderProjects(){
+  const homeEmpty = document.getElementById("homeEmpty");
+  const homeProjects = document.getElementById("homeProjects");
+  const projectsEmpty = document.getElementById("projectsEmpty");
+  const projectsList = document.getElementById("projectsList");
+  if(!homeEmpty || !homeProjects || !projectsEmpty || !projectsList) return;
+
+  if(!projects.length){
+    homeEmpty.style.display = "block";
+    homeProjects.style.display = "none";
+    projectsEmpty.style.display = "block";
+    projectsList.style.display = "none";
+    return;
+  }
+  homeEmpty.style.display = "none";
+  homeProjects.style.display = "grid";
+  projectsEmpty.style.display = "none";
+  projectsList.style.display = "grid";
+  homeProjects.innerHTML = "";
+  projectsList.innerHTML = "";
+
+  projects.forEach(function(project){
+    homeProjects.appendChild(createProjectCard(project));
+    projectsList.appendChild(createProjectCard(project));
+  });
+}
+
+function createProjectCard(project){
+  const wrapper = document.createElement("div");
+  wrapper.className = "project-card";
+  const status = project.status || "draft";
+  const id = project.id || "";
+  const name = escapeHtml(project.name || "Project");
+  const type = escapeHtml(project.type || project.framework || "Project");
+  const cls = statusClass(status);
+  const safeId = escapeAttr(id);
+  wrapper.innerHTML =
+    '<div class="project-main">' +
+      '<div class="project-icon">📦</div>' +
+      '<div>' +
+        '<div class="project-name">' + name + '</div>' +
+        '<div class="project-meta">' + type + '</div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="project-actions">' +
+      '<span class="project-status ' + cls + '">' + escapeHtml(status) + '</span>' +
+      '<button class="btn btn-secondary" onclick="openProject(\'' + safeId + '\')">Open</button>' +
+      '<button class="del-btn" aria-label="Futa project" onclick="deleteProject(\'' + safeId + '\')">🗑</button>' +
+    '</div>';
+  return wrapper;
 }
 
 /* =========================================================
@@ -1066,7 +1161,6 @@ async function createProject(event){
   const name = document.getElementById("projectName").value.trim();
   const type = document.getElementById("projectType").value;
   const description = document.getElementById("projectDescription").value.trim();
-
   if(!name){ showToast("Weka jina la project.", "error"); return; }
 
   const button = event.target.querySelector('button[type="submit"]');
@@ -1075,7 +1169,7 @@ async function createProject(event){
   try{
     const data = await apiFetch("/api/v1/projects", {
       method: "POST",
-      body: JSON.stringify({ name, type, description })
+      body: JSON.stringify({ name: name, type: type, description: description })
     });
     const project = data && data.project;
     if(project) projects.unshift(project);
@@ -1086,8 +1180,10 @@ async function createProject(event){
     closeModal("createModal");
     document.getElementById("projectName").value = "";
     document.getElementById("projectDescription").value = "";
-    document.getElementById("projectFiles").value = "";
-    document.getElementById("fileSelection").textContent = "Hakuna files zilizochaguliwa.";
+    const fi = document.getElementById("projectFiles");
+    if(fi) fi.value = "";
+    const fs = document.getElementById("fileSelection");
+    if(fs) fs.textContent = "Hakuna files zilizochaguliwa.";
   }catch(err){
     console.error(err);
     showToast("Imeshindwa kuunda project: " + err.message, "error");
@@ -1097,10 +1193,11 @@ async function createProject(event){
 }
 
 async function deleteProject(id){
+  if(!id){ return; }
   if(!confirm("Una uhakika unataka kufuta project hii? Hatua hii haiwezi kurudishwa.")) return;
   try{
     await apiFetch("/api/v1/projects/" + encodeURIComponent(id), { method:"DELETE" });
-    projects = projects.filter(p => p.id !== id);
+    projects = projects.filter(function(p){ return p.id !== id; });
     renderProjects();
     updateStats();
     fillProjectSelectors();
@@ -1114,15 +1211,24 @@ async function deleteProject(id){
 async function updateProjectStatus(id, status){
   const data = await apiFetch("/api/v1/projects/" + encodeURIComponent(id), {
     method: "PATCH",
-    body: JSON.stringify({ status })
+    body: JSON.stringify({ status: status })
   });
   const updated = data && data.project;
   if(updated){
-    projects = projects.map(p => p.id === id ? updated : p);
+    projects = projects.map(function(p){ return p.id === id ? updated : p; });
     renderProjects();
     updateStats();
   }
   return updated;
+}
+
+function openProject(id){
+  showPage("editor");
+  const select = document.getElementById("editorProject");
+  if(select){
+    select.value = id;
+    loadEditorCode();
+  }
 }
 
 /* =========================================================
@@ -1141,7 +1247,7 @@ async function startDeployment(event){
     showToast("Inaanzisha deployment...");
     const data = await apiFetch("/api/v1/deployments", {
       method: "POST",
-      body: JSON.stringify({ project_id: id, environment })
+      body: JSON.stringify({ project_id: id, environment: environment })
     });
     if(data && data.deployment){
       deployments.unshift(data.deployment);
@@ -1158,132 +1264,24 @@ async function startDeployment(event){
   }
 }
 
-/* =========================================================
-   DOMAINS
-========================================================= */
-async function addDomain(event){
-  event.preventDefault();
-  const domain = document.getElementById("domainName").value.trim().toLowerCase();
-  const type = document.getElementById("domainType").value;
-  const project_id = document.getElementById("domainProject").value;
-
-  if(!domain){ showToast("Weka domain.", "error"); return; }
-  const pattern = /^(?=.{1,253}$)(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}$/;
-  if(!pattern.test(domain)){ showToast("Muundo wa domain si sahihi.", "error"); return; }
-
-  try{
-    const data = await apiFetch("/api/v1/domains", {
-      method: "POST",
-      body: JSON.stringify({ domain, type, project_id: project_id || null })
-    });
-    if(data && data.domain) domains.unshift(data.domain);
-    renderDomains();
-    updateStats();
-    closeModal("domainModal");
-    document.getElementById("domainName").value = "";
-    showToast("Domain imeongezwa. Configure DNS kisha itathibitishwa.", "success");
-  }catch(err){
-    console.error(err);
-    showToast("Imeshindwa kuongeza domain: " + err.message, "error");
-  }
-}
-
-async function deleteDomain(id){
-  if(!confirm("Futa domain hii?")) return;
-  try{
-    await apiFetch("/api/v1/domains/" + encodeURIComponent(id), { method:"DELETE" });
-    domains = domains.filter(d => d.id !== id);
-    renderDomains();
-    updateStats();
-    showToast("Domain imefutwa.", "success");
-  }catch(err){
-    console.error(err);
-    showToast("Imeshindwa kufuta domain: " + err.message, "error");
-  }
-}
-
-/* =========================================================
-   SUPPORT
-========================================================= */
-async function createTicket(event){
-  event.preventDefault();
-  const subject = document.getElementById("ticketSubject").value.trim();
-  const message = document.getElementById("ticketMessage").value.trim();
-  if(!subject || !message){ showToast("Jaza subject na message.", "error"); return; }
-
-  try{
-    await apiFetch("/api/v1/support/tickets", {
-      method: "POST",
-      body: JSON.stringify({ subject, message })
-    });
-    closeModal("supportModal");
-    document.getElementById("ticketSubject").value = "";
-    document.getElementById("ticketMessage").value = "";
-    showToast("Ticket imeundwa ✓", "success");
-  }catch(err){
-    console.error(err);
-    showToast("Imeshindwa kuunda ticket: " + err.message, "error");
-  }
-}
-
-/* =========================================================
-   HEALTH
-========================================================= */
-async function checkBackend(){
-  showToast("Inakagua LucasNode API...");
-  try{
-    const data = await apiFetch("/api/v1/health");
-    console.log("LucasNode API:", data);
-    showToast("LucasNode API inajibu vizuri ✓", "success");
-  }catch(err){
-    console.error(err);
-    showToast("API haijajibu: " + err.message, "error");
-  }
-}
-
-/* =========================================================
-   RENDER PROJECTS
-========================================================= */
-function renderProjects(){
-  const homeEmpty = document.getElementById("homeEmpty");
-  const homeProjects = document.getElementById("homeProjects");
-  const projectsEmpty = document.getElementById("projectsEmpty");
-  const projectsList = document.getElementById("projectsList");
-
-  if(!projects.length){
-    homeEmpty.style.display = "block";
-    homeProjects.style.display = "none";
-    projectsEmpty.style.display = "block";
-    projectsList.style.display = "none";
+function renderDeployHistory(){
+  const empty = document.getElementById("deployHistoryEmpty");
+  const list = document.getElementById("deployHistory");
+  if(!empty || !list) return;
+  if(!deployments.length){
+    empty.style.display = "block";
+    list.style.display = "none";
     return;
   }
-
-  homeEmpty.style.display = "none";
-  homeProjects.style.display = "grid";
-  projectsEmpty.style.display = "none";
-  projectsList.style.display = "grid";
-  homeProjects.innerHTML = "";
-  projectsList.innerHTML = "";
-
-  projects.forEach(project => {
-    homeProjects.appendChild(createProjectCard(project));
-    projectsList.appendChild(createProjectCard(project));
-  });
-}
-
-function createProjectCard(project){
-  const wrapper = document.createElement("div");
-  wrapper.className = "project-card";
-  const status = project.status || "draft";
-  wrapper.innerHTML = `
-    <div class="project-main">
-      <div class="project-icon">📦</div>
-      <div>
-        <div class="project-name">${escapeHtml(project.name || "Project")}</div>
-        <div class="project-meta">${escapeHtml(project.type || project.framework || "Project")}</div>
-      </div>
-    </div>
-    <div class="project-actions">
-      <span class="project-status ${statusClass(status)}">${escapeHtml(status)}</span>
-      <button class="btn btn-secondary" onclick="openProject('${escapeAttr(project.id || "")}')">Open</button>
-      <button class="del-btn" aria-label="Futa project" onclick="deleteProject('${escapeAttr(project.id || "")}')
+  empty.style.display = "none";
+  list.style.display = "grid";
+  list.innerHTML = "";
+  deployments.forEach(function(d){
+    const el = document.createElement("div");
+    el.className = "project-card";
+    el.innerHTML =
+      '<div class="project-main">' +
+        '<div class="project-icon">🚀</div>' +
+        '<div>' +
+          '<div class="project-name">' + escapeHtml(d.project_name || d.project_id || "Deployment") + '</div>' +
+          '<
