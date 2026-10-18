@@ -894,7 +894,7 @@ tr:last-child td{border-bottom:0}
 
 <div id="toast" class="toast"></div>
 
-  <script>
+<script>
 /* =========================================================
    CONFIG
 ========================================================= */
@@ -973,9 +973,7 @@ function showToast(message, kind){
   toast.textContent = message;
   toast.className = "toast show" + (kind ? " " + kind : "");
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(function(){
-    toast.className = "toast";
-  }, 3200);
+  toastTimer = setTimeout(function(){ toast.className = "toast"; }, 3200);
 }
 
 /* =========================================================
@@ -1284,4 +1282,265 @@ function renderDeployHistory(){
         '<div class="project-icon">🚀</div>' +
         '<div>' +
           '<div class="project-name">' + escapeHtml(d.project_name || d.project_id || "Deployment") + '</div>' +
-          '<
+          '<div class="project-meta">' + escapeHtml(d.environment || "preview") + ' • ' + escapeHtml(d.created_at ? new Date(d.created_at).toLocaleString() : "") + '</div>' +
+        '</div>' +
+      '</div>' +
+      '<span class="project-status ' + statusClass(d.status || "live") + '">' + escapeHtml(d.status || "live") + '</span>';
+    list.appendChild(el);
+  });
+}
+
+/* =========================================================
+   DOMAINS
+========================================================= */
+async function addDomain(event){
+  event.preventDefault();
+  const domain = document.getElementById("domainName").value.trim().toLowerCase();
+  const type = document.getElementById("domainType").value;
+  const project_id = document.getElementById("domainProject").value;
+  if(!domain){ showToast("Weka domain.", "error"); return; }
+  const pattern = /^(?=.{1,253}$)(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}$/;
+  if(!pattern.test(domain)){ showToast("Muundo wa domain si sahihi.", "error"); return; }
+
+  try{
+    const data = await apiFetch("/api/v1/domains", {
+      method: "POST",
+      body: JSON.stringify({ domain: domain, type: type, project_id: project_id || null })
+    });
+    if(data && data.domain) domains.unshift(data.domain);
+    renderDomains();
+    updateStats();
+    closeModal("domainModal");
+    document.getElementById("domainName").value = "";
+    showToast("Domain imeongezwa. Configure DNS kisha itathibitishwa.", "success");
+  }catch(err){
+    console.error(err);
+    showToast("Imeshindwa kuongeza domain: " + err.message, "error");
+  }
+}
+
+async function deleteDomain(id){
+  if(!id){ return; }
+  if(!confirm("Futa domain hii?")) return;
+  try{
+    await apiFetch("/api/v1/domains/" + encodeURIComponent(id), { method:"DELETE" });
+    domains = domains.filter(function(d){ return d.id !== id; });
+    renderDomains();
+    updateStats();
+    showToast("Domain imefutwa.", "success");
+  }catch(err){
+    console.error(err);
+    showToast("Imeshindwa kufuta domain: " + err.message, "error");
+  }
+}
+
+function renderDomains(){
+  const empty = document.getElementById("domainsEmpty");
+  const list = document.getElementById("domainsList");
+  if(!empty || !list) return;
+  if(!domains.length){
+    empty.style.display = "block";
+    list.style.display = "none";
+    return;
+  }
+  empty.style.display = "none";
+  list.style.display = "grid";
+  list.innerHTML = "";
+  domains.forEach(function(d){
+    const el = document.createElement("div");
+    el.className = "project-card";
+    el.innerHTML =
+      '<div class="project-main">' +
+        '<div class="project-icon">🌐</div>' +
+        '<div>' +
+          '<div class="project-name">' + escapeHtml(d.domain || "") + '</div>' +
+          '<div class="project-meta">' + escapeHtml(d.type || "") + '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="project-actions">' +
+        '<span class="project-status ' + statusClass(d.status || "pending") + '">' + escapeHtml(d.status || "pending") + '</span>' +
+        '<button class="del-btn" onclick="deleteDomain(\'' + escapeAttr(d.id || "") + '\')" aria-label="Delete">🗑</button>' +
+      '</div>';
+    list.appendChild(el);
+  });
+}
+
+/* =========================================================
+   SUPPORT
+========================================================= */
+async function createTicket(event){
+  event.preventDefault();
+  const subject = document.getElementById("ticketSubject").value.trim();
+  const message = document.getElementById("ticketMessage").value.trim();
+  if(!subject || !message){ showToast("Jaza subject na message.", "error"); return; }
+  try{
+    await apiFetch("/api/v1/support/tickets", {
+      method: "POST",
+      body: JSON.stringify({ subject: subject, message: message })
+    });
+    closeModal("supportModal");
+    document.getElementById("ticketSubject").value = "";
+    document.getElementById("ticketMessage").value = "";
+    showToast("Ticket imeundwa ✓", "success");
+  }catch(err){
+    console.error(err);
+    showToast("Imeshindwa kuunda ticket: " + err.message, "error");
+  }
+}
+
+/* =========================================================
+   HEALTH
+========================================================= */
+async function checkBackend(){
+  showToast("Inakagua LucasNode API...");
+  try{
+    const data = await apiFetch("/api/v1/health");
+    console.log("LucasNode API:", data);
+    showToast("LucasNode API inajibu vizuri ✓", "success");
+  }catch(err){
+    console.error(err);
+    showToast("API haijajibu: " + err.message, "error");
+  }
+}
+
+/* =========================================================
+   DOMAIN LOOKUP (DNS-over-HTTPS)
+========================================================= */
+async function checkDomain(event){
+  event.preventDefault();
+  const input = document.getElementById("domainSearch");
+  const result = document.getElementById("domainSearchResult");
+  const button = document.getElementById("domainSearchButton");
+  const domain = (input.value || "").trim().toLowerCase();
+
+  const pattern = /^(?=.{1,253}$)(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}$/;
+  if(!pattern.test(domain)){
+    result.textContent = "Muundo wa domain si sahihi. Mfano: mfano.com";
+    return;
+  }
+  button.disabled = true;
+  result.textContent = "Inakagua...";
+
+  try{
+    const response = await fetch(
+      "https://cloudflare-dns.com/dns-query?name=" + encodeURIComponent(domain) + "&type=A",
+      { headers: { "accept": "application/dns-json" } }
+    );
+    if(!response.ok) throw new Error("HTTP " + response.status);
+    const data = await response.json();
+
+    if(data.Status === 3){
+      result.textContent = domain + " haina rekodi za DNS. Huenda haijasajiliwa.";
+    }else if(Array.isArray(data.Answer) && data.Answer.length){
+      const ips = data.Answer.filter(function(a){ return a.type === 1; }).map(function(a){ return a.data; }).slice(0,3).join(", ");
+      result.textContent = domain + " ina rekodi za DNS" + (ips ? " (" + ips + ")" : "") + ".";
+    }else{
+      result.textContent = domain + " ipo lakini haina rekodi ya A.";
+    }
+  }catch(err){
+    console.error(err);
+    result.textContent = "Ukaguzi umeshindwa. Jaribu tena.";
+  }finally{
+    button.disabled = false;
+  }
+}
+
+/* =========================================================
+   EDITOR & PREVIEW
+========================================================= */
+const DEFAULT_HTML = '<!DOCTYPE html>\n<html lang="sw">\n<head>\n<meta charset="UTF-8">\n<title>Mradi wangu</title>\n<style>body{font-family:Arial;padding:30px;color:#10243a}h1{color:#1769ff}</style>\n</head>\n<body>\n<h1>Karibu kwenye mradi wangu!</h1>\n<p>Badilisha code hii na uone matokeo papo hapo.</p>\n</body>\n</html>';
+
+let previewTimer;
+
+function codeKey(id){ return "lucasnode_code_" + id; }
+
+function selectedEditorProject(){
+  const select = document.getElementById("editorProject");
+  return select ? select.value : "";
+}
+
+function loadEditorCode(){
+  const editor = document.getElementById("htmlEditor");
+  const note = document.getElementById("editorNote");
+  if(!editor) return;
+  const id = selectedEditorProject();
+  let saved = "";
+  try{
+    if(id) saved = localStorage.getItem(codeKey(id)) || "";
+  }catch(e){ console.error(e); }
+  editor.value = saved || DEFAULT_HTML;
+  if(note){
+    note.textContent = id
+      ? (saved ? "Code iliyohifadhiwa ya project hii imepakiwa." : "Project hii bado haina code iliyohifadhiwa. Andika kisha bonyeza Hifadhi.")
+      : "Chagua project ili kupakia code yake.";
+  }
+  runPreview();
+}
+
+function runPreview(){
+  const editor = document.getElementById("htmlEditor");
+  const frame = document.getElementById("previewFrame");
+  if(!editor || !frame) return;
+  frame.srcdoc = editor.value;
+}
+
+function schedulePreview(){
+  clearTimeout(previewTimer);
+  previewTimer = setTimeout(runPreview, 500);
+}
+
+function saveEditorCode(){
+  const id = selectedEditorProject();
+  if(!id){ showToast("Chagua project kwanza ili kuhifadhi code.", "error"); return; }
+  try{
+    localStorage.setItem(codeKey(id), document.getElementById("htmlEditor").value);
+    showToast("Code imehifadhiwa kwenye kivinjari hiki ✓", "success");
+  }catch(err){
+    console.error(err);
+    showToast("Imeshindwa kuhifadhi code.", "error");
+  }
+}
+
+function togglePreviewFullscreen(){
+  const box = document.getElementById("previewBox");
+  const close = document.getElementById("closePreviewButton");
+  if(!box) return;
+  box.classList.add("fullscreen");
+  if(close) close.style.display = "inline-flex";
+}
+
+function closePreviewFullscreen(){
+  const box = document.getElementById("previewBox");
+  const close = document.getElementById("closePreviewButton");
+  if(box) box.classList.remove("fullscreen");
+  if(close) close.style.display = "none";
+}
+
+/* =========================================================
+   INIT
+========================================================= */
+function initApp(){
+  initFileInput();
+
+  document.querySelectorAll(".modal-wrap").forEach(function(modal){
+    modal.addEventListener("click", function(e){
+      if(e.target === modal) modal.classList.remove("show");
+    });
+  });
+
+  document.addEventListener("keydown", function(e){
+    if(e.key === "Escape"){
+      closePreviewFullscreen();
+      document.querySelectorAll(".modal-wrap.show").forEach(function(m){ m.classList.remove("show"); });
+      closeDrawer();
+    }
+  });
+
+  loadEditorCode();
+  loadAll();
+}
+
+document.addEventListener("DOMContentLoaded", initApp);
+</script>
+</body>
+</html>
