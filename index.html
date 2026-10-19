@@ -1,424 +1,494 @@
-<script>
-/* =========================================================
-   LucasNode Frontend — inaunganishwa na lucasnode-backend
-   Backend: https://lucasnode-backend.lucasherbalclinic.workers.dev
-========================================================= */
-const API_BASE = "https://lucasnode-backend.lucasherbalclinic.workers.dev";
-const LS_TOKEN = "lucasnode_access_token";
-const LS_REFRESH = "lucasnode_refresh_token";
-const LS_USER = "lucasnode_user";
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LucasNode</title>
 
-let authMode = "login";
-const state = { user: null, ghPath: "", ghOwner: "", ghRepo: "", ghBranch: "main" };
-
-/* ---------- helpers ---------- */
-function $(id){ return document.getElementById(id); }
-function toast(msg, kind){
-  const t = $("toast");
-  t.textContent = msg;
-  t.className = "toast show" + (kind === "ok" ? " ok" : kind === "err" ? " err" : "");
-  clearTimeout(t._tm);
-  t._tm = setTimeout(()=>{ t.className = "toast"; }, 3200);
-}
-function getToken(){ return localStorage.getItem(LS_TOKEN); }
-function getRefreshToken(){ return localStorage.getItem(LS_REFRESH); }
-function saveSession(session, user){
-  if(session){
-    if(session.access_token) localStorage.setItem(LS_TOKEN, session.access_token);
-    if(session.refresh_token) localStorage.setItem(LS_REFRESH, session.refresh_token);
-  }
-  if(user){ state.user = user; localStorage.setItem(LS_USER, JSON.stringify(user)); updateAvatar(); }
-}
-function clearSession(){
-  localStorage.removeItem(LS_TOKEN);
-  localStorage.removeItem(LS_REFRESH);
-  localStorage.removeItem(LS_USER);
-  state.user = null;
-  updateAvatar();
-}
-function isLoggedIn(){ return !!getToken(); }
-function updateAvatar(){
-  const a = $("avatarBtn");
-  if(state.user && state.user.email){ a.textContent = (state.user.email[0]||"L").toUpperCase(); }
-  else { a.textContent = "L"; }
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
 }
 
-/* ---------- API client with auto-refresh ---------- */
-async function apiRequest(method, path, body, retry=true){
-  const headers = { "Content-Type": "application/json" };
-  const token = getToken();
-  if(token) headers["Authorization"] = "Bearer " + token;
-  try{
-    const res = await fetch(API_BASE + path, { method, headers, body: body ? JSON.stringify(body) : undefined });
-    const data = await res.json().catch(()=>({ success:false, error:"Jibu si JSON." }));
-    if(res.status === 401 && retry && getRefreshToken()){
-      const refreshed = await refreshSession();
-      if(refreshed) return apiRequest(method, path, body, false);
-    }
-    return { ok: res.ok, status: res.status, data };
-  }catch(e){
-    return { ok:false, status:0, data:{ success:false, error:"Imeshindikana kuunganisha na backend." } };
-  }
-}
-async function refreshSession(){
-  const r = await fetch(API_BASE + "/api/idhini/upya", {
-    method:"POST", headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({ refresh_token: getRefreshToken() })
-  });
-  const d = await r.json().catch(()=>null);
-  if(r.ok && d && d.success && d.session){ saveSession(d.session, d.user); return true; }
-  clearSession(); showAuthGate(); return false;
+:root{
+  --bg:#030712;
+  --panel:#080f1d;
+  --panel2:#0c1526;
+  --panel3:#111d32;
+  --line:#1c2a42;
+  --text:#f8fafc;
+  --muted:#94a3b8;
+  --dim:#64748b;
+  --blue:#3b82f6;
+  --blue2:#2563eb;
+  --purple:#7c3aed;
+  --green:#22c55e;
+  --yellow:#f59e0b;
+  --red:#ef4444;
+  --cyan:#06b6d4;
+  --radius:18px;
+  --shadow:0 20px 60px rgba(0,0,0,.35);
 }
 
-/* ---------- auth ---------- */
-function showAuthGate(){ $("authGate").style.display = "flex"; }
-function hideAuthGate(){ $("authGate").style.display = "none"; }
-function setAuthTab(mode){
-  authMode = mode;
-  $("tabLogin").classList.toggle("active", mode==="login");
-  $("tabRegister").classList.toggle("active", mode==="register");
-  $("nameField").style.display = mode==="register" ? "grid" : "none";
-  $("authSubmit").textContent = mode==="login" ? "Kuingia" : "Sajili";
-}
-async function submitAuth(e){
-  e.preventDefault();
-  const email = $("authEmail").value.trim().toLowerCase();
-  const password = $("authPassword").value;
-  if(authMode === "register"){
-    const display_name = $("authName").value.trim();
-    const r = await fetch(API_BASE+"/api/idhini/jisajili", {
-      method:"POST", headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({ email, password, display_name })
-    });
-    const d = await r.json().catch(()=>null);
-    if(r.ok && d && d.success){
-      if(d.session){ saveSession(d.session, d.user); hideAuthGate(); toast("Akaunti imetengenezwa. Karibu!","ok"); initApp(); }
-      else { toast("Akaunti imetengenezwa. Angalia barua pepe kuthibitisha, kisha ingia.","ok"); setAuthTab("login"); }
-    } else { toast(d?.error || "Usajili umeshindikana.","err"); }
-  } else {
-    const r = await fetch(API_BASE+"/api/idhini/kuingia", {
-      method:"POST", headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({ email, password })
-    });
-    const d = await r.json().catch(()=>null);
-    if(r.ok && d && d.success && d.session){ saveSession(d.session, d.user); hideAuthGate(); toast("Karibu, "+(d.user?.email||"")+"!","ok"); initApp(); }
-    else { toast(d?.error || "Barua pepe au nenosiri si sahihi.","err"); }
-  }
-}
-async function logout(){
-  if(!isLoggedIn()){ clearSession(); showAuthGate(); return; }
-  await apiRequest("POST", "/api/idhini/toka", {}, false);
-  clearSession(); showAuthGate(); toast("Umetoka kwenye akaunti.","ok");
+html{ scroll-behavior:smooth; }
+
+body{
+  min-height:100vh;
+  background:
+    radial-gradient(circle at 50% -10%,#172554 0,transparent 34%),
+    radial-gradient(circle at 100% 40%,#111827 0,transparent 28%),
+    var(--bg);
+  color:var(--text);
+  font-family:Inter,Arial,Helvetica,sans-serif;
 }
 
-/* ---------- navigation ---------- */
-function showPage(name){
-  if(!isLoggedIn()){ showAuthGate(); return; }
-  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
-  const el = $("page-"+name);
-  if(el) el.classList.add("active");
-  document.querySelectorAll(".bottom-item").forEach(b=>b.classList.toggle("active", b.dataset.page===name));
-  closeDrawer();
-  window.scrollTo(0,0);
-  loadPageData(name);
-}
-function loadPageData(name){
-  if(name==="home"||name==="projects") loadProjects();
-  if(name==="domains") loadDomains();
-  if(name==="hosting") loadTovuti();
-  if(name==="deploy") loadDeployProjects();
-  if(name==="monitoring") checkBackend();
-  if(name==="settings") loadProfile();
-}
-function openDrawer(){ if(!isLoggedIn()){ showAuthGate(); return; } $("drawerOverlay").classList.add("show"); }
-function closeDrawer(){ $("drawerOverlay").classList.remove("show"); }
+button,input,textarea,select{ font:inherit; }
+button{ cursor:pointer; border:0; }
+a{ color:inherit; text-decoration:none; }
 
-/* ---------- modals ---------- */
-function openModal(id){ if(!isLoggedIn()){ showAuthGate(); return; } $(id).classList.add("show"); }
-function closeModal(id){ $(id).classList.remove("show"); }
-function openCreateProject(){ openModal("modalProject"); }
-function openDomainModal(){ openModal("modalDomain"); }
-function openTovutiModal(){ openModal("modalTovuti"); }
-function openSupportModal(){ openModal("modalSupport"); }
-function openGithubModal(){ $("modalGithub").classList.add("show"); } // inapatikana bila login (GitHub API ni ya umma)
+.app{ width:100%; max-width:1180px; margin:auto; min-height:100vh; }
 
-/* ---------- projects ---------- */
-async function loadProjects(){
-  const r = await apiRequest("GET", "/api/v1/projects");
-  const list = (r.ok && r.data && r.data.data) ? r.data.data : [];
-  renderProjects(list);
-  updateStats();
+/* ICON */
+.lucas-icon{
+  width:46px; height:46px; position:relative; flex:none; border-radius:14px;
+  background:linear-gradient(145deg,#172554,#0f172a 55%,#020617);
+  border:1px solid rgba(96,165,250,.35);
+  box-shadow:inset 2px 2px 8px rgba(255,255,255,.08),inset -4px -5px 10px rgba(0,0,0,.45),0 10px 25px rgba(37,99,235,.2);
+  display:grid; place-items:center; overflow:hidden;
 }
-function renderProjects(list){
-  const home = $("homeProjects"), homeEmpty = $("homeEmpty");
-  const pl = $("projectsList"), plEmpty = $("projectsEmpty");
-  const fill = (container, emptyEl) => {
-    if(!list.length){ container.style.display="none"; emptyEl.style.display="block"; container.innerHTML=""; return; }
-    container.style.display="grid"; emptyEl.style.display="none";
-    container.innerHTML = list.map(p=>projectCard(p)).join("");
-  };
-  fill(home, homeEmpty); fill(pl, plEmpty);
+.lucas-icon:before{
+  content:""; position:absolute; width:80%; height:30%; top:-8%; left:10%;
+  border-radius:50%; background:rgba(255,255,255,.16); filter:blur(5px);
 }
-function projectCard(p){
-  const repo = p.repository_url ? `<div class="project-meta">🔗 ${escapeHtml(p.repository_url)}${p.repository_branch?(" · "+escapeHtml(p.repository_branch)):""}</div>` : "";
-  const meta = `<div class="project-meta">${escapeHtml(p.slug||p.name||"")} ${p.framework?("· "+escapeHtml(p.framework)):""}</div>`;
-  return `<div class="project-card">
-    <div class="project-main">
-      <div class="project-icon">📁</div>
-      <div><div class="project-name">${escapeHtml(p.name||"")}</div>${meta}${repo}</div>
+.l-mark{ position:relative; width:24px; height:27px; transform:skewY(-4deg); filter:drop-shadow(2px 3px 2px rgba(0,0,0,.65)); }
+.l-mark:before{
+  content:""; position:absolute; left:2px; top:0; width:7px; height:24px; border-radius:3px;
+  background:linear-gradient(90deg,#bfdbfe,#60a5fa,#2563eb); box-shadow:2px 0 0 #1d4ed8;
+}
+.l-mark:after{
+  content:""; position:absolute; left:7px; bottom:1px; width:17px; height:7px; border-radius:2px 4px 4px 2px;
+  background:linear-gradient(180deg,#93c5fd,#2563eb); box-shadow:0 2px 0 #1e40af;
+}
+
+/* HEADER */
+.topbar{
+  position:sticky; top:0; z-index:50; height:72px; padding:0 18px;
+  display:flex; align-items:center; justify-content:space-between;
+  background:rgba(3,7,18,.82); backdrop-filter:blur(18px); border-bottom:1px solid rgba(148,163,184,.08);
+}
+.brand{ display:flex; align-items:center; gap:11px; min-width:0; }
+.brand-text{ font-size:17px; font-weight:800; letter-spacing:-.4px; }
+.brand-sub{ font-size:10px; color:var(--muted); margin-top:2px; }
+.top-actions{ display:flex; align-items:center; gap:8px; }
+.icon-btn{
+  width:40px; height:40px; border-radius:12px; color:var(--text);
+  background:var(--panel2); border:1px solid var(--line); display:grid; place-items:center;
+}
+.icon-btn:hover{ background:var(--panel3); }
+.avatar{ width:40px; height:40px; border-radius:12px; display:grid; place-items:center; background:linear-gradient(145deg,#2563eb,#7c3aed); font-size:14px; font-weight:800; cursor:pointer; }
+
+/* MAIN */
+main{ padding:22px 18px 110px; }
+.page{ display:none; animation:fade .2s ease; }
+.page.active{ display:block; }
+@keyframes fade{ from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:none} }
+
+.hero{
+  padding:24px; border:1px solid var(--line); border-radius:24px;
+  background:radial-gradient(circle at 90% 10%,rgba(59,130,246,.18),transparent 32%),linear-gradient(145deg,rgba(15,23,42,.95),rgba(8,15,29,.95));
+  box-shadow:var(--shadow); margin-bottom:18px;
+}
+.badge{
+  display:inline-flex; align-items:center; gap:7px; padding:7px 10px; border-radius:999px;
+  background:rgba(59,130,246,.12); border:1px solid rgba(59,130,246,.22); color:#93c5fd; font-size:11px; font-weight:700;
+}
+.status-dot{ width:7px; height:7px; border-radius:50%; background:var(--green); box-shadow:0 0 10px rgba(34,197,94,.7); }
+.hero h1{ margin-top:14px; font-size:clamp(27px,6vw,42px); line-height:1.05; letter-spacing:-1.5px; }
+.hero p{ color:var(--muted); max-width:680px; line-height:1.65; margin-top:10px; font-size:14px; }
+.hero-actions{ display:flex; flex-wrap:wrap; gap:10px; margin-top:20px; }
+
+/* BUTTONS */
+.btn{
+  min-height:44px; padding:0 16px; border-radius:12px; display:inline-flex; align-items:center; justify-content:center;
+  gap:8px; font-weight:700; font-size:13px; transition:.18s ease;
+}
+.btn-primary{ color:white; background:linear-gradient(135deg,#2563eb,#4f46e5); box-shadow:0 10px 25px rgba(37,99,235,.22); }
+.btn-primary:hover{ transform:translateY(-1px); }
+.btn-secondary{ color:var(--text); background:var(--panel2); border:1px solid var(--line); }
+.btn-danger{ color:#fecaca; background:rgba(239,68,68,.1); border:1px solid rgba(239,68,68,.2); }
+.btn-full{ width:100%; }
+
+/* STATS */
+.stats{ display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:18px; }
+.stat{ min-width:0; padding:17px; border:1px solid var(--line); background:rgba(8,15,29,.82); border-radius:17px; }
+.stat-label{ color:var(--muted); font-size:11px; }
+.stat-value{ margin-top:7px; font-size:25px; font-weight:800; }
+.stat-note{ margin-top:4px; color:var(--dim); font-size:10px; }
+
+/* SECTION */
+.section{ margin-top:24px; }
+.section-head{ display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:12px; }
+.section-title{ font-size:17px; font-weight:800; }
+.section-sub{ color:var(--muted); font-size:11px; margin-top:3px; }
+
+/* EMPTY */
+.empty{ padding:34px 20px; text-align:center; border:1px dashed #263957; border-radius:20px; background:rgba(8,15,29,.55); }
+.empty-icon{ width:58px; height:58px; margin:0 auto 12px; border-radius:18px; display:grid; place-items:center; background:var(--panel2); border:1px solid var(--line); font-size:25px; }
+.empty h3{ font-size:16px; }
+.empty p{ color:var(--muted); max-width:460px; margin:8px auto 17px; line-height:1.55; font-size:12px; }
+
+/* FEATURE GRID */
+.feature-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+.feature{ min-height:130px; padding:16px; border:1px solid var(--line); border-radius:17px; background:linear-gradient(145deg,rgba(13,23,41,.9),rgba(8,15,29,.9)); transition:.18s ease; }
+.feature:hover{ border-color:#315078; transform:translateY(-2px); }
+.feature-icon{ width:37px; height:37px; display:grid; place-items:center; border-radius:11px; background:#101d34; border:1px solid #203453; font-size:17px; }
+.feature h3{ font-size:13px; margin-top:12px; }
+.feature p{ color:var(--muted); font-size:10px; line-height:1.5; margin-top:5px; }
+
+/* CARDS */
+.card{ padding:18px; border:1px solid var(--line); border-radius:18px; background:rgba(8,15,29,.85); }
+.card-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
+
+/* PROJECTS */
+.project-list{ display:grid; gap:12px; }
+.project-card{ display:flex; align-items:center; justify-content:space-between; gap:15px; padding:17px; border:1px solid var(--line); border-radius:17px; background:var(--panel); }
+.project-main{ display:flex; align-items:center; gap:12px; min-width:0; }
+.project-icon{ width:43px; height:43px; flex:none; border-radius:13px; background:linear-gradient(145deg,#172554,#0f172a); border:1px solid #263b60; display:grid; place-items:center; }
+.project-name{ font-weight:750; font-size:14px; }
+.project-meta{ color:var(--muted); font-size:10px; margin-top:4px; word-break:break-all; }
+.project-status{ padding:6px 9px; border-radius:999px; font-size:9px; font-weight:800; }
+.status-draft{ background:rgba(148,163,184,.1); color:#cbd5e1; }
+.status-live{ background:rgba(34,197,94,.1); color:#86efac; }
+.status-build{ background:rgba(59,130,246,.1); color:#93c5fd; }
+.del-btn{ width:34px; height:34px; flex:none; border-radius:10px; background:rgba(239,68,68,.1); border:1px solid rgba(239,68,68,.2); color:#fecaca; font-size:14px; }
+.del-btn:hover{ background:rgba(239,68,68,.2); }
+
+/* FORMS */
+.form{ display:grid; gap:14px; }
+.field{ display:grid; gap:7px; }
+.field label{ font-size:11px; font-weight:700; color:#cbd5e1; }
+.input,.textarea,.select{
+  width:100%; min-height:46px; padding:0 13px; border-radius:12px; color:var(--text);
+  background:#060d19; border:1px solid var(--line); outline:none;
+}
+.textarea{ padding:12px 13px; min-height:110px; resize:vertical; }
+.input:focus,.textarea:focus,.select:focus{ border-color:#3b82f6; box-shadow:0 0 0 3px rgba(59,130,246,.1); }
+.hint{ color:var(--dim); font-size:10px; line-height:1.5; }
+
+/* WORKFLOW */
+.workflow{ display:grid; grid-template-columns:repeat(6,1fr); gap:8px; }
+.step{ padding:13px 8px; border:1px solid var(--line); border-radius:14px; text-align:center; background:var(--panel); }
+.step-number{ width:27px; height:27px; border-radius:50%; margin:0 auto 7px; display:grid; place-items:center; background:#172554; color:#93c5fd; font-size:11px; font-weight:800; }
+.step span{ color:var(--muted); font-size:9px; }
+
+/* TABLE / STATUS */
+.table-wrap{ overflow:auto; border:1px solid var(--line); border-radius:16px; }
+table{ width:100%; border-collapse:collapse; min-width:600px; }
+th,td{ padding:13px; text-align:left; border-bottom:1px solid var(--line); font-size:11px; }
+th{ color:var(--muted); font-weight:700; }
+td{ color:#dbeafe; }
+tr:last-child td{ border-bottom:0; }
+.notice{ display:flex; gap:10px; padding:13px; border-radius:13px; background:rgba(59,130,246,.07); border:1px solid rgba(59,130,246,.16); color:#bfdbfe; font-size:11px; line-height:1.5; }
+
+/* DRAWER */
+.overlay{ position:fixed; inset:0; z-index:80; background:rgba(0,0,0,.62); display:none; }
+.overlay.show{ display:block; }
+.drawer{ position:absolute; left:0; top:0; bottom:0; width:min(330px,88vw); background:#050b17; border-right:1px solid var(--line); padding:18px; overflow:auto; }
+.drawer-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
+.menu-section{ margin:18px 0 7px; color:var(--dim); font-size:9px; font-weight:800; text-transform:uppercase; letter-spacing:1px; }
+.menu-item{ width:100%; min-height:44px; padding:0 12px; display:flex; align-items:center; gap:11px; border-radius:11px; background:transparent; color:#cbd5e1; text-align:left; margin-bottom:4px; }
+.menu-item:hover,.menu-item.active{ background:#101b30; color:white; }
+.menu-icon{ width:22px; text-align:center; }
+
+/* MODAL */
+.modal-wrap{ position:fixed; inset:0; z-index:100; padding:18px; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,.72); }
+.modal-wrap.show{ display:flex; }
+.modal{ width:min(620px,100%); max-height:90vh; overflow:auto; background:#070e1b; border:1px solid var(--line); border-radius:22px; box-shadow:0 30px 90px rgba(0,0,0,.65); }
+.modal-head{ position:sticky; top:0; z-index:2; padding:18px; display:flex; justify-content:space-between; align-items:center; background:#070e1b; border-bottom:1px solid var(--line); }
+.modal-title{ font-size:17px; font-weight:800; }
+.modal-body{ padding:18px; }
+.close{ width:36px; height:36px; border-radius:10px; color:white; background:var(--panel2); border:1px solid var(--line); }
+
+/* FILE DROP */
+.dropzone{ min-height:150px; padding:20px; border:1px dashed #315078; border-radius:16px; display:grid; place-items:center; text-align:center; background:rgba(59,130,246,.035); }
+.drop-icon{ font-size:30px; margin-bottom:8px; }
+.dropzone h3{ font-size:14px; }
+.dropzone p{ color:var(--muted); font-size:10px; margin-top:5px; }
+input[type=file]{ display:none; }
+
+/* GITHUB TREE */
+.gh-bar{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px; }
+.gh-tree{ border:1px solid var(--line); border-radius:14px; overflow:hidden; }
+.gh-row{ display:flex; align-items:center; gap:10px; padding:11px 13px; border-bottom:1px solid var(--line); cursor:pointer; font-size:12px; }
+.gh-row:last-child{ border-bottom:0; }
+.gh-row:hover{ background:#0e1a2e; }
+.gh-row .gh-name{ flex:1; word-break:break-all; }
+.gh-row .gh-size{ color:var(--dim); font-size:10px; }
+.gh-breadcrumb{ font-size:11px; color:var(--muted); margin-bottom:8px; word-break:break-all; }
+
+/* BOTTOM NAV */
+.bottom-nav{
+  position:fixed; left:50%; bottom:10px; transform:translateX(-50%); z-index:60;
+  width:min(560px,calc(100% - 20px)); padding:7px; display:grid; grid-template-columns:repeat(5,1fr); gap:3px;
+  border:1px solid var(--line); border-radius:18px; background:rgba(5,11,23,.92); backdrop-filter:blur(18px); box-shadow:0 20px 50px rgba(0,0,0,.45);
+}
+.bottom-item{ min-height:50px; border-radius:12px; background:transparent; color:var(--muted); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; font-size:9px; }
+.bottom-item strong{ font-size:18px; line-height:1; }
+.bottom-item.active{ color:white; background:#101c31; }
+.create-bottom{ margin-top:-23px; width:55px; height:55px; border-radius:18px; justify-self:center; background:linear-gradient(145deg,#2563eb,#4f46e5); color:white; border:4px solid #050b17; box-shadow:0 10px 25px rgba(37,99,235,.35); font-size:25px; }
+
+/* TOAST */
+.toast{
+  position:fixed; left:50%; top:84px; transform:translate(-50%,-15px); z-index:150; opacity:0; pointer-events:none;
+  width:min(430px,calc(100% - 30px)); padding:13px 15px; border-radius:13px; background:#0b1628; border:1px solid #29415f;
+  box-shadow:var(--shadow); color:#e2e8f0; font-size:11px; transition:.22s ease;
+}
+.toast.show{ opacity:1; transform:translate(-50%,0); }
+.toast.ok{ border-color:rgba(34,197,94,.4); }
+.toast.err{ border-color:rgba(239,68,68,.4); }
+
+/* AUTH GATE */
+.auth-gate{ position:fixed; inset:0; z-index:120; display:flex; align-items:center; justify-content:center; padding:18px; background:rgba(3,7,18,.96); }
+.auth-card{ width:min(420px,100%); padding:26px; border:1px solid var(--line); border-radius:22px; background:linear-gradient(145deg,rgba(15,23,42,.95),rgba(8,15,29,.95)); box-shadow:var(--shadow); }
+.auth-card .lucas-icon{ width:54px; height:54px; margin:0 auto 14px; }
+.auth-card h2{ text-align:center; font-size:22px; }
+.auth-card p.sub{ text-align:center; color:var(--muted); font-size:12px; margin-top:6px; margin-bottom:18px; }
+.auth-tabs{ display:flex; gap:8px; margin-bottom:16px; }
+.auth-tab{ flex:1; min-height:40px; border-radius:10px; background:var(--panel2); border:1px solid var(--line); color:var(--muted); font-weight:700; font-size:12px; }
+.auth-tab.active{ color:white; background:#101c31; border-color:#3b82f6; }
+
+/* RESPONSIVE */
+@media(max-width:850px){ .feature-grid{ grid-template-columns:repeat(2,1fr); } .workflow{ grid-template-columns:repeat(3,1fr); } }
+@media(max-width:650px){
+  main{ padding:16px 12px 105px; }
+  .topbar{ padding:0 12px; height:66px; }
+  .brand-sub{ display:none; }
+  .stats{ grid-template-columns:repeat(2,1fr); }
+  .feature-grid{ grid-template-columns:repeat(2,1fr); }
+  .card-grid{ grid-template-columns:1fr; }
+  .hero{ padding:19px; border-radius:20px; }
+  .hero h1{ font-size:29px; }
+  .workflow{ grid-template-columns:repeat(2,1fr); }
+  .project-card{ align-items:flex-start; }
+  .project-card .btn{ display:none; }
+}
+@media(max-width:390px){ .feature-grid{ grid-template-columns:1fr; } .stats{ grid-template-columns:1fr 1fr; } .stat{ padding:13px; } .stat-value{ font-size:22px; } }
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <!-- HEADER -->
+  <header class="topbar">
+    <div class="brand">
+      <div class="lucas-icon"><div class="l-mark"></div></div>
+      <div>
+        <div class="brand-text">LucasNode</div>
+        <div class="brand-sub">Cloud • Hosting • Deployments</div>
+      </div>
     </div>
-    <button class="del-btn" onclick="deleteProject('${p.id}')">🗑</button>
-  </div>`;
-}
-async function createProject(e){
-  e.preventDefault();
-  const body = {
-    name: $("projName").value.trim(),
-    slug: $("projSlug").value.trim() || undefined,
-    description: $("projDesc").value.trim() || undefined,
-    framework: $("projFramework").value.trim() || undefined,
-    repository_url: $("projRepo").value.trim() || undefined,
-    repository_branch: $("projBranch").value.trim() || undefined
-  };
-  if(!body.name){ toast("Jina la project linahitajika.","err"); return; }
-  const r = await apiRequest("POST", "/api/v1/projects", body);
-  if(r.ok && r.data && r.data.success){ toast("Project imeundwa!","ok"); closeModal("modalProject"); e.target.reset(); loadProjects(); }
-  else toast(r.data?.error || "Imeshindikana kuunda project.","err");
-}
-async function deleteProject(id){
-  if(!confirm("Futa project hii?")) return;
-  const r = await apiRequest("DELETE", "/api/v1/projects/"+id);
-  if(r.ok) toast("Project imefutwa.","ok"); else toast(r.data?.error||"Imeshindikana kufuta.","err");
-  loadProjects();
-}
+    <div class="top-actions">
+      <button class="icon-btn" onclick="showPage('notifications')">🔔</button>
+      <button class="icon-btn" onclick="openDrawer()">☰</button>
+      <div class="avatar" id="avatarBtn" onclick="showPage('settings')">L</div>
+    </div>
+  </header>
 
-/* ---------- domains ---------- */
-async function loadDomains(){
-  const r = await apiRequest("GET", "/api/v1/domains");
-  const list = (r.ok && r.data && r.data.data) ? r.data.data : [];
-  const el = $("domainsList"), empty = $("domainsEmpty");
-  if(!list.length){ el.style.display="none"; empty.style.display="block"; el.innerHTML=""; }
-  else{ el.style.display="grid"; empty.style.display="none";
-    el.innerHTML = list.map(d=>`<div class="project-card"><div class="project-main"><div class="project-icon">🌐</div><div><div class="project-name">${escapeHtml(d.domain||d.name||"")}</div><div class="project-meta">${escapeHtml(d.status||"connected")}</div></div></div><button class="del-btn" onclick="toast('Domain inasimamiwa na backend.','ok')">⚙</button></div>`).join("");
-  }
-  updateStats();
-}
-async function searchDomain(){
-  const domain = ($("domainSearchInput").value||"").trim().toLowerCase();
-  if(!domain){ toast("Weka domain.","err"); return; }
-  $("domainSearchResult").textContent = "Inatafuta...";
-  const r = await apiRequest("GET", "/api/domains/check?domain="+encodeURIComponent(domain));
-  if(r.ok && r.data && r.data.success){ $("domainSearchResult").innerHTML = r.data.registered ? `✅ <b>${escapeHtml(domain)}</b> imekwisha sajiliwa (${r.data.source}).` : `🟢 <b>${escapeHtml(domain)}</b> inapatikana!`; }
-  else $("domainSearchResult").textContent = r.data?.error || "Imeshindikana.";
-}
-async function checkDomainInModal(){
-  const domain = ($("domainInput").value||"").trim().toLowerCase();
-  if(!domain){ toast("Weka domain.","err"); return; }
-  $("domainCheckResult").textContent = "Inatafuta...";
-  const r = await apiRequest("GET", "/api/domains/check?domain="+encodeURIComponent(domain));
-  if(r.ok && r.data && r.data.success){ $("domainCheckResult").innerHTML = r.data.registered ? `✅ Imekwisha sajiliwa (${r.data.source}).` : `🟢 Inapatikana!`; }
-  else $("domainCheckResult").textContent = r.data?.error || "Imeshindikana.";
-}
-async function addDomain(e){
-  e.preventDefault();
-  const domain = ($("domainInput").value||"").trim().toLowerCase();
-  if(!domain){ toast("Weka domain.","err"); return; }
-  const r = await apiRequest("POST", "/api/v1/domains", { domain });
-  if(r.ok && r.data && r.data.success){ toast("Domain imehifadhiwa!","ok"); closeModal("modalDomain"); e.target.reset(); loadDomains(); }
-  else toast(r.data?.error || "Imeshindikana kuhifadhi domain.","err");
-}
+  <!-- MAIN -->
+  <main>
 
-/* ---------- tovuti (hosting) ---------- */
-async function loadTovuti(){
-  const r = await apiRequest("GET", "/api/tovuti");
-  const list = (r.ok && r.data && r.data.data) ? r.data.data : [];
-  const el = $("tovutiList"), empty = $("tovutiEmpty");
-  if(!list.length){ el.style.display="none"; empty.style.display="block"; el.innerHTML=""; }
-  else{ el.style.display="grid"; empty.style.display="none";
-    el.innerHTML = list.map(s=>`<div class="project-card"><div class="project-main"><div class="project-icon">🌍</div><div><div class="project-name">${escapeHtml(s.name||"")}</div><div class="project-meta">/${escapeHtml(s.slug||"")} · ${fmtDate(s.created_at)}</div></div></div><button class="btn btn-secondary" onclick="toast('Tovuti imehifadhiwa kwenye backend.','ok')">Angalia</button></div>`).join("");
-  }
-  updateStats();
-}
-async function createTovuti(e){
-  e.preventDefault();
-  const body = { name:$("tovutiName").value.trim(), slug:$("tovutiSlug").value.trim(), html:$("tovutiHtml").value };
-  if(!body.name||!body.slug||!body.html){ toast("Jaza sehemu zote.","err"); return; }
-  const r = await apiRequest("POST", "/api/tovuti", body);
-  if(r.ok && r.data && r.data.success){ toast("Tovuti imehifadhiwa!","ok"); closeModal("modalTovuti"); e.target.reset(); loadTovuti(); }
-  else toast(r.data?.error || "Imeshindikana kuhifadhi tovuti.","err");
-}
+    <!-- HOME -->
+    <section id="page-home" class="page active">
+      <div class="hero">
+        <span class="badge"><span class="status-dot"></span> LucasNode Platform</span>
+        <h1>Jenga. Deploy.<br>Weka LIVE.</h1>
+        <p>Simamia projects zako, files, deployments, domains, hosting na huduma za cloud kutoka sehemu moja.</p>
+        <div class="hero-actions">
+          <button class="btn btn-primary" onclick="openCreateProject()">＋ Create Project</button>
+          <button class="btn btn-secondary" onclick="showPage('projects')">Projects Zangu</button>
+          <button class="btn btn-secondary" onclick="openGithubModal()">⬇ Pakua kutoka GitHub</button>
+        </div>
+      </div>
 
-/* ---------- deployments ---------- */
-async function loadDeployProjects(){
-  const r = await apiRequest("GET", "/api/v1/projects");
-  const list = (r.ok && r.data && r.data.data) ? r.data.data : [];
-  const sel = $("deployProject");
-  sel.innerHTML = '<option value="">Chagua project</option>' + list.map(p=>`<option value="${p.id}">${escapeHtml(p.name)}</option>`).join("");
-  loadDeployHistory();
-}
-async function loadDeployHistory(){
-  const r = await apiRequest("GET", "/api/v1/deployments");
-  const list = (r.ok && r.data && r.data.data) ? r.data.data : [];
-  const el = $("deployHistoryList"), empty = $("deployHistoryEmpty");
-  if(!list.length){ el.style.display="none"; empty.style.display="block"; el.innerHTML=""; }
-  else{ el.style.display="grid"; empty.style.display="none";
-    el.innerHTML = list.map(d=>`<div class="project-card"><div class="project-main"><div class="project-icon">🚀</div><div><div class="project-name">${escapeHtml(d.project_id||d.id||"Deployment")}</div><div class="project-meta">${escapeHtml(d.status||"")}</div></div></div></div>`).join("");
-  }
-  updateStats();
-}
-async function startDeployment(e){
-  e.preventDefault();
-  const pid = $("deployProject").value;
-  if(!pid){ toast("Chagua project kwanza.","err"); return; }
-  toast("Deployment imeombwa — backend inasimamia build na inspect.","ok");
-  setTimeout(loadDeployHistory, 1500);
-}
+      <div class="stats">
+        <div class="stat"><div class="stat-label">Projects</div><div class="stat-value" id="statProjects">0</div><div class="stat-note">Projects zako</div></div>
+        <div class="stat"><div class="stat-label">Live Sites</div><div class="stat-value" id="statLive">0</div><div class="stat-note">Sites zinazoishi</div></div>
+        <div class="stat"><div class="stat-label">Domains</div><div class="stat-value" id="statDomains">0</div><div class="stat-note">Domains zilizounganishwa</div></div>
+        <div class="stat"><div class="stat-label">Deployments</div><div class="stat-value" id="statDeployments">0</div><div class="stat-note">Deployments zako</div></div>
+      </div>
 
-/* ---------- monitoring ---------- */
-async function checkBackend(){
-  const el = $("healthResult");
-  if(el) el.textContent = "Inakagua...";
-  const r = await apiRequest("GET", "/api/afya", null, false);
-  if(r.ok && r.data && r.data.success){ if(el) el.innerHTML = '✅ <b>Hai</b> — LucasNode API inafanya kazi.'; toast("Backend inafanya kazi!","ok"); }
-  else { if(el) el.textContent = r.data?.error || "Backend haipatikani."; toast("Backend haipatikani.","err"); }
-}
+      <div class="section">
+        <div class="section-head">
+          <div><div class="section-title">Projects Zako</div><div class="section-sub">Projects utakazounda zitaonekana hapa.</div></div>
+          <button class="btn btn-secondary" onclick="showPage('projects')">Angalia zote</button>
+        </div>
+        <div id="homeEmpty" class="empty">
+          <div class="empty-icon">📦</div>
+          <h3>Hakuna project bado</h3>
+          <p>Anza kwa kuunda project yako ya kwanza. Unaweza kuongeza GitHub repo URL kama chanzo.</p>
+          <button class="btn btn-primary" onclick="openCreateProject()">＋ Anza Project</button>
+        </div>
+        <div id="homeProjects" class="project-list" style="display:none"></div>
+      </div>
 
-/* ---------- profile ---------- */
-async function loadProfile(){
-  if(!isLoggedIn()) return;
-  const r = await apiRequest("GET", "/api/v1/me");
-  if(r.ok && r.data && r.data.success){
-    const u = r.data.user||{}, p = r.data.profile||{};
-    $("profileInfo").innerHTML = `📧 ${escapeHtml(u.email||"-")}<br>👤 ${escapeHtml(p.full_name||"-")}<br>📱 ${escapeHtml(p.phone||"-")}<br>🌍 ${escapeHtml(p.country||"-")}`;
-  } else { $("profileInfo").textContent = r.data?.error || "Imeshindikana kusoma wasifu."; }
-}
+      <div class="section">
+        <div class="section-head"><div><div class="section-title">Workflow ya LucasNode</div><div class="section-sub">Njia rahisi kutoka project hadi LIVE.</div></div></div>
+        <div class="workflow">
+          <div class="step"><div class="step-number">1</div><span>Create</span></div>
+          <div class="step"><div class="step-number">2</div><span>Upload</span></div>
+          <div class="step"><div class="step-number">3</div><span>Inspect</span></div>
+          <div class="step"><div class="step-number">4</div><span>Build</span></div>
+          <div class="step"><div class="step-number">5</div><span>Deploy</span></div>
+          <div class="step"><div class="step-number">6</div><span>LIVE</span></div>
+        </div>
+      </div>
+    </section>
 
-/* ---------- support tickets (local) ---------- */
-async function createTicket(e){
-  e.preventDefault();
-  const subject = $("ticketSubject").value.trim(), message = $("ticketMessage").value.trim();
-  if(!subject||!message){ toast("Jaza sehemu zote.","err"); return; }
-  const tickets = JSON.parse(localStorage.getItem("lucasnode_tickets")||"[]");
-  tickets.unshift({ subject, message, created_at: new Date().toISOString() });
-  localStorage.setItem("lucasnode_tickets", JSON.stringify(tickets));
-  toast("Ticket imetumwa!","ok"); closeModal("modalSupport"); e.target.reset(); renderTickets();
-}
-function renderTickets(){
-  const tickets = JSON.parse(localStorage.getItem("lucasnode_tickets")||"[]");
-  const el = $("ticketsList");
-  if(!tickets.length){ el.className="empty"; el.innerHTML='<div class="empty-icon">🎫</div><h3>Hakuna support ticket</h3><p>Tickets zako zitaonekana hapa.</p>'; return; }
-  el.className="project-list"; el.style.display="grid";
-  el.innerHTML = tickets.map(t=>`<div class="project-card"><div class="project-main"><div class="project-icon">🎫</div><div><div class="project-name">${escapeHtml(t.subject)}</div><div class="project-meta">${fmtDate(t.created_at)}</div></div></div></div>`).join("");
-}
+    <!-- PROJECTS -->
+    <section id="page-projects" class="page">
+      <div class="section-head">
+        <div><div class="section-title">Projects</div><div class="section-sub">Projects zako zote zinasimamiwa hapa.</div></div>
+        <button class="btn btn-primary" onclick="openCreateProject()">＋ Create</button>
+      </div>
+      <div id="projectsEmpty" class="empty">
+        <div class="empty-icon">📁</div>
+        <h3>Hakuna project bado</h3>
+        <p>Ukianza project, workspace yake itaonekana hapa pamoja na files, deployments, domains na settings.</p>
+        <button class="btn btn-primary" onclick="openCreateProject()">Create Project</button>
+      </div>
+      <div id="projectsList" class="project-list" style="display:none"></div>
+    </section>
 
-/* ---------- GitHub downloader ---------- */
-async function browseGithub(e){
-  e.preventDefault();
-  state.ghOwner = $("ghOwner").value.trim();
-  state.ghRepo = $("ghRepo").value.trim();
-  state.ghBranch = $("ghBranch").value.trim() || "main";
-  state.ghPath = "";
-  await fetchGithubDir("");
-}
-async function fetchGithubDir(path){
-  state.ghPath = path;
-  const token = $("ghToken").value.trim();
-  const url = `https://api.github.com/repos/${encodeURIComponent(state.ghOwner)}/${encodeURIComponent(state.ghRepo)}/contents/${path}?ref=${encodeURIComponent(state.ghBranch)}`;
-  const headers = { "Accept":"application/vnd.github+json" };
-  if(token) headers["Authorization"] = "Bearer " + token;
-  $("ghStatus").textContent = "Inasoma...";
-  try{
-    const res = await fetch(url, { headers });
-    if(res.status === 404){ $("ghStatus").textContent = "Faili au saraka haipatikani (404)."; return; }
-    if(res.status === 403){ $("ghStatus").textContent = "Upatikanaji umekataliwa (403). Kwa repo binafsi weka token sahihi."; return; }
-    if(!res.ok){ $("ghStatus").textContent = "Hitilafu: "+res.status; return; }
-    const items = await res.json();
-    const arr = Array.isArray(items) ? items : [items];
-    arr.sort((a,b)=> (a.type===b.type)? a.name.localeCompare(b.name) : (a.type==="dir"?-1:1));
-    renderGhBreadcrumb();
-    const tree = $("ghTree"); tree.style.display="block";
-    tree.innerHTML = (path ? `<div class="gh-row" onclick="fetchGithubDir('${parentPath(path)}')">📁 <span class="gh-name">.. (nyuma)</span></div>` : "") +
-      arr.map(it=> ghRow(it)).join("");
-    $("ghStatus").textContent = `${arr.length} kipengee.`;
-  }catch(err){ $("ghStatus").textContent = "Imeshindikana kuunganisha na GitHub."; }
-}
-function ghRow(it){
-  const isDir = it.type === "dir";
-  const icon = isDir ? "📁" : "📄";
-  const click = isDir ? `fetchGithubDir('${it.path}')` : `downloadGithubFile('${it.path}','${it.download_url||""}')`;
-  const size = isDir ? "" : `<span class="gh-size">${fmtSize(it.size)}</span>`;
-  return `<div class="gh-row" onclick="${click}">${icon} <span class="gh-name">${escapeHtml(it.name)}</span>${size}</div>`;
-}
-function renderGhBreadcrumb(){
-  const bc = $("ghBreadcrumb"); bc.style.display="block";
-  const parts = state.ghPath.split("/").filter(Boolean);
-  let html = `<span style="cursor:pointer;color:#93c5fd" onclick="fetchGithubDir('')">${escapeHtml(state.ghOwner)}/${escapeHtml(state.ghRepo)}</span> @ ${escapeHtml(state.ghBranch)}`;
-  let acc = "";
-  for(const p of parts){ acc = acc ? acc+"/"+p : p; html += ` / <span style="cursor:pointer;color:#93c5fd" onclick="fetchGithubDir('${acc}')">${escapeHtml(p)}</span>`; }
-  bc.innerHTML = html;
-}
-async function downloadGithubFile(path, downloadUrl){
-  const token = $("ghToken").value.trim();
-  const rawUrl = downloadUrl || `https://raw.githubusercontent.com/${encodeURIComponent(state.ghOwner)}/${encodeURIComponent(state.ghRepo)}/${encodeURIComponent(state.ghBranch)}/${path}`;
-  $("ghStatus").textContent = "Inapakua: "+path;
-  try{
-    const headers = {};
-    if(token) headers["Authorization"] = "Bearer " + token;
-    const res = await fetch(rawUrl, { headers });
-    if(!res.ok){ $("ghStatus").textContent = "Imeshindikana kupakua: "+res.status; return; }
-    const blob = await res.blob();
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = path.split("/").pop();
-    document.body.appendChild(a); a.click(); a.remove();
-    setTimeout(()=>URL.revokeObjectURL(a.href), 4000);
-    $("ghStatus").textContent = "✅ Imepakuliwa: "+path;
-    toast("File imepakuliwa!","ok");
-  }catch(err){ $("ghStatus").textContent = "Imeshindikana kupakua."; }
-}
-function parentPath(p){ const i=p.lastIndexOf("/"); return i===-1?"":p.slice(0,i); }
+    <!-- DEPLOY -->
+    <section id="page-deploy" class="page">
+      <div class="hero">
+        <span class="badge">🚀 Deployment Center</span>
+        <h1>Deploy Project</h1>
+        <p>Chagua project, kagua build configuration, kisha deploy to preview au production.</p>
+      </div>
+      <form class="form card" onsubmit="startDeployment(event)">
+        <div class="field"><label>Project</label><select class="select" id="deployProject"><option value="">Chagua project</option></select></div>
+        <div class="field"><label>Environment</label><select class="select" id="deployEnv"><option>Preview</option><option>Production</option></select></div>
+        <div class="field"><label>Build Command</label><input class="input" placeholder="npm run build"></div>
+        <div class="field"><label>Output Directory</label><input class="input" placeholder="dist"></div>
+        <div class="notice"><span>🔍</span><span>LucasNode itapaswa kufanya Inspector na build checks kabla ya deployment halisi kupitia Worker backend.</span></div>
+        <button class="btn btn-primary btn-full" type="submit">🚀 Start Deployment</button>
+      </form>
+      <div class="section">
+        <div class="section-head"><div><div class="section-title">Deployment History</div><div class="section-sub">Historia ya deployments zako.</div></div></div>
+        <div id="deployHistoryEmpty" class="empty">
+          <div class="empty-icon">🚀</div>
+          <h3>Hakuna deployment bado</h3>
+          <p>Deployment utakayofanya itaonekana hapa.</p>
+        </div>
+        <div id="deployHistoryList" class="project-list" style="display:none"></div>
+      </div>
+    </section>
 
-/* ---------- utils ---------- */
-function escapeHtml(s){ return String(s??"").replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
-function fmtDate(s){ try{ return new Date(s).toLocaleString("sw"); }catch{ return s||""; } }
-function fmtSize(b){ if(b==null) return ""; if(b<1024) return b+" B"; if(b<1048576) return (b/1024).toFixed(1)+" KB"; return (b/1048576).toFixed(1)+" MB"; }
-async function updateStats(){
-  const [p, d, dep] = await Promise.all([
-    apiRequest("GET","/api/v1/projects"),
-    apiRequest("GET","/api/v1/domains"),
-    apiRequest("GET","/api/v1/deployments")
-  ]);
-  $("statProjects").textContent = (p.ok&&p.data?.data)? p.data.data.length : 0;
-  $("statDomains").textContent = (d.ok&&d.data?.data)? d.data.data.length : 0;
-  $("statDeployments").textContent = (dep.ok&&dep.data?.data)? dep.data.data.length : 0;
-  const t = await apiRequest("GET","/api/tovuti");
-  $("statLive").textContent = (t.ok&&t.data?.data)? t.data.data.length : 0;
-}
+    <!-- DOMAINS -->
+    <section id="page-domains" class="page">
+      <div class="hero">
+        <span class="badge">🌐 Domain Center</span>
+        <h1>Domains</h1>
+        <p>Unganisha domain au tumia subdomain ya LucasNode kwa project yako.</p>
+        <div class="hero-actions"><button class="btn btn-primary" onclick="openDomainModal()">＋ Add Domain</button></div>
+      </div>
+      <div class="card-grid">
+        <div class="card"><div class="section-title">🔎 Domain Search</div><p class="hint">Tafuta domain na kuangalia taarifa za domain (RDAP).</p>
+          <div class="form" style="margin-top:10px">
+            <input class="input" id="domainSearchInput" placeholder="example.com">
+            <button class="btn btn-secondary" onclick="searchDomain()">Search</button>
+          </div>
+          <div id="domainSearchResult" class="hint" style="margin-top:10px"></div>
+        </div>
+        <div class="card"><div class="section-title">🔗 Connect Domain</div><p class="hint">Unganisha domain yako na project.</p><button class="btn btn-secondary" onclick="openDomainModal()">Connect</button></div>
+      </div>
+      <div class="section">
+        <div class="section-head"><div><div class="section-title">Your Domains</div><div class="section-sub">Domains zilizohifadhiwa.</div></div></div>
+        <div id="domainsEmpty" class="empty">
+          <div class="empty-icon">🌐</div><h3>No domains yet</h3><p>Domain utakayounganisha itaonekana hapa.</p>
+          <button class="btn btn-primary" onclick="openDomainModal()">Add Domain</button>
+        </div>
+        <div id="domainsList" class="project-list" style="display:none"></div>
+      </div>
+    </section>
 
-/* ---------- init ---------- */
-async function initApp(){
-  hideAuthGate();
-  updateAvatar();
-  renderTickets();
-  showPage("home");
-}
-async function bootstrap(){
-  const token = getToken();
-  if(!token){ showAuthGate(); return; }
-  const r = await apiRequest("GET", "/api/idhini/mimi", null, false);
-  if(r.ok && r.data && r.data.success && r.data.user){ state.user = r.data.user; updateAvatar(); initApp(); }
-  else {
-    const refreshed = await refreshSession();
-    if(refreshed){ state.user = JSON.parse(localStorage.getItem(LS_USER)||"null"); updateAvatar(); initApp(); }
-    else showAuthGate();
-  }
-}
-bootstrap();
-document.querySelectorAll(".modal-wrap").forEach(m=> m.addEventListener("click", e=>{ if(e.target===m) m.classList.remove("show"); }));
-</script>
-</body>
-</html>
+    <!-- HOSTING -->
+    <section id="page-hosting" class="page">
+      <div class="hero">
+        <span class="badge">☁ Hosting</span>
+        <h1>Hosting Center</h1>
+        <p>Simamia sites zako, production status, URLs, storage na matumizi.</p>
+        <div class="hero-actions"><button class="btn btn-primary" onclick="openTovutiModal()">＋ Ongeza Tovuti</button></div>
+      </div>
+      <div class="section">
+        <div class="section-head"><div><div class="section-title">Tovuti Zilizohifadhiwa</div><div class="section-sub">Hosted sites kutoka backend.</div></div></div>
+        <div id="tovutiEmpty" class="empty">
+          <div class="empty-icon">🌍</div><h3>Hakuna tovuti bado</h3><p>Tovuti utakayohifadhi itaonekana hapa.</p>
+          <button class="btn btn-primary" onclick="openTovutiModal()">＋ Ongeza Tovuti</button>
+        </div>
+        <div id="tovutiList" class="project-list" style="display:none"></div>
+      </div>
+    </section>
 
+    <!-- PLATFORM -->
+    <section id="page-platform" class="page">
+      <div class="hero">
+        <span class="badge">⚡ LucasNode Platform</span>
+        <h1>Tools za Project</h1>
+        <p>Kila tool imepangwa kulingana na hatua ya project yako.</p>
+      </div>
+      <div class="feature-grid">
+        <div class="feature" onclick="showPage('projects')" style="cursor:pointer"><div class="feature-icon">📁</div><h3>Projects</h3><p>Create na simamia projects.</p></div>
+        <div class="feature" onclick="openGithubModal()" style="cursor:pointer"><div class="feature-icon">⬇</div><h3>Pakua kutoka GitHub</h3><p>Soma na pakua file za repo.</p></div>
+        <div class="feature" onclick="showPage('deploy')" style="cursor:pointer"><div class="feature-icon">🚀</div><h3>Deployments</h3><p>Build, deploy, logs na rollback.</p></div>
+        <div class="feature" onclick="showPage('domains')" style="cursor:pointer"><div class="feature-icon">🌐</div><h3>Domains</h3><p>Custom domains na subdomains.</p></div>
+        <div class="feature" onclick="showPage('hosting')" style="cursor:pointer"><div class="feature-icon">☁️</div><h3>Hosting</h3><p>Sites na production services.</p></div>
+        <div class="feature" onclick="showPage('monitoring')" style="cursor:pointer"><div class="feature-icon">📈</div><h3>Monitoring</h3><p>Health, errors na uptime.</p></div>
+        <div class="feature" onclick="showPage('security')" style="cursor:pointer"><div class="feature-icon">🛡️</div><h3>Security Shield</h3><p>Security, secrets na audit.</p></div>
+        <div class="feature" onclick="showPage('apikeys')" style="cursor:pointer"><div class="feature-icon">🔑</div><h3>API Keys</h3><p>Keys za integrations.</p></div>
+        <div class="feature" onclick="showPage('backup')" style="cursor:pointer"><div class="feature-icon">💾</div><h3>Backup & Recovery</h3><p>Backups na recovery.</p></div>
+        <div class="feature" onclick="showPage('payments')" style="cursor:pointer"><div class="feature-icon">💳</div><h3>Payments & Billing</h3><p>Plans, payments na billing.</p></div>
+        <div class="feature" onclick="showPage('support')" style="cursor:pointer"><div class="feature-icon">🆘</div><h3>Support</h3><p>Fungua support ticket.</p></div>
+        <div class="feature" onclick="showPage('settings')" style="cursor:pointer"><div class="feature-icon">⚙️</div><h3>Settings</h3><p>Akaunti na preferences.</p></div>
+      </div>
+    </section>
+
+    <!-- PAYMENTS -->
+    <section id="page-payments" class="page">
+      <div class="hero"><span class="badge">💳 Payments & Billing</span><h1>Malipo</h1><p>Angalia plans, payment instructions na historia ya malipo ya account yako.</p></div>
+      <div class="notice"><span>ℹ️</span><span>Mfumo unaweza kutumia payment flow ya manual approval: Payment → Pending → Admin Verification → Approved → Service Activation.</span></div>
+      <div class="section"><div class="section-title">Plans</div><div class="empty"><div class="empty-icon">💳</div><h3>Hakuna plan inayopatikana bado</h3><p>Plans zitasomwa kutoka LucasNode backend na Supabase.</p></div></div>
+      <div class="section"><div class="section-title">Payment History</div><div class="empty"><div class="empty-icon">🧾</div><h3>Hakuna payment bado</h3><p>Malipo yako yataonekana hapa.</p></div></div>
+    </section>
+
+    <!-- SECURITY -->
+    <section id="page-security" class="page">
+      <div class="hero"><span class="badge">🛡️ Security Center</span><h1>Security</h1><p>Simamia usalama wa account, API keys, secrets na activity logs.</p></div>
+      <div class="card-grid">
+        <div class="card"><div class="section-title">🔐 Environment Variables</div><p class="hint">Secrets hazipaswi kuwekwa moja kwa moja kwenye frontend.</p><button class="btn btn-secondary" onclick="toast('Secrets husimamiwa kwenye backend.','ok')">Manage</button></div>
+        <div class="card"><div class="section-title">🔑 API Keys</div><p class="hint">Tengeneza na revoke API keys za account yako.</p><button class="btn btn-secondary" onclick="showPage('apikeys')">Open API Keys</button></div>
+      </div>
+      <div class="section"><div class="section-title">Audit Activity</div><div class="empty"><div class="empty-icon">📋</div><h3>Hakuna activity bado</h3><p>Matukio ya account/project yataonekana hapa baada ya backend kuunganishwa.</p></div></div>
+    </section>
+
+    <!-- MONITORING -->
+    <section id="page-monitoring" class="page">
+      <div class="hero"><span class="badge">📈 Monitoring</span><h1>Health Center</h1><p>Angalia deployment, domain, SSL, errors na health ya services zako.</p></div>
+      <div class="card-grid">
+        <div class="card"><div class="section-title">🟢 System Status</div><p class="hint">API health status inaweza kupimwa moja kwa moja.</p><button class="btn btn-secondary" onclick="checkBackend()">Check API</button><div id="healthResult" class="hint" style="margin-top:10px"></div></div>
+        <div class="card"><div class="section-title">📡 Project Monitoring</div><p class="hint">Monitoring events zitasomwa kutoka backend.</p></div>
+      </div>
+      <div class="section"><div class="section-title">Monitoring Events</div><div class="empty"><div class="empty-icon">📊</div><h3>Hakuna events bado</h3><p>Events za monitoring zitaonekana hapa.</p></div></div>
+    </section>
+
+    <!-- BACKUP -->
+    <section id="page-backup" class="page">
+      <div class="hero"><span class="badge">💾 Backup & Recovery</span><h1>Backups</h1><p>Linda projects zako kwa backups na recovery workflows.</p
 <script>
 /* =========================================================
    LucasNode Frontend — inaunganishwa na lucasnode-backend
