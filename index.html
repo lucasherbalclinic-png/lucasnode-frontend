@@ -1,5 +1,6 @@
 
 
+```html
 <!DOCTYPE html>
 <html lang="sw">
 <head>
@@ -490,7 +491,193 @@ input[type=file]{ display:none; }
 
     <!-- BACKUP -->
     <section id="page-backup" class="page">
-      <div class="hero"><span class="badge">💾 Backup & Recovery</span><h1>Backups</h1><p>Linda projects zako kwa backups na recovery workflows.</p
+      <div class="hero"><span class="badge">💾 Backup & Recovery</span><h1>Backups</h1><p>Linda projects zako kwa backups na recovery workflows.</p></div>
+      <div class="empty"><div class="empty-icon">💾</div><h3>Hakuna backup bado</h3><p>Backups zitaonekana hapa baada ya backend backup engine kuunganishwa.</p></div>
+    </section>
+
+    <!-- API KEYS -->
+    <section id="page-apikeys" class="page">
+      <div class="section-head"><div><div class="section-title">API Keys</div><div class="section-sub">Keys za kuunganisha LucasNode na services nyingine.</div></div><button class="btn btn-primary" onclick="toast('API key creation inasimamiwa na backend.','ok')">＋ New Key</button></div>
+      <div class="notice"><span>🔐</span><span>Raw API keys hazipaswi kuhifadhiwa kwenye database. Backend itasimamia hashing na revocation.</span></div>
+      <div class="section"><div class="empty"><div class="empty-icon">🔑</div><h3>Hakuna API key bado</h3><p>API keys utakazounda zitaonekana hapa.</p></div></div>
+    </section>
+
+    <!-- NOTIFICATIONS -->
+    <section id="page-notifications" class="page">
+      <div class="section-head"><div><div class="section-title">Notifications</div><div class="section-sub">Taarifa muhimu za account na projects.</div></div></div>
+      <div id="notificationsList" class="empty"><div class="empty-icon">🔔</div><h3>Hakuna notifications</h3><p>Notifications za deployments, domains, payments na system events zitaonekana hapa.</p></div>
+    </section>
+
+    <!-- SUPPORT -->
+    <section id="page-support" class="page">
+      <div class="hero"><span class="badge">🆘 Support Center</span><h1>Tunahitaji kukusaidia?</h1><p>Fungua support ticket na fuatilia majibu kutoka LucasNode.</p>
+        <div class="hero-actions"><button class="btn btn-primary" onclick="openSupportModal()">＋ New Ticket</button></div>
+      </div>
+      <div id="ticketsList" class="empty"><div class="empty-icon">🎫</div><h3>Hakuna support ticket</h3><p>Tickets zako zitaonekana hapa.</p></div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section id="page-settings" class="page">
+      <div class="section-head"><div><div class="section-title">Settings</div><div class="section-sub">Simamia account na preferences zako.</div></div></div>
+      <div class="card-grid">
+        <div class="card"><div class="section-title">Profile</div><p class="hint" id="profileInfo">Jina, simu, avatar na taarifa za account.</p><button class="btn btn-secondary" onclick="loadProfile()">Pakia Wasifu</button></div>
+        <div class="card"><div class="section-title">Language</div><p class="hint">Kiswahili / English.</p><select class="select"><option>Kiswahili</option><option>English</option></select></div>
+        <div class="card"><div class="section-title">Security</div><p class="hint">Account security na authentication.</p><button class="btn btn-secondary" onclick="showPage('security')">Security Center</button></div>
+        <div class="card"><div class="section-title">Account</div><p class="hint">Toka kwenye akaunti kwenye kifaa hiki.</p><button class="btn btn-danger" onclick="logout()">🚪 Toka (Logout)</button></div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <button class="bottom-item active" data-page="home" onclick="showPage('home')"><strong>⌂</strong>Home</button>
+    <button class="bottom-item" data-page="projects" onclick="showPage('projects')"><strong>▦</strong>Projects</button>
+    <button class="create-bottom" onclick="openCreateProject()">＋</button>
+    <button class="bottom-item" data-page="deploy" onclick="showPage('deploy')"><strong>↗</strong>Deploy</button>
+    <button class="bottom-item" data-page="platform" onclick="openDrawer()"><strong>☰</strong>More</button>
+  </nav>
+
+</div>
+
+<!-- DRAWER -->
+<div id="drawerOverlay" class="overlay" onclick="closeDrawer()">
+  <div class="drawer" onclick="event.stopPropagation()">
+    <div class="drawer-head">
+      <div class="brand"><div class="lucas-icon"><div class="l-mark"></div></div><div class="brand-text">LucasNode</div></div>
+      <button class="close" onclick="closeDrawer()">✕</button>
+    </div>
+    <div class="menu-section">Meneja</div>
+    <button class="menu-item" onclick="showPage('home')"><span class="menu-icon">⌂</span> Home</button>
+    <button class="menu-item" onclick="showPage('projects')"><span class="menu-icon">📁</span> Projects</button>
+    <button class="menu-item" onclick="showPage('deploy')"><span class="menu-icon">🚀</span> Deployments</button>
+    <button class="menu-item" onclick="showPage('domains')"><span class="menu-icon">🌐</span> Domains</button>
+    <button class="menu-item" onclick="showPage('hosting')"><span class="menu-icon">☁️</span> Hosting</button>
+    <div class="menu-section">Platform</div>
+    <button class="menu-item" onclick="showPage('platform')"><span class="menu-icon">⚡</span> Platform Tools</button>
+    <button class="menu-item" onclick="openGithubModal()"><span class="menu-icon">⬇</span> Pakua kutoka GitHub</button>
+    <button class="menu-item" onclick="showPage('monitoring')"><span class="menu-icon">📈</span> Monitoring</button>
+    <button class="menu-item" onclick="showPage('security')"><span class="menu-icon">🛡️</span> Security</button>
+    <button class="menu-item" onclick="showPage('backup')"><span class="menu-icon">💾</span> Backup</button>
+    <button class="menu-item" onclick="showPage('apikeys')"><span class="menu-icon">🔑</span> API Keys</button>
+    <div class="menu-section">Akaunti</div>
+    <button class="menu-item" onclick="showPage('payments')"><span class="menu-icon">💳</span> Payments</button>
+    <button class="menu-item" onclick="showPage('notifications')"><span class="menu-icon">🔔</span> Notifications</button>
+    <button class="menu-item" onclick="showPage('support')"><span class="menu-icon">🆘</span> Support</button>
+    <button class="menu-item" onclick="showPage('settings')"><span class="menu-icon">⚙️</span> Settings</button>
+    <button class="menu-item" onclick="logout()" style="color:#fca5a5"><span class="menu-icon">🚪</span> Toka (Logout)</button>
+  </div>
+</div>
+
+<!-- AUTH GATE -->
+<div id="authGate" class="auth-gate" style="display:none">
+  <div class="auth-card">
+    <div class="lucas-icon"><div class="l-mark"></div></div>
+    <h2>LucasNode</h2>
+    <p class="sub">Ingia au sajili akaunti yako kuendelea.</p>
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tabLogin" onclick="setAuthTab('login')">Kuingia</button>
+      <button class="auth-tab" id="tabRegister" onclick="setAuthTab('register')">Kusajili</button>
+    </div>
+    <form class="form" onsubmit="submitAuth(event)">
+      <div class="field" id="nameField" style="display:none"><label>Jina la kuonesha</label><input class="input" id="authName" placeholder="Jina lako"></div>
+      <div class="field"><label>Barua pepe</label><input class="input" id="authEmail" type="email" placeholder="you@example.com" required></div>
+      <div class="field"><label>Nenosiri</label><input class="input" id="authPassword" type="password" placeholder="Angalau herufi 10" required></div>
+      <button class="btn btn-primary btn-full" type="submit" id="authSubmit">Kuingia</button>
+    </form>
+    <p class="hint" style="text-align:center;margin-top:12px">Backend: lucasnode-backend • Supabase Auth</p>
+  </div>
+</div>
+
+<!-- MODAL: CREATE PROJECT -->
+<div class="modal-wrap" id="modalProject">
+  <div class="modal">
+    <div class="modal-head"><div class="modal-title">Create Project</div><button class="close" onclick="closeModal('modalProject')">✕</button></div>
+    <div class="modal-body">
+      <form class="form" onsubmit="createProject(event)">
+        <div class="field"><label>Jina la project *</label><input class="input" id="projName" placeholder="My Site" required></div>
+        <div class="field"><label>Slug (chaguo)</label><input class="input" id="projSlug" placeholder="my-site"></div>
+        <div class="field"><label>Maelezo</label><textarea class="textarea" id="projDesc" placeholder="Maelezo mafupi..."></textarea></div>
+        <div class="field"><label>Framework</label><input class="input" id="projFramework" placeholder="next, astro, hugo, vite..."></div>
+        <div class="field"><label>GitHub Repo URL</label><input class="input" id="projRepo" placeholder="https://github.com/owner/repo"></div>
+        <div class="field"><label>Branch</label><input class="input" id="projBranch" placeholder="main"></div>
+        <button class="btn btn-primary btn-full" type="submit">＋ Unda Project</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: DOMAIN -->
+<div class="modal-wrap" id="modalDomain">
+  <div class="modal">
+    <div class="modal-head"><div class="modal-title">Add / Check Domain</div><button class="close" onclick="closeModal('modalDomain')">✕</button></div>
+    <div class="modal-body">
+      <form class="form" onsubmit="addDomain(event)">
+        <div class="field"><label>Domain *</label><input class="input" id="domainInput" placeholder="example.com" required></div>
+        <div id="domainCheckResult" class="hint"></div>
+        <button class="btn btn-secondary btn-full" type="button" onclick="checkDomainInModal()">🔎 Angalia kwanza (RDAP)</button>
+        <button class="btn btn-primary btn-full" type="submit">🔗 Hifadhi Domain</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: TOVUTI (hosting) -->
+<div class="modal-wrap" id="modalTovuti">
+  <div class="modal">
+    <div class="modal-head"><div class="modal-title">Ongeza Tovuti (HTML)</div><button class="close" onclick="closeModal('modalTovuti')">✕</button></div>
+    <div class="modal-body">
+      <form class="form" onsubmit="createTovuti(event)">
+        <div class="field"><label>Jina *</label><input class="input" id="tovutiName" placeholder="Tovuti yangu" required></div>
+        <div class="field"><label>Slug *</label><input class="input" id="tovutiSlug" placeholder="tovuti-yangu" required></div>
+        <div class="field"><label>HTML (lazima kuwa na &lt;html&gt; au &lt;body&gt;)</label><textarea class="textarea" id="tovutiHtml" placeholder="<html><body><h1>Hello</h1></body></html>" required></textarea></div>
+        <button class="btn btn-primary btn-full" type="submit">💾 Hifadhi Tovuti</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: SUPPORT -->
+<div class="modal-wrap" id="modalSupport">
+  <div class="modal">
+    <div class="modal-head"><div class="modal-title">New Support Ticket</div><button class="close" onclick="closeModal('modalSupport')">✕</button></div>
+    <div class="modal-body">
+      <form class="form" onsubmit="createTicket(event)">
+        <div class="field"><label>Subject *</label><input class="input" id="ticketSubject" placeholder="Tatizo lako" required></div>
+        <div class="field"><label>Ujumbe *</label><textarea class="textarea" id="ticketMessage" placeholder="Eleza tatizo..." required></textarea></div>
+        <button class="btn btn-primary btn-full" type="submit">🎫 Tuma Ticket</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: GITHUB DOWNLOADER -->
+<div class="modal-wrap" id="modalGithub">
+  <div class="modal">
+    <div class="modal-head"><div class="modal-title">⬇ Pakua File kutoka GitHub</div><button class="close" onclick="closeModal('modalGithub')">✕</button></div>
+    <div class="modal-body">
+      <div class="notice"><span>ℹ️</span><span>Inatumia GitHub API. Kwa repo za umma hauhitaji token. Kwa repo binafsi weka Personal Access Token.</span></div>
+      <form class="form" onsubmit="browseGithub(event)" style="margin-top:12px">
+        <div class="card-grid">
+          <div class="field"><label>Owner *</label><input class="input" id="ghOwner" placeholder="cloudflare" required></div>
+          <div class="field"><label>Repo *</label><input class="input" id="ghRepo" placeholder="workers-sdk" required></div>
+        </div>
+        <div class="card-grid">
+          <div class="field"><label>Branch</label><input class="input" id="ghBranch" placeholder="main"></div>
+          <div class="field"><label>Token (chaguo)</label><input class="input" id="ghToken" type="password" placeholder="ghp_..."></div>
+        </div>
+        <button class="btn btn-primary btn-full" type="submit">📂 Soma Repo</button>
+      </form>
+      <div id="ghBreadcrumb" class="gh-breadcrumb" style="display:none"></div>
+      <div id="ghTree" class="gh-tree" style="display:none"></div>
+      <div id="ghStatus" class="hint" style="margin-top:10px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
 <script>
 /* =========================================================
    LucasNode Frontend — inaunganishwa na lucasnode-backend
@@ -633,7 +820,7 @@ function openCreateProject(){ openModal("modalProject"); }
 function openDomainModal(){ openModal("modalDomain"); }
 function openTovutiModal(){ openModal("modalTovuti"); }
 function openSupportModal(){ openModal("modalSupport"); }
-function openGithubModal(){ $("modalGithub").classList.add("show"); } // inapatikana bila login (GitHub API ni ya umma)
+function openGithubModal(){ $("modalGithub").classList.add("show"); }
 
 /* ---------- projects ---------- */
 async function loadProjects(){
@@ -911,3 +1098,4 @@ document.querySelectorAll(".modal-wrap").forEach(m=> m.addEventListener("click",
 </script>
 </body>
 </html>
+```
