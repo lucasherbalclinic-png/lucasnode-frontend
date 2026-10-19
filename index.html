@@ -1300,77 +1300,349 @@ function renderDeployHistory(){
 }
 
 /* =========================================================
-   DOMAINS
+   LUCASNODE — DOMAINS
+   Secure domain records and ownership-status handling.
+   Preserves the existing UI elements and CSS classes.
 ========================================================= */
-async function addDomain(event){
-  event.preventDefault();
-  const domain = document.getElementById("domainName").value.trim().toLowerCase();
-  const type = document.getElementById("domainType").value;
-  const project_id = document.getElementById("domainProject").value;
-  if(!domain){ showToast("Weka domain.", "error"); return; }
-  const pattern = /^(?=.{1,253}$)(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}$/;
-  if(!pattern.test(domain)){ showToast("Muundo wa domain si sahihi.", "error"); return; }
 
-  try{
-    const data = await apiFetch("/api/v1/domains", {
-      method: "POST",
-      body: JSON.stringify({ domain: domain, type: type, project_id: project_id || null })
-    });
-    if(data && data.domain) domains.unshift(data.domain);
-    renderDomains();
-    updateStats();
-    closeModal("domainModal");
-    document.getElementById("domainName").value = "";
-    showToast("Domain imeongezwa. Configure DNS kisha itathibitishwa.", "success");
-  }catch(err){
-    console.error(err);
-    showToast("Imeshindwa kuongeza domain: " + err.message, "error");
+const LUCASNODE_DOMAIN_PATTERN =
+  /^(?=.{1,253}$)(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}$/i;
+
+function normalizeDomain(value) {
+  return String(value || "")
+    .trim()
+    .toLowerCase()
+    .replace(/\.$/, "");
+}
+
+function validateDomainName(value) {
+  const domain = normalizeDomain(value);
+
+  if (!domain) {
+    return { valid: false, message: "Weka jina la domain." };
+  }
+
+  if (domain.length > 253 || !LUCASNODE_DOMAIN_PATTERN.test(domain)) {
+    return {
+      valid: false,
+      message: "Muundo wa domain si sahihi. Mfano: kampuni.com"
+    };
+  }
+
+  return { valid: true, domain };
+}
+
+function getDomainType() {
+  const element = document.getElementById("domainType");
+  return element ? element.value.trim() : "";
+}
+
+function getDomainProject() {
+  const element = document.getElementById("domainProject");
+  return element ? element.value.trim() : "";
+}
+
+function setDomainSubmitState(disabled) {
+  const form = document.getElementById("domainModal");
+  if (!form) return;
+
+  const button = form.querySelector(
+    'button[type="submit"], input[type="submit"]'
+  );
+
+  if (button) {
+    if (disabled) {
+      button.dataset.domainPreviousDisabled =
+        button.disabled ? "true" : "false";
+      button.disabled = true;
+    } else {
+      button.disabled =
+        button.dataset.domainPreviousDisabled === "true";
+      delete button.dataset.domainPreviousDisabled;
+    }
   }
 }
 
-async function deleteDomain(id){
-  if(!id){ return; }
-  if(!confirm("Futa domain hii?")) return;
-  try{
-    await apiFetch("/api/v1/domains/" + encodeURIComponent(id), { method:"DELETE" });
-    domains = domains.filter(function(d){ return d.id !== id; });
-    renderDomains();
-    updateStats();
-    showToast("Domain imefutwa.", "success");
-  }catch(err){
-    console.error(err);
-    showToast("Imeshindwa kufuta domain: " + err.message, "error");
-  }
-}
+/*
+ * Kuongeza domain kwenye rekodi za LucasNode.
+ *
+ * Muhimu:
+ * POST /api/v1/domains lazima ihifadhi rekodi kwenye backend
+ * na ihakikishe mtumiaji ana ruhusa ya kuifanya.
+ *
+ * Kuongeza rekodi pekee hakuthibitishi umiliki wala usajili.
+ */
+async function addDomain(event) {
+  if (event) event.preventDefault();
 
-function renderDomains(){
-  const empty = document.getElementById("domainsEmpty");
-  const list = document.getElementById("domainsList");
-  if(!empty || !list) return;
-  if(!domains.length){
-    empty.style.display = "block";
-    list.style.display = "none";
+  const domainInput = document.getElementById("domainName");
+
+  if (!domainInput) {
+    showToast("Sehemu ya kuingiza domain haijapatikana.", "error");
     return;
   }
+
+  const validation = validateDomainName(domainInput.value);
+
+  if (!validation.valid) {
+    showToast(validation.message, "error");
+    domainInput.focus();
+    return;
+  }
+
+  const domain = validation.domain;
+  const type = getDomainType();
+  const projectId = getDomainProject();
+
+  if (!type) {
+    showToast("Chagua aina ya domain.", "error");
+    return;
+  }
+
+  /*
+   * Hakikisha project_id iliyochaguliwa ni halali kwa
+   * kuangalia orodha ya projects iliyopo kwenye app.
+   * Usibuni project au data ya majaribio.
+   */
+  if (projectId && Array.isArray(window.projects)) {
+    const projectExists = window.projects.some(function (project) {
+      return String(project.id) === String(projectId);
+    });
+
+    if (!projectExists) {
+      showToast(
+        "Project iliyochaguliwa haipatikani. Sasisha orodha ya projects.",
+        "error"
+      );
+      return;
+    }
+  }
+
+  /*
+   * Zuia kuongeza domain ileile mara mbili kwenye orodha
+   * iliyo tayari kupakiwa kwenye frontend.
+   */
+  if (
+    Array.isArray(window.domains) &&
+    window.domains.some(function (item) {
+      return normalizeDomain(item.domain) === domain;
+    })
+  ) {
+    showToast("Domain hii tayari ipo kwenye orodha.", "error");
+    return;
+  }
+
+  setDomainSubmitState(true);
+
+  try {
+    const response = await apiFetch("/api/v1/domains", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        domain: domain,
+        type: type,
+        project_id: projectId || null
+      })
+    });
+
+    /*
+     * Usiongeze taarifa ya kubuni kwenye orodha.
+     * Backend lazima irudishe rekodi halisi iliyohifadhiwa.
+     */
+    const savedDomain =
+      response && response.domain
+        ? response.domain
+        : response && response.id
+          ? response
+          : null;
+
+    if (!savedDomain || !savedDomain.id || !savedDomain.domain) {
+      throw new Error(
+        "Backend haikurudisha rekodi halali ya domain. Hakikisha API imehifadhi rekodi."
+      );
+    }
+
+    if (
+      normalizeDomain(savedDomain.domain) !== domain
+    ) {
+      throw new Error(
+        "Domain iliyorejeshwa na backend haitoshei na ile uliyoingiza."
+      );
+    }
+
+    if (!Array.isArray(window.domains)) {
+      window.domains = [];
+    }
+
+    const alreadyExists = window.domains.some(function (item) {
+      return String(item.id) === String(savedDomain.id);
+    });
+
+    if (!alreadyExists) {
+      window.domains.unshift(savedDomain);
+    }
+
+    renderDomains();
+
+    if (typeof updateStats === "function") {
+      updateStats();
+    }
+
+    closeModal("domainModal");
+    domainInput.value = "";
+
+    showToast(
+      "Rekodi ya domain imehifadhiwa. Umiliki na DNS bado vinahitaji kuthibitishwa.",
+      "success"
+    );
+  } catch (error) {
+    console.error("LucasNode addDomain error:", error);
+
+    showToast(
+      "Imeshindwa kuhifadhi domain: " +
+        (error && error.message
+          ? error.message
+          : "Hitilafu isiyojulikana."),
+      "error"
+    );
+  } finally {
+    setDomainSubmitState(false);
+  }
+}
+
+/*
+ * Kufuta rekodi ya domain kwenye LucasNode pekee.
+ * Hii si amri ya kufuta usajili kwa registrar.
+ */
+async function deleteDomain(id) {
+  if (id === undefined || id === null || String(id).trim() === "") {
+    showToast("Kitambulisho cha domain hakipo.", "error");
+    return;
+  }
+
+  if (
+    !confirm(
+      "Una uhakika unataka kuondoa rekodi hii kwenye LucasNode? " +
+      "Hatua hii haifuti usajili wa domain kwa msajili."
+    )
+  ) {
+    return;
+  }
+
+  try {
+    await apiFetch(
+      "/api/v1/domains/" + encodeURIComponent(String(id)),
+      { method: "DELETE" }
+    );
+
+    if (Array.isArray(window.domains)) {
+      window.domains = window.domains.filter(function (domain) {
+        return String(domain.id) !== String(id);
+      });
+    }
+
+    renderDomains();
+
+    if (typeof updateStats === "function") {
+      updateStats();
+    }
+
+    showToast("Rekodi ya domain imeondolewa kwenye LucasNode.", "success");
+  } catch (error) {
+    console.error("LucasNode deleteDomain error:", error);
+
+    showToast(
+      "Imeshindwa kuondoa rekodi: " +
+        (error && error.message
+          ? error.message
+          : "Hitilafu isiyojulikana."),
+      "error"
+    );
+  }
+}
+
+/*
+ * Onyesha rekodi zilizopo bila kutafsiri pending kama
+ * umiliki uliothibitishwa.
+ *
+ * Tumia escapeHtml na escapeAttr zilizopo kwenye app.
+ */
+function renderDomains() {
+  const empty = document.getElementById("domainsEmpty");
+  const list = document.getElementById("domainsList");
+
+  if (!empty || !list) return;
+
+  const domainRecords = Array.isArray(window.domains)
+    ? window.domains
+    : [];
+
+  if (domainRecords.length === 0) {
+    empty.style.display = "block";
+    list.style.display = "none";
+    list.replaceChildren();
+    return;
+  }
+
   empty.style.display = "none";
   list.style.display = "grid";
-  list.innerHTML = "";
-  domains.forEach(function(d){
-    const el = document.createElement("div");
-    el.className = "project-card";
-    el.innerHTML =
-      '<div class="project-main">' +
-        '<div class="project-icon">🌐</div>' +
-        '<div>' +
-          '<div class="project-name">' + escapeHtml(d.domain || "") + '</div>' +
-          '<div class="project-meta">' + escapeHtml(d.type || "") + '</div>' +
-        '</div>' +
-      '</div>' +
-      '<div class="project-actions">' +
-        '<span class="project-status ' + statusClass(d.status || "pending") + '">' + escapeHtml(d.status || "pending") + '</span>' +
-        '<button class="del-btn" onclick="deleteDomain(\'' + escapeAttr(d.id || "") + '\')" aria-label="Delete">🗑</button>' +
-      '</div>';
-    list.appendChild(el);
+  list.replaceChildren();
+
+  domainRecords.forEach(function (domain) {
+    const record = document.createElement("div");
+    record.className = "project-card";
+
+    const main = document.createElement("div");
+    main.className = "project-main";
+
+    const icon = document.createElement("div");
+    icon.className = "project-icon";
+    icon.textContent = "🌐";
+
+    const details = document.createElement("div");
+
+    const name = document.createElement("div");
+    name.className = "project-name";
+    name.textContent = String(domain.domain || "Domain haijatajwa");
+
+    const meta = document.createElement("div");
+    meta.className = "project-meta";
+    meta.textContent = String(domain.type || "");
+
+    details.append(name, meta);
+    main.append(icon, details);
+
+    const actions = document.createElement("div");
+    actions.className = "project-actions";
+
+    const status = document.createElement("span");
+    const currentStatus = String(domain.status || "pending");
+
+    status.className =
+      "project-status " +
+      (
+        typeof statusClass === "function"
+          ? statusClass(currentStatus)
+          : ""
+      );
+
+    status.textContent = currentStatus;
+
+    const deleteButton = document.createElement("button");
+    deleteButton.className = "del-btn";
+    deleteButton.type = "button";
+    deleteButton.textContent = "🗑";
+    deleteButton.setAttribute("aria-label", "Ondoa rekodi ya domain");
+
+    deleteButton.addEventListener("click", function () {
+      deleteDomain(domain.id);
+    });
+
+    actions.append(status, deleteButton);
+    record.append(main, actions);
+    list.appendChild(record);
   });
 }
 
