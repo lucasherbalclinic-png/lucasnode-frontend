@@ -1179,7 +1179,152 @@ document.addEventListener("keydown", (e) => {
   document.querySelectorAll(".modal-wrap.show").forEach(m => m.classList.remove("show"));
   closeDrawer();
 });
+    
+/* =========================================================
+   LUCASNODE AI APP BUILDER ENGINE
+   Integration layer — no demo responses.
+   AI generation requires a real backend endpoint.
+========================================================= */
 
+const LucasNodeAIBuilder = (() => {
+  "use strict";
+
+  const ENDPOINT = "/api/v1/ai/build";
+
+  let isBuilding = false;
+
+  async function buildProject(instructions) {
+    if (isBuilding) {
+      throw new Error("Ujenzi mwingine unaendelea. Subiri ukamilike.");
+    }
+
+    const prompt = String(instructions || "").trim();
+
+    if (prompt.length < 20) {
+      throw new Error(
+        "Eleza app unayotaka kujenga kwa maelezo ya angalau herufi 20."
+      );
+    }
+
+    if (prompt.length > 12000) {
+      throw new Error("Maelezo ni marefu sana. Punguza maandishi.");
+    }
+
+    isBuilding = true;
+
+    try {
+      const response = await apiRequest(
+        "POST",
+        ENDPOINT,
+        {
+          prompt,
+          action: "generate_project"
+        }
+      );
+
+      if (!response || !response.ok) {
+        throw new Error(
+          response?.data?.error ||
+          "AI Builder haikuweza kuwasiliana na backend."
+        );
+      }
+
+      const result = response.data;
+
+      if (
+        !result ||
+        result.success !== true ||
+        !result.project
+      ) {
+        throw new Error(
+          result?.error ||
+          "Backend haijarudisha project iliyozalishwa."
+        );
+      }
+
+      return result.project;
+    } finally {
+      isBuilding = false;
+    }
+  }
+
+  return Object.freeze({
+    buildProject
+  });
+})();
+
+/* ---------- LucasNode AI Builder integration ---------- */
+
+async function generateAIProject(e) {
+  if (e) e.preventDefault();
+
+  const promptElement = $("aiBuilderPrompt");
+  const statusElement = $("aiBuilderStatus");
+  const buttonElement = $("aiBuilderSubmit");
+
+  if (!promptElement) {
+    toast("Sehemu ya maelezo ya AI Builder haijapatikana.", "err");
+    return;
+  }
+
+  const prompt = promptElement.value.trim();
+
+  if (prompt.length < 20) {
+    toast("Eleza app unayotaka kujenga kwa maelezo zaidi.", "err");
+    promptElement.focus();
+    return;
+  }
+
+  if (buttonElement) buttonElement.disabled = true;
+
+  if (statusElement) {
+    statusElement.textContent = "Inaomba AI ijenge project...";
+  }
+
+  try {
+    const project = await LucasNodeAIBuilder.buildProject(prompt);
+
+    if (statusElement) {
+      statusElement.textContent =
+        "AI imerudisha project. Inathibitisha matokeo...";
+    }
+
+    if (!project.id) {
+      throw new Error(
+        "Project imerudishwa bila ID. Haiwezi kuthibitishwa kuwa imehifadhiwa."
+      );
+    }
+
+    toast(
+      "Project imerudishwa na AI. Thibitisha mafaili yake kabla ya Build.",
+      "ok"
+    );
+
+    if (statusElement) {
+      statusElement.textContent =
+        "Project ID: " + String(project.id);
+    }
+
+    if (typeof loadDeployProjects === "function") {
+      await loadDeployProjects();
+    }
+
+  } catch (error) {
+    if (statusElement) {
+      statusElement.textContent =
+        error.message || "AI Builder imeshindwa.";
+    }
+
+    toast(
+      error.message || "AI Builder imeshindwa.",
+      "err"
+    );
+
+  } finally {
+    if (buttonElement) buttonElement.disabled = false;
+  }
+}
+    
 /* ---------- init ---------- */
 function initApp(){
   hideAuthGate();
