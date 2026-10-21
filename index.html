@@ -593,7 +593,7 @@ input[type=file]{ display:none; }
       <div class="field"><label>Nenosiri</label><input class="input" id="authPassword" type="password" placeholder="Angalau herufi 10" required></div>
       <button class="btn btn-primary btn-full" type="submit" id="authSubmit">Kuingia</button>
     </form>
-    <p class="hint" style="text-align:center;margin-top:12px">Backend: lucasnode-backend • Supabase Auth</p>
+    <p class="hint" style="text-align:center;margin-top:12px">Supabase Auth</p>
   </div>
 </div>
 
@@ -686,31 +686,26 @@ input[type=file]{ display:none; }
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
-<script src="app.js?v=1"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="app.js?v=2"></script>
 </body>
 </html>
 
 "use strict";
+/* ===== Config (anon key pekee — usiweke service_role hapa) ===== */
+const SUPABASE_URL = "https://vrpmntqwanoxokjjllgr.supabase.co";
+const SUPABASE_ANON_KEY = "PASTE_ANON_KEY_HERE";
 const API_BASE = "https://lucasnode-backend.lucasherbalclinic.workers.dev";
-const LS_TOKEN = "lucasnode_access_token";
-const LS_REFRESH = "lucasnode_refresh_token";
-const LS_USER = "lucasnode_user";
-const LS_TICKETS = "lucasnode_tickets";
 const REQUEST_TIMEOUT_MS = 15000;
 
-let authMode = "login";
-let refreshing = null;
-let ghRequestId = 0;
-const state = { user: null, ghPath: "", ghOwner: "", ghRepo: "", ghBranch: "main" };
+let sb = null, initError = null, appStarted = false, authMode = "login", ghRequestId = 0;
+const state = { session: null, user: null, projects: [], ghPath: "", ghOwner: "", ghRepo: "", ghBranch: "main" };
 const counts = { projects: 0, domains: 0, deployments: 0, tovuti: 0 };
 
 /* ---------- helpers ---------- */
 const $ = (id) => document.getElementById(id);
-const store = {
-  get(k){ try{ return localStorage.getItem(k); }catch{ return null; } },
-  set(k, v){ try{ localStorage.setItem(k, v); }catch{} },
-  del(k){ try{ localStorage.removeItem(k); }catch{} }
-};
+const uid = () => state.session?.user?.id || null;
+const isLoggedIn = () => !!state.session;
 function escapeHtml(s){
   return String(s ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]));
 }
@@ -721,78 +716,53 @@ function fmtSize(b){
   if(b < 1048576) return (b/1024).toFixed(1) + " KB";
   return (b/1048576).toFixed(1) + " MB";
 }
-function listOf(r){ return (r.ok && Array.isArray(r.data?.data)) ? r.data.data : []; }
 function toast(msg, kind){
   const t = $("toast");
   t.textContent = msg;
   t.className = "toast show" + (kind === "ok" ? " ok" : kind === "err" ? " err" : "");
   clearTimeout(t._tm);
-  t._tm = setTimeout(() => { t.className = "toast"; }, 3200);
+  t._tm = setTimeout(() => { t.className = "toast"; }, 3600);
+}
+function errMsg(e, fb){
+  if(!e) return fb;
+  if(e.code === "23505") return "Thamani hii tayari ipo (slug au domain inatumika).";
+  if(e.code === "23514") return "Thamani si sahihi.";
+  if(e.code === "42501" || /permission denied|row-level security/i.test(e.message || "")) return "Huna ruhusa ya kufanya kitendo hiki.";
+  return e.message || fb;
 }
 async function withBusy(e, fn){
   const btn = e?.submitter || e?.target?.querySelector?.('[type="submit"]');
   if(btn){ if(btn.disabled) return; btn.disabled = true; }
   try{ await fn(); } finally { if(btn) btn.disabled = false; }
 }
-
-/* ---------- session ---------- */
-const getToken = () => store.get(LS_TOKEN);
-const getRefreshToken = () => store.get(LS_REFRESH);
-const isLoggedIn = () => !!getToken();
-function saveSession(session, user){
-  if(session?.access_token) store.set(LS_TOKEN, session.access_token);
-  if(session?.refresh_token) store.set(LS_REFRESH, session.refresh_token);
-  if(user){ state.user = user; store.set(LS_USER, JSON.stringify(user)); updateAvatar(); }
+function slugify(s){
+  const v = String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 40).replace(/-+$/g, "");
+  return v.length >= 3 ? v : "project-" + Math.random().toString(36).slice(2, 6);
 }
-function clearSession(){
-  store.del(LS_TOKEN); store.del(LS_REFRESH); store.del(LS_USER);
-  state.user = null;
-  updateAvatar();
+const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+const DOMAIN_RE = /^(?=.{4,253}$)([a-z0-9-]{1,63}\.)+[a-z]{2,63}$/;
+
+/* ---------- Supabase client ---------- */
+function keyIsUnsafe(k){
+  if(/^sb_secret_/.test(k)) return true;
+  try{
+    const p = JSON.parse(atob(k.split(".")[1].replace(/-/g, "+").replace(/_/g, "/")));
+    return p.role === "service_role";
+  }catch{ return false; }
+}
+function initClient(){
+  if(!window.supabase?.createClient) return "Maktaba ya Supabase haikupakiwa.";
+  if(!SUPABASE_ANON_KEY || SUPABASE_ANON_KEY.startsWith("PASTE_")) return "Weka anon key kwenye app.js.";
+  if(keyIsUnsafe(SUPABASE_ANON_KEY)) return "Key hii ni ya siri (service_role). Tumia anon key pekee.";
+  sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false }
+  });
+  return null;
 }
 function updateAvatar(){
   const a = $("avatarBtn");
   if(a) a.textContent = (state.user?.email?.[0] || "L").toUpperCase();
-}
-
-/* ---------- API client ---------- */
-async function rawFetch(path, opts = {}){
-  const ctrl = new AbortController();
-  const tm = setTimeout(() => ctrl.abort(), REQUEST_TIMEOUT_MS);
-  try{ return await fetch(API_BASE + path, { ...opts, signal: ctrl.signal }); }
-  finally{ clearTimeout(tm); }
-}
-async function apiRequest(method, path, body, retry = true){
-  const headers = { "Content-Type": "application/json" };
-  const token = getToken();
-  if(token) headers.Authorization = "Bearer " + token;
-  try{
-    const res = await rawFetch(path, { method, headers, body: body ? JSON.stringify(body) : undefined });
-    const data = await res.json().catch(() => ({ success:false, error:"Jibu si JSON." }));
-    if(res.status === 401 && retry && getRefreshToken() && await refreshSession()){
-      return apiRequest(method, path, body, false);
-    }
-    return { ok: res.ok, status: res.status, data };
-  }catch{
-    return { ok:false, status:0, data:{ success:false, error:"Imeshindikana kuunganisha na backend." } };
-  }
-}
-function refreshSession(){
-  if(!getRefreshToken()) return Promise.resolve(false);
-  if(refreshing) return refreshing;
-  refreshing = (async () => {
-    try{
-      const r = await rawFetch("/api/idhini/upya", {
-        method:"POST", headers:{ "Content-Type":"application/json" },
-        body: JSON.stringify({ refresh_token: getRefreshToken() })
-      });
-      const d = await r.json().catch(() => null);
-      if(r.ok && d?.success && d.session){ saveSession(d.session, d.user); return true; }
-      if(r.status >= 400 && r.status < 500){ clearSession(); showAuthGate(); }
-      return false;
-    }catch{ return false; }
-    finally{ refreshing = null; }
-  })();
-  return refreshing;
 }
 
 /* ---------- auth ---------- */
@@ -805,43 +775,31 @@ function setAuthTab(mode){
   $("nameField").style.display = mode === "register" ? "grid" : "none";
   $("authSubmit").textContent = mode === "login" ? "Kuingia" : "Sajili";
 }
-async function authPost(path, body){
-  try{
-    const r = await rawFetch(path, { method:"POST", headers:{ "Content-Type":"application/json" }, body: JSON.stringify(body) });
-    const d = await r.json().catch(() => null);
-    return { ok: r.ok, data: d };
-  }catch{
-    return { ok:false, data:{ error:"Imeshindikana kuunganisha na backend." } };
-  }
-}
 function submitAuth(e){
   e.preventDefault();
   return withBusy(e, async () => {
+    if(!sb){ toast(initError || "Mfumo haujawekwa vizuri.", "err"); return; }
     const email = $("authEmail").value.trim().toLowerCase();
     const password = $("authPassword").value;
     if(!email || !password){ toast("Jaza barua pepe na nenosiri.", "err"); return; }
     if(authMode === "register"){
       if(password.length < 10){ toast("Nenosiri liwe na angalau herufi 10.", "err"); return; }
-      const display_name = $("authName").value.trim();
-      const { ok, data } = await authPost("/api/idhini/jisajili", { email, password, display_name });
-      if(ok && data?.success){
-        if(data.session){ saveSession(data.session, data.user); toast("Akaunti imetengenezwa. Karibu!", "ok"); initApp(); }
-        else { toast("Akaunti imetengenezwa. Angalia barua pepe kuthibitisha, kisha ingia.", "ok"); setAuthTab("login"); }
-      } else toast(data?.error || "Usajili umeshindikana.", "err");
+      const full_name = $("authName").value.trim();
+      const { data, error } = await sb.auth.signUp({ email, password, options: { data: { full_name } } });
+      if(error){ toast(errMsg(error, "Usajili umeshindikana."), "err"); return; }
+      if(data.session) toast("Akaunti imetengenezwa. Karibu!", "ok");
+      else { toast("Akaunti imetengenezwa. Angalia barua pepe kuthibitisha, kisha ingia.", "ok"); setAuthTab("login"); }
     } else {
-      const { ok, data } = await authPost("/api/idhini/kuingia", { email, password });
-      if(ok && data?.success && data.session){
-        saveSession(data.session, data.user);
-        $("authPassword").value = "";
-        toast("Karibu, " + (data.user?.email || "") + "!", "ok");
-        initApp();
-      } else toast(data?.error || "Barua pepe au nenosiri si sahihi.", "err");
+      const { error } = await sb.auth.signInWithPassword({ email, password });
+      if(error){ toast("Barua pepe au nenosiri si sahihi.", "err"); return; }
+      $("authPassword").value = "";
+      toast("Karibu!", "ok");
     }
   });
 }
 async function logout(){
-  if(isLoggedIn()) await apiRequest("POST", "/api/idhini/toka", {}, false);
-  clearSession(); showAuthGate();
+  if(sb) await sb.auth.signOut();
+  state.session = null; state.user = null; updateAvatar(); showAuthGate();
   toast("Umetoka kwenye akaunti.", "ok");
 }
 
@@ -862,7 +820,7 @@ function loadPageData(name){
   else if(name === "deploy") loadDeployProjects();
   else if(name === "monitoring") checkBackend();
   else if(name === "settings") loadProfile();
-  else if(name === "support") renderTickets();
+  else if(name === "support") loadTickets();
 }
 function openDrawer(){ if(!isLoggedIn()){ showAuthGate(); return; } $("drawerOverlay").classList.add("show"); }
 function closeDrawer(){ $("drawerOverlay").classList.remove("show"); }
@@ -876,16 +834,16 @@ const openTovutiModal = () => openModal("modalTovuti");
 const openSupportModal = () => openModal("modalSupport");
 const openGithubModal = () => openModal("modalGithub");
 
-/* ---------- generic list rendering ---------- */
+/* ---------- list rendering ---------- */
 function fillList(container, emptyEl, items, render){
   if(!items.length){ container.style.display = "none"; container.innerHTML = ""; emptyEl.style.display = "block"; return; }
   container.style.display = "grid"; emptyEl.style.display = "none";
   container.innerHTML = items.map(render).join("");
 }
-function card(icon, title, meta, extra = "", action = ""){
+const metaDiv = (t) => `<div class="project-meta">${t}</div>`;
+function card(icon, title, meta, action = ""){
   return `<div class="project-card"><div class="project-main"><div class="project-icon">${icon}</div><div><div class="project-name">${escapeHtml(title)}</div>${meta}</div></div>${action}</div>`;
 }
-const metaDiv = (t) => `<div class="project-meta">${t}</div>`;
 
 /* ---------- stats ---------- */
 function renderStats(){
@@ -895,74 +853,95 @@ function renderStats(){
   $("statLive").textContent = counts.tovuti;
 }
 async function refreshStats(){
-  const [p, d, dep, t] = await Promise.all([
-    apiRequest("GET", "/api/v1/projects"),
-    apiRequest("GET", "/api/v1/domains"),
-    apiRequest("GET", "/api/v1/deployments"),
-    apiRequest("GET", "/api/tovuti")
-  ]);
-  counts.projects = listOf(p).length;
-  counts.domains = listOf(d).length;
-  counts.deployments = listOf(dep).length;
-  counts.tovuti = listOf(t).length;
+  const c = (t) => sb.from(t).select("id", { count: "exact", head: true });
+  const [p, d, dep, t] = await Promise.all([c("projects"), c("domains"), c("deployments"), c("hosted_sites")]);
+  counts.projects = p.count || 0; counts.domains = d.count || 0;
+  counts.deployments = dep.count || 0; counts.tovuti = t.count || 0;
   renderStats();
 }
 
 /* ---------- projects ---------- */
 async function loadProjects(){
-  const r = await apiRequest("GET", "/api/v1/projects");
-  if(!r.ok){ toast(r.data?.error || "Imeshindikana kusoma projects.", "err"); return; }
-  const list = listOf(r);
-  counts.projects = list.length; renderStats();
+  const { data, error } = await sb.from("projects")
+    .select("id,name,slug,framework,repository_url,repository_branch,created_at")
+    .order("created_at", { ascending: false });
+  if(error){ toast(errMsg(error, "Imeshindikana kusoma projects."), "err"); return; }
+  state.projects = data || [];
+  counts.projects = state.projects.length; renderStats();
   const render = (p) => {
     const repo = p.repository_url
       ? metaDiv(`🔗 ${escapeHtml(p.repository_url)}${p.repository_branch ? " · " + escapeHtml(p.repository_branch) : ""}`) : "";
     const meta = metaDiv(`${escapeHtml(p.slug || p.name || "")} ${p.framework ? "· " + escapeHtml(p.framework) : ""}`) + repo;
-    return card("📁", p.name || "", meta, "", `<button class="del-btn" data-action="delete-project" data-id="${escapeHtml(p.id)}" aria-label="Futa">🗑</button>`);
+    return card("📁", p.name || "", meta, `<button class="del-btn" data-action="delete-project" data-id="${escapeHtml(p.id)}" aria-label="Futa">🗑</button>`);
   };
-  fillList($("homeProjects"), $("homeEmpty"), list, render);
-  fillList($("projectsList"), $("projectsEmpty"), list, render);
+  fillList($("homeProjects"), $("homeEmpty"), state.projects, render);
+  fillList($("projectsList"), $("projectsEmpty"), state.projects, render);
 }
 function createProject(e){
   e.preventDefault();
   return withBusy(e, async () => {
-    const v = (id) => $(id).value.trim() || undefined;
-    const body = { name: $("projName").value.trim(), slug: v("projSlug"), description: v("projDesc"),
-      framework: v("projFramework"), repository_url: v("projRepo"), repository_branch: v("projBranch") };
-    if(!body.name){ toast("Jina la project linahitajika.", "err"); return; }
-    const r = await apiRequest("POST", "/api/v1/projects", body);
-    if(r.ok && r.data?.success){ toast("Project imeundwa!", "ok"); closeModal("modalProject"); e.target.reset(); loadProjects(); }
-    else toast(r.data?.error || "Imeshindikana kuunda project.", "err");
+    const v = (id) => $(id).value.trim() || null;
+    const name = $("projName").value.trim();
+    if(!name){ toast("Jina la project linahitajika.", "err"); return; }
+    let slug = $("projSlug").value.trim().toLowerCase();
+    if(slug && (slug.length < 3 || !SLUG_RE.test(slug))){ toast("Slug: herufi ndogo, namba na '-' (angalau 3).", "err"); return; }
+    if(!slug) slug = slugify(name);
+    const row = { user_id: uid(), name, slug, description: v("projDesc"), framework: v("projFramework"),
+      repository_url: v("projRepo"), repository_branch: v("projBranch") };
+    const { error } = await sb.from("projects").insert(row);
+    if(error){ toast(errMsg(error, "Imeshindikana kuunda project."), "err"); return; }
+    toast("Project imeundwa!", "ok"); closeModal("modalProject"); e.target.reset(); loadProjects();
   });
 }
 async function deleteProject(id){
   if(!confirm("Futa project hii?")) return;
-  const r = await apiRequest("DELETE", "/api/v1/projects/" + encodeURIComponent(id));
-  toast(r.ok ? "Project imefutwa." : (r.data?.error || "Imeshindikana kufuta."), r.ok ? "ok" : "err");
+  const { data, error } = await sb.from("projects").delete().eq("id", id).select("id");
+  if(error) toast(errMsg(error, "Imeshindikana kufuta."), "err");
+  else if(!data?.length) toast("Project haikufutwa.", "err");
+  else toast("Project imefutwa.", "ok");
   loadProjects();
 }
 
 /* ---------- domains ---------- */
 async function loadDomains(){
-  const r = await apiRequest("GET", "/api/v1/domains");
-  if(!r.ok){ toast(r.data?.error || "Imeshindikana kusoma domains.", "err"); return; }
-  const list = listOf(r);
+  const { data, error } = await sb.from("domains")
+    .select("id,domain,domain_type,status,ssl_status,dns_status")
+    .order("created_at", { ascending: false });
+  if(error){ toast(errMsg(error, "Imeshindikana kusoma domains."), "err"); return; }
+  const list = data || [];
   counts.domains = list.length; renderStats();
-  fillList($("domainsList"), $("domainsEmpty"), list,
-    d => card("🌐", d.domain || d.name || "", metaDiv(escapeHtml(d.status || "—"))));
+  fillList($("domainsList"), $("domainsEmpty"), list, d => card("🌐", d.domain || "",
+    metaDiv(`${escapeHtml(d.status || "—")} · SSL ${escapeHtml(d.ssl_status || "—")} · DNS ${escapeHtml(d.dns_status || "—")}`),
+    `<button class="del-btn" data-action="delete-domain" data-id="${escapeHtml(d.id)}" aria-label="Futa">🗑</button>`));
+}
+async function deleteDomain(id){
+  if(!confirm("Futa domain hii?")) return;
+  const { data, error } = await sb.from("domains").delete().eq("id", id).select("id");
+  if(error) toast(errMsg(error, "Imeshindikana kufuta."), "err");
+  else if(!data?.length) toast("Domain haikufutwa.", "err");
+  else toast("Domain imefutwa.", "ok");
+  loadDomains();
 }
 async function checkDomain(inputId, outId, withName){
   const domain = ($(inputId).value || "").trim().toLowerCase();
   const out = $(outId);
-  if(!/^(?=.{4,253}$)([a-z0-9-]{1,63}\.)+[a-z]{2,63}$/.test(domain)){ toast("Weka domain sahihi (mfano: example.com).", "err"); return; }
+  if(!DOMAIN_RE.test(domain)){ toast("Weka domain sahihi (mfano: example.com).", "err"); return; }
   out.textContent = "Inatafuta...";
-  const r = await apiRequest("GET", "/api/domains/check?domain=" + encodeURIComponent(domain));
-  if(r.ok && r.data?.success){
-    const name = withName ? ` <b>${escapeHtml(domain)}</b>` : "";
-    out.innerHTML = r.data.registered
-      ? `✅${name} imekwisha sajiliwa${r.data.source ? " (" + escapeHtml(r.data.source) + ")" : ""}.`
-      : `🟢${name} inapatikana!`;
-  } else out.textContent = r.data?.error || "Imeshindikana.";
+  const ctrl = new AbortController();
+  const tm = setTimeout(() => ctrl.abort(), REQUEST_TIMEOUT_MS);
+  try{
+    const res = await fetch(API_BASE + "/api/domains/check?domain=" + encodeURIComponent(domain), {
+      headers: { Authorization: "Bearer " + (state.session?.access_token || "") }, signal: ctrl.signal
+    });
+    const d = await res.json().catch(() => null);
+    if(res.ok && d?.success){
+      const name = withName ? ` <b>${escapeHtml(domain)}</b>` : "";
+      out.innerHTML = d.registered
+        ? `✅${name} imekwisha sajiliwa${d.source ? " (" + escapeHtml(d.source) + ")" : ""}.`
+        : `🟢${name} inapatikana!`;
+    } else out.textContent = d?.error || "Imeshindikana.";
+  }catch{ out.textContent = "Imeshindikana kuunganisha na huduma ya domain."; }
+  finally{ clearTimeout(tm); }
 }
 const searchDomain = () => checkDomain("domainSearchInput", "domainSearchResult", true);
 const checkDomainInModal = () => checkDomain("domainInput", "domainCheckResult", false);
@@ -970,18 +949,38 @@ function addDomain(e){
   e.preventDefault();
   return withBusy(e, async () => {
     const domain = ($("domainInput").value || "").trim().toLowerCase();
-    if(!domain){ toast("Weka domain.", "err"); return; }
-    const r = await apiRequest("POST", "/api/v1/domains", { domain });
-    if(r.ok && r.data?.success){ toast("Domain imehifadhiwa!", "ok"); closeModal("modalDomain"); e.target.reset(); $("domainCheckResult").textContent = ""; loadDomains(); }
-    else toast(r.data?.error || "Imeshindikana kuhifadhi domain.", "err");
+    if(!DOMAIN_RE.test(domain)){ toast("Weka domain sahihi (mfano: example.com).", "err"); return; }
+    const { error } = await sb.from("domains").insert({ user_id: uid(), domain, domain_type: "custom" });
+    if(error){ toast(errMsg(error, "Imeshindikana kuhifadhi domain."), "err"); return; }
+    toast("Domain imehifadhiwa!", "ok"); closeModal("modalDomain"); e.target.reset();
+    $("domainCheckResult").textContent = ""; loadDomains();
   });
 }
 
-/* ---------- tovuti (hosting) ---------- */
+/* ---------- tovuti (hosted_sites) ---------- */
+const MAX_APP_BYTES = 500 * 1024;
+function validateSite({ name, slug, html }){
+  if(!name){ toast("Weka jina.", "err"); return false; }
+  if(slug.length < 3 || slug.length > 40 || !SLUG_RE.test(slug)){ toast("Slug: herufi ndogo, namba na '-' (angalau 3).", "err"); return false; }
+  if(!html.trim()){ toast("Weka HTML code.", "err"); return false; }
+  if(!/<html|<body/i.test(html)){ toast("HTML lazima iwe na <html> au <body>.", "err"); return false; }
+  if(new Blob([html]).size > MAX_APP_BYTES){ toast("HTML ni kubwa mno (zaidi ya 500 KB).", "err"); return false; }
+  return true;
+}
+async function saveSite({ name, slug, html }){
+  const { error } = await sb.from("hosted_sites").insert({ user_id: uid(), name, slug, html });
+  if(error?.code !== "23505") return { error };
+  const { data, error: e2 } = await sb.from("hosted_sites").update({ name, html })
+    .eq("slug", slug).eq("user_id", uid()).select("id");
+  if(e2) return { error: e2 };
+  if(!data?.length) return { error: { message: "Slug hii tayari inatumika." } };
+  return { updated: true };
+}
 async function loadTovuti(){
-  const r = await apiRequest("GET", "/api/tovuti");
-  if(!r.ok){ toast(r.data?.error || "Imeshindikana kusoma tovuti.", "err"); return; }
-  const list = listOf(r);
+  const { data, error } = await sb.from("hosted_sites").select("id,name,slug,created_at")
+    .order("created_at", { ascending: false });
+  if(error){ toast(errMsg(error, "Imeshindikana kusoma tovuti."), "err"); return; }
+  const list = data || [];
   counts.tovuti = list.length; renderStats();
   fillList($("tovutiList"), $("tovutiEmpty"), list,
     s => card("🌍", s.name || "", metaDiv(`/${escapeHtml(s.slug || "")} · ${escapeHtml(fmtDate(s.created_at))}`)));
@@ -989,78 +988,89 @@ async function loadTovuti(){
 function createTovuti(e){
   e.preventDefault();
   return withBusy(e, async () => {
-    const body = { name: $("tovutiName").value.trim(), slug: $("tovutiSlug").value.trim(), html: $("tovutiHtml").value };
-    if(!body.name || !body.slug || !body.html){ toast("Jaza sehemu zote.", "err"); return; }
-    const r = await apiRequest("POST", "/api/tovuti", body);
-    if(r.ok && r.data?.success){ toast("Tovuti imehifadhiwa!", "ok"); closeModal("modalTovuti"); e.target.reset(); loadTovuti(); }
-    else toast(r.data?.error || "Imeshindikana kuhifadhi tovuti.", "err");
+    const site = { name: $("tovutiName").value.trim(), slug: $("tovutiSlug").value.trim().toLowerCase(), html: $("tovutiHtml").value };
+    if(!validateSite(site)) return;
+    const r = await saveSite(site);
+    if(r.error){ toast(errMsg(r.error, "Imeshindikana kuhifadhi tovuti."), "err"); return; }
+    toast(r.updated ? "Tovuti imesasishwa!" : "Tovuti imehifadhiwa!", "ok");
+    closeModal("modalTovuti"); e.target.reset(); loadTovuti();
   });
 }
 
-/* ---------- deployments ---------- */
+/* ---------- deployments (soma tu) ---------- */
 async function loadDeployProjects(){
-  const r = await apiRequest("GET", "/api/v1/projects");
+  const { data } = await sb.from("projects").select("id,name").order("created_at", { ascending: false });
+  state.projects = data || state.projects;
   $("deployProject").innerHTML = '<option value="">Chagua project</option>' +
-    listOf(r).map(p => `<option value="${escapeHtml(p.id)}">${escapeHtml(p.name)}</option>`).join("");
+    state.projects.map(p => `<option value="${escapeHtml(p.id)}">${escapeHtml(p.name)}</option>`).join("");
   loadDeployHistory();
 }
 async function loadDeployHistory(){
-  const r = await apiRequest("GET", "/api/v1/deployments");
-  const list = listOf(r);
+  const { data, error } = await sb.from("deployments").select("id,project_id,version,status,created_at")
+    .order("created_at", { ascending: false }).limit(50);
+  if(error){ toast(errMsg(error, "Imeshindikana kusoma deployments."), "err"); return; }
+  const list = data || [];
   counts.deployments = list.length; renderStats();
+  const names = Object.fromEntries(state.projects.map(p => [p.id, p.name]));
   fillList($("deployHistoryList"), $("deployHistoryEmpty"), list,
-    d => card("🚀", d.project_id || d.id || "Deployment", metaDiv(escapeHtml(d.status || ""))));
+    d => card("🚀", names[d.project_id] || "Deployment",
+      metaDiv(`v${escapeHtml(d.version ?? "")} · ${escapeHtml(d.status || "")} · ${escapeHtml(fmtDate(d.created_at))}`)));
 }
 function startDeployment(e){
   e.preventDefault();
   if(!$("deployProject").value){ toast("Chagua project kwanza.", "err"); return; }
-  toast("Deployment haijaunganishwa na backend bado.", "err");
+  toast("Deployment engine haijaunganishwa bado.", "err");
 }
 
 /* ---------- monitoring ---------- */
 async function checkBackend(){
   const el = $("healthResult");
   if(el) el.textContent = "Inakagua...";
-  const r = await apiRequest("GET", "/api/afya", null, false);
-  if(r.ok && r.data?.success){
-    if(el) el.innerHTML = '✅ <b>Hai</b> — LucasNode API inafanya kazi.';
-  } else {
-    if(el) el.textContent = r.data?.error || "Backend haipatikani.";
-    toast("Backend haipatikani.", "err");
-  }
+  const { error } = await sb.from("plans").select("id", { head: true, count: "exact" });
+  let worker = "—";
+  try{
+    const r = await fetch(API_BASE + "/api/afya");
+    const d = await r.json().catch(() => null);
+    worker = (r.ok && d?.success) ? "✅" : "❌";
+  }catch{ worker = "❌"; }
+  if(el) el.innerHTML = `Supabase: ${error ? "❌ " + escapeHtml(errMsg(error, "")) : "✅ <b>Hai</b>"}<br>Worker API: ${worker}`;
+  if(error) toast("Supabase haipatikani.", "err");
 }
 
 /* ---------- profile ---------- */
 async function loadProfile(){
   if(!isLoggedIn()) return;
-  const r = await apiRequest("GET", "/api/v1/me");
-  if(r.ok && r.data?.success){
-    const u = r.data.user || {}, p = r.data.profile || {};
-    $("profileInfo").innerHTML = `📧 ${escapeHtml(u.email || "-")}<br>👤 ${escapeHtml(p.full_name || "-")}<br>📱 ${escapeHtml(p.phone || "-")}<br>🌍 ${escapeHtml(p.country || "-")}`;
-  } else $("profileInfo").textContent = r.data?.error || "Imeshindikana kusoma wasifu.";
+  const { data, error } = await sb.from("profiles").select("full_name,phone,country").eq("id", uid()).maybeSingle();
+  if(error){ $("profileInfo").textContent = errMsg(error, "Imeshindikana kusoma wasifu."); return; }
+  const p = data || {};
+  $("profileInfo").innerHTML = `📧 ${escapeHtml(state.user?.email || "-")}<br>👤 ${escapeHtml(p.full_name || "-")}<br>📱 ${escapeHtml(p.phone || "-")}<br>🌍 ${escapeHtml(p.country || "-")}`;
 }
 
-/* ---------- support tickets (kifaa hiki tu) ---------- */
-function readTickets(){ try{ const t = JSON.parse(store.get(LS_TICKETS) || "[]"); return Array.isArray(t) ? t : []; }catch{ return []; } }
-function createTicket(e){
-  e.preventDefault();
-  const subject = $("ticketSubject").value.trim(), message = $("ticketMessage").value.trim();
-  if(!subject || !message){ toast("Jaza sehemu zote.", "err"); return; }
-  const tickets = readTickets();
-  tickets.unshift({ subject, message, created_at: new Date().toISOString() });
-  store.set(LS_TICKETS, JSON.stringify(tickets.slice(0, 50)));
-  toast("Ticket imehifadhiwa kwenye kifaa hiki tu (haijatumwa).", "ok");
-  closeModal("modalSupport"); e.target.reset(); renderTickets();
-}
-function renderTickets(){
-  const tickets = readTickets(), el = $("ticketsList");
-  if(!tickets.length){
+/* ---------- support tickets ---------- */
+async function loadTickets(){
+  const el = $("ticketsList");
+  const { data, error } = await sb.from("support_tickets").select("id,subject,status,priority,created_at")
+    .order("created_at", { ascending: false }).limit(50);
+  if(error){ toast(errMsg(error, "Imeshindikana kusoma tickets."), "err"); return; }
+  const list = data || [];
+  if(!list.length){
     el.className = "empty"; el.style.display = "";
     el.innerHTML = '<div class="empty-icon">🎫</div><h3>Hakuna support ticket</h3><p>Tickets zako zitaonekana hapa.</p>';
     return;
   }
   el.className = "project-list"; el.style.display = "grid";
-  el.innerHTML = tickets.map(t => card("🎫", t.subject, metaDiv(escapeHtml(fmtDate(t.created_at))))).join("");
+  el.innerHTML = list.map(t => card("🎫", t.subject,
+    metaDiv(`${escapeHtml(t.status || "")} · ${escapeHtml(fmtDate(t.created_at))}`))).join("");
+}
+function createTicket(e){
+  e.preventDefault();
+  return withBusy(e, async () => {
+    const subject = $("ticketSubject").value.trim(), description = $("ticketMessage").value.trim();
+    if(!subject || !description){ toast("Jaza sehemu zote.", "err"); return; }
+    const { error } = await sb.from("support_tickets").insert({ user_id: uid(), subject, description, priority: "normal" });
+    if(error){ toast(errMsg(error, "Imeshindikana kutuma ticket."), "err"); return; }
+    toast("Ticket imetumwa!", "ok"); closeModal("modalSupport"); e.target.reset(); loadTickets();
+  });
 }
 
 /* ---------- GitHub downloader ---------- */
@@ -1134,34 +1144,22 @@ async function downloadGithubFile(path){
 function parentPath(p){ const i = p.lastIndexOf("/"); return i === -1 ? "" : p.slice(0, i); }
 
 /* ---------- HTML app: preview + deploy ---------- */
-const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
-const MAX_APP_BYTES = 500 * 1024;
-function readApp(){
-  const name = $("appName").value.trim();
-  const slug = $("appSlug").value.trim().toLowerCase();
-  const html = $("appHtml").value;
-  if(!html.trim()){ toast("Weka HTML code.", "err"); return null; }
-  if(!/<html|<body/i.test(html)){ toast("HTML lazima iwe na <html> au <body>.", "err"); return null; }
-  if(new Blob([html]).size > MAX_APP_BYTES){ toast("HTML ni kubwa mno (zaidi ya 500 KB).", "err"); return null; }
-  return { name, slug, html };
-}
 function previewApp(){
   const html = $("appHtml").value;
   if(!html.trim()){ toast("Weka HTML code.", "err"); return; }
   $("appPreview").srcdoc = html;
-  $("appPreview").scrollIntoView({ behavior:"smooth", block:"start" });
+  $("appPreview").scrollIntoView({ behavior: "smooth", block: "start" });
 }
 function deployApp(e){
   e.preventDefault();
   return withBusy(e, async () => {
-    const app = readApp();
-    if(!app) return;
-    if(!app.name){ toast("Weka jina la app.", "err"); return; }
-    if(app.slug.length < 3 || !SLUG_RE.test(app.slug)){ toast("Slug: herufi ndogo, namba na '-' (angalau 3).", "err"); return; }
-    $("appPreview").srcdoc = app.html;
-    const r = await apiRequest("POST", "/api/tovuti", app);
-    if(r.ok && r.data?.success){ toast("Imehifadhiwa kama tovuti /" + app.slug + ".", "ok"); refreshStats(); }
-    else toast(r.data?.error || "Imeshindikana kuhifadhi tovuti.", "err");
+    const site = { name: $("appName").value.trim(), slug: $("appSlug").value.trim().toLowerCase(), html: $("appHtml").value };
+    if(!validateSite(site)) return;
+    $("appPreview").srcdoc = site.html;
+    const r = await saveSite(site);
+    if(r.error){ toast(errMsg(r.error, "Imeshindikana kuhifadhi tovuti."), "err"); return; }
+    toast((r.updated ? "Imesasishwa" : "Imehifadhiwa") + " kama tovuti /" + site.slug + ".", "ok");
+    refreshStats();
   });
 }
 
@@ -1171,6 +1169,7 @@ document.addEventListener("click", (e) => {
   if(!el) return;
   const { action, id, path } = el.dataset;
   if(action === "delete-project") deleteProject(id);
+  else if(action === "delete-domain") deleteDomain(id);
   else if(action === "gh-dir") fetchGithubDir(path || "");
   else if(action === "gh-file") downloadGithubFile(path);
 });
@@ -1185,16 +1184,17 @@ document.addEventListener("keydown", (e) => {
 function initApp(){
   hideAuthGate();
   updateAvatar();
-  renderTickets();
   refreshStats();
   showPage("home");
 }
-async function bootstrap(){
-  if(!getToken()){ showAuthGate(); return; }
-  try{ state.user = JSON.parse(store.get(LS_USER) || "null"); }catch{ state.user = null; }
-  const r = await apiRequest("GET", "/api/idhini/mimi", null, false);
-  if(r.ok && r.data?.success && r.data.user){ state.user = r.data.user; initApp(); return; }
-  if(r.status === 0){ toast("Backend haipatikani. Jaribu tena.", "err"); showAuthGate(); return; }
-  if(await refreshSession()) initApp(); else showAuthGate();
+function bootstrap(){
+  initError = initClient();
+  if(initError){ showAuthGate(); toast(initError, "err"); return; }
+  sb.auth.onAuthStateChange((event, session) => {
+    state.session = session; state.user = session?.user || null; updateAvatar();
+    if(!session){ appStarted = false; showAuthGate(); return; }
+    if(!appStarted){ appStarted = true; setTimeout(initApp, 0); }
+  });
 }
 bootstrap();
+
