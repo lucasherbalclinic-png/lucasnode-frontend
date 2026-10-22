@@ -1,3 +1,1 @@
-CORS)
-/*
-  Access-Control-Allow-Origin: https://lucasnode.pages.dev
+<script src="main.js" defer></script>
