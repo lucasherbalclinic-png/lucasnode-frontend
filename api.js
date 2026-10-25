@@ -2,7 +2,7 @@ mkdir -p /home/claude/build2 && cd /home/claude/build2 && cat > app.js <<'EOF'
 "use strict";
 /* ===== Config (anon key pekee — usiweke service_role hapa) ===== */
 const SUPABASE_URL = "https://vrpmntqwanoxokjjllgr.supabase.co";
-const SUPABASE_ANON_KEY = "PASTE_ANON_KEY_HERE";
+const SUPABASE_ANON_KEY = sb_publishable_-cGd8ukTTO4TqhD0_HuqHQ_XFgyuGcD
 const API_BASE = "https://lucasnode-backend.lucasherbalclinic.workers.dev";
 const REQUEST_TIMEOUT_MS = 15000;
 
