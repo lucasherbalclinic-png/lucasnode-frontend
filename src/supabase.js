@@ -20,7 +20,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
  *
  * These values are public client configuration, not server secrets.
  */
-const SUPABASE_URL = "https://cajrbghmvmxxzrwievse.supabase.co";
+const SUPABASE_URL = "https://tligicyjxhmvggubytbp.supabase.co";
 
 /**
  * Replace this value with your project's actual publishable key
@@ -28,12 +28,12 @@ const SUPABASE_URL = "https://cajrbghmvmxxzrwievse.supabase.co";
  *
  * Do not put the service_role key here.
  */
-const SUPABASE_PUBLISHABLE_KEY = "WEKA_SUPABASE_PUBLISHABLE_KEY_HAPA";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_B6ENCwwlVa4v3xv65-s3OQ_Tfq-jmBh";
 
 if (
   !SUPABASE_URL.startsWith("https://") ||
   !SUPABASE_PUBLISHABLE_KEY ||
-  SUPABASE_PUBLISHABLE_KEY === "WEKA_SUPABASE_PUBLISHABLE_KEY_HAPA"
+  SUPABASE_PUBLISHABLE_KEY === "sb_publishable_B6ENCwwlVa4v3xv65-s3OQ_Tfq-jmBh"
 ) {
   console.error(
     "LucasNode: Weka Supabase publishable key sahihi kwenye src/supabase.js."
