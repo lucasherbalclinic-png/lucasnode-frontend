@@ -31,8 +31,8 @@ const SUPABASE_URL = "https://tligicyjxhmvggubytbp.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_B6ENCwwlVa4v3xv65-s3OQ_Tfq-jmBh";
 
 if (
-  !SUPABASE_URL.startsWith("https://") ||
-  !SUPABASE_PUBLISHABLE_KEY ||
+  !SUPABASE_URL.startsWith("https://tligicyjxhmvggubytbp.supabase.co") ||
+  !SUPABASE_PUBLISHABLE_KEY || "sb_publishable_B6ENCwwlVa4v3xv65-s3OQ_Tfq-jmBh"
   SUPABASE_PUBLISHABLE_KEY === "sb_publishable_B6ENCwwlVa4v3xv65-s3OQ_Tfq-jmBh"
 ) {
   console.error(
@@ -44,8 +44,8 @@ if (
  * Shared Supabase client.
  */
 export const supabase = createClient(
-  SUPABASE_URL,
-  SUPABASE_PUBLISHABLE_KEY,
+  SUPABASE_URL, "https://tligicyjxhmvggubytbp.supabase.co"
+  SUPABASE_PUBLISHABLE_KEY, "sb_publishable_B6ENCwwlVa4v3xv65-s3OQ_Tfq-jmBh"
   {
     auth: {
       persistSession: true,
