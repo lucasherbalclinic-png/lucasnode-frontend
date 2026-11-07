@@ -5,10 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>LucasNode</title>
 <meta name="theme-color" content="#030712">
-<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
-<link rel="icon" href="favicon.ico" sizes="any">
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
-<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/jpeg" href="assets/lucasnode-icon.jpg">
+
+<link rel="apple-touch-icon" href="assets/lucasnode-icon.jpg">
+
 
 <style>
 *{
@@ -283,7 +283,7 @@ input[type=file]{ display:none; }
   <!-- HEADER -->
   <header class="topbar">
     <div class="brand">
-      <div class="lucas-icon"><img src="icon-96.png" alt="LucasNode" width="46" height="46"></div>
+      <div class="lucas-icon"><img src="assets/lucasnode-icon.jpg" alt="LucasNode" width="46" height="46"></div>
       <div>
         <div class="brand-text">LucasNode</div>
         <div class="brand-sub">Cloud • Hosting • Deployments</div>
@@ -495,6 +495,14 @@ input[type=file]{ display:none; }
           <select class="select" id="editorProject" onchange="loadEditorCode()"><option value="">Bila project (starter, haihifadhiwi)</option></select>
         </div>
         <div class="field">
+          <label for="builderDescription">LucasNode Builder — Eleza app unayotaka</label>
+          <textarea class="textarea" id="builderDescription" maxlength="5000" placeholder="Mfano: Tengeneza app ya kusimamia mauzo, bidhaa na ripoti."></textarea>
+          <div class="editor-actions">
+            <button class="btn btn-primary" type="button" onclick="generateWithLucasNodeBuilder()">⚡ Tengeneza App</button>
+          </div>
+          <div class="hint" id="builderNote">Eleza app yako, kisha tengeneza mafaili na uyajaribu kwenye Preview.</div>
+        </div>
+        <div class="field">
           <label>Files</label>
           <div class="editor-actions" id="fileTabs"></div>
           <div class="editor-actions">
@@ -628,7 +636,7 @@ input[type=file]{ display:none; }
 <div id="drawerOverlay" class="overlay" onclick="closeDrawer()">
   <div class="drawer" onclick="event.stopPropagation()">
     <div class="drawer-head">
-      <div class="brand"><div class="lucas-icon"><img src="icon-96.png" alt="LucasNode" width="46" height="46"></div><div class="brand-text">LucasNode</div></div>
+      <div class="brand"><div class="lucas-icon"><img src="assets/lucasnode-icon.jpg" alt="LucasNode" width="46" height="46"></div><div class="brand-text">LucasNode</div></div>
       <button class="close" onclick="closeDrawer()">✕</button>
     </div>
     <div class="menu-section">Meneja</div>
@@ -657,7 +665,7 @@ input[type=file]{ display:none; }
 <!-- AUTH GATE -->
 <div id="authGate" class="auth-gate" style="display:none">
   <div class="auth-card">
-    <div class="lucas-icon"><img src="icon-96.png" alt="LucasNode" width="46" height="46"></div>
+    <div class="lucas-icon"><img src="assets/lucasnode-icon.jpg" alt="LucasNode" width="46" height="46"></div>
     <h2>LucasNode</h2>
     <p class="sub">Ingia au sajili akaunti yako kuendelea.</p>
     <div class="auth-tabs">
@@ -764,20 +772,18 @@ input[type=file]{ display:none; }
 <div class="toast" id="toast"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
-<script src="app.js?v=4"></script>
-<script src="builder.js?v=4"></script>
-</body>
-</html>
 
-"use strict";
+
+</body>
+<script>
 const API_ORIGIN = "https://api.lucasnode.com";
 const LS_TOKEN = "lucasnode_access_token";
 const LS_REFRESH = "lucasnode_refresh_token";
 const LS_USER = "lucasnode_user";
 const REQUEST_TIMEOUT_MS = 15000;
 /* Anon key pekee (ni ya umma). Usiweke service_role hapa. Inatumika kwa Storage/project_files tu. */
-const SUPABASE_URL = "https://vrpmntqwanoxokjjllgr.supabase.co";
-const SUPABASE_ANON_KEY = "PASTE_ANON_KEY_HERE";
+const SUPABASE_URL = "https://tligicyjxhmvggubytbp.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_B6ENCwwlVa4v3xv65-s3OQ_Tfq-jmBh";
 const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const DOMAIN_RE = /^(?=.{4,253}$)([a-z0-9-]{1,63}\.)+[a-z]{2,63}$/;
 let sb = null;
@@ -1006,7 +1012,7 @@ function renderStats(){
 }
 async function refreshStats(){
   const [p, d, dep, t] = await Promise.all([
-    apiRequest("GET", "/api/v1/projects"),
+    apiRequest("GET", "/api/projects"),
     apiRequest("GET", "/api/v1/domains"),
     apiRequest("GET", "/api/v1/deployments"),
     apiRequest("GET", "/api/tovuti")
@@ -1020,7 +1026,7 @@ async function refreshStats(){
 
 /* ---------- projects ---------- */
 async function loadProjects(){
-  const r = await apiRequest("GET", "/api/v1/projects");
+  const r = await apiRequest("GET", "/api/projects");
   if(!r.ok){ toast(r.data?.error || "Imeshindikana kusoma projects.", "err"); return; }
   const list = listOf(r);
   counts.projects = list.length; renderStats();
@@ -1040,14 +1046,14 @@ function createProject(e){
     const body = { name: $("projName").value.trim(), slug: v("projSlug"), description: v("projDesc"),
       framework: v("projFramework"), repository_url: v("projRepo"), repository_branch: v("projBranch") };
     if(!body.name){ toast("Jina la project linahitajika.", "err"); return; }
-    const r = await apiRequest("POST", "/api/v1/projects", body);
+    const r = await apiRequest("POST", "/api/projects", body);
     if(r.ok && r.data?.success){ toast("Project imeundwa!", "ok"); closeModal("modalProject"); e.target.reset(); loadProjects(); }
     else toast(r.data?.error || "Imeshindikana kuunda project.", "err");
   });
 }
 async function deleteProject(id){
   if(!confirm("Futa project hii?")) return;
-  const r = await apiRequest("DELETE", "/api/v1/projects/" + encodeURIComponent(id));
+  const r = await apiRequest("DELETE", "/api/projects/" + encodeURIComponent(id));
   toast(r.ok ? "Project imefutwa." : (r.data?.error || "Imeshindikana kufuta."), r.ok ? "ok" : "err");
   loadProjects();
 }
@@ -1137,7 +1143,7 @@ function createTovuti(e){
 
 /* ---------- deployments ---------- */
 async function loadDeployProjects(){
-  const r = await apiRequest("GET", "/api/v1/projects");
+  const r = await apiRequest("GET", "/api/projects");
   $("deployProject").innerHTML = '<option value="">Chagua project</option>' +
     listOf(r).map(p => `<option value="${escapeHtml(p.id)}">${escapeHtml(p.name)}</option>`).join("");
   loadDeployHistory();
@@ -1158,11 +1164,39 @@ function startDeployment(e){
 /* ---------- monitoring ---------- */
 async function checkBackend(){
   const el = $("healthResult");
-  if(el) el.textContent = "Inakagua...";
-  const [h, r] = await Promise.all([apiRequest("GET", "/api/health", null, false), apiRequest("GET", "/api/ready", null, false)]);
-  const mark = (x) => x.ok ? "✅" : "❌ " + escapeHtml(x.data?.error || x.status || "");
-  if(el) el.innerHTML = `Health: ${mark(h)}<br>Ready: ${mark(r)}`;
-  if(!h.ok) toast("API haipatikani.", "err");
+  if(!el) return;
+
+  el.textContent = "Inakagua API...";
+  const startedAt = performance.now();
+
+  try {
+    const response = await fetch(API_ORIGIN + "/api/health", {
+      method: "GET",
+      headers: { "Accept": "application/json" },
+      cache: "no-store",
+      signal: AbortSignal.timeout(10000)
+    });
+
+    const data = await response.json();
+    const elapsed = Math.round(performance.now() - startedAt);
+
+    if(response.ok && data?.success === true && data?.status === "ok"){
+      el.innerHTML =
+        `<span style="color:#86efac">● API ONLINE</span><br>` +
+        `Service: ${escapeHtml(data.service || "LucasNode API")}<br>` +
+        `Version: ${escapeHtml(data.version || "—")}<br>` +
+        `Response: ${elapsed} ms`;
+    } else {
+      el.innerHTML =
+        `<span style="color:#f87171">● API ERROR</span><br>` +
+        `HTTP: ${response.status}<br>` +
+        `${escapeHtml(data?.error || "Majibu ya API si sahihi.")}`;
+    }
+  } catch(error) {
+    el.innerHTML =
+      `<span style="color:#f87171">● API OFFLINE</span><br>` +
+      `${escapeHtml(error?.name === "TimeoutError" ? "Ombi limepitwa na muda." : "Imeshindikana kuunganisha na API.")}`;
+  }
 }
 
 /* ---------- profile ---------- */
@@ -1299,7 +1333,7 @@ const ED = {
   gate: { testedVer: -1, passed: false, testedHash: "", previewedVer: -1, approvedVer: -1, approvedHash: "" }
 };
 const STARTER = {
-  "index.html": '<!DOCTYPE html>\n<html lang="sw">\n<head>\n<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width, initial-scale=1.0">\n<title>Tovuti Yangu</title>\n<link rel="stylesheet" href="styles.css">\n</head>\n<body>\n<main>\n  <h1>Karibu</h1>\n  <button id="btn">Bonyeza</button>\n  <p id="msg"></p>\n</main>\n<script src="script.js"></script>\n</body>\n</html>\n',
+  "index.html": '<!DOCTYPE html>\n<html lang="sw">\n<head>\n<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width, initial-scale=1.0">\n<title>Tovuti Yangu</title>\n<link rel="stylesheet" href="styles.css">\n</head>\n<body>\n<main>\n  <h1>Karibu</h1>\n  <button id="btn">Bonyeza</button>\n  <p id="msg"></p>\n</main>\n<script src="script.js"><\/script>\n</body>\n</html>\n',
   "styles.css": 'body{font-family:Arial,sans-serif;margin:0;display:grid;place-items:center;min-height:100vh;background:#0f172a;color:#f8fafc}\nmain{text-align:center}\nbutton{padding:10px 18px;border:0;border-radius:10px;background:#2563eb;color:#fff;font-size:15px}\n',
   "script.js": 'document.getElementById("btn").addEventListener("click", function () {\n  document.getElementById("msg").textContent = "Inafanya kazi!";\n});\n'
 };
@@ -1330,41 +1364,124 @@ function readDraft(id){ try{ const d = JSON.parse(localStorage.getItem(draftKey(
 function writeDraft(id, files){ try{ localStorage.setItem(draftKey(id), JSON.stringify(files)); return true; }catch{ return false; } }
 function clearDraft(id){ try{ localStorage.removeItem(draftKey(id)); }catch{} }
 
-/* ---------- server storage (Supabase: project_files + bucket project-files) ---------- */
+/* ---------- server storage (LucasNode Backend API) ---------- */
+function projectFilesPath(projectId){
+  return "/api/projects/" + encodeURIComponent(projectId) + "/files";
+}
+
+function fileApiError(result, fallback){
+  return {
+    message: result?.data?.error || result?.data?.message || fallback,
+    status: result?.status || 0
+  };
+}
+
 async function sbLoadFiles(projectId){
-  const { data, error } = await sb.from("project_files").select("path,storage_path").eq("project_id", projectId);
-  if(error) return { error };
-  if(!data?.length) return { files: null };
-  const files = {};
-  for(const row of data){
-    const { data: blob, error: e2 } = await sb.storage.from("project-files").download(row.storage_path);
-    if(e2) return { error: e2 };
-    files[row.path] = await blob.text();
+  const list = await apiRequest("GET", projectFilesPath(projectId));
+
+  if(!list.ok){
+    return { error: fileApiError(list, "Imeshindikana kusoma orodha ya files.") };
   }
+
+  if(!Array.isArray(list.data?.files)){
+    return { error: { message: "Backend imerudisha orodha ya files isiyo sahihi." } };
+  }
+
+  if(list.data.files.length === 0){
+    return { files: null };
+  }
+
+  const files = {};
+
+  for(const item of list.data.files){
+    if(!item?.id || typeof item.path !== "string"){
+      return { error: { message: "Taarifa za file kutoka backend si sahihi." } };
+    }
+
+    const result = await apiRequest(
+      "GET",
+      projectFilesPath(projectId) + "/" + encodeURIComponent(item.id)
+    );
+
+    if(!result.ok){
+      return { error: fileApiError(result, "Imeshindikana kusoma " + item.path) };
+    }
+
+    const file = result.data?.file;
+
+    if(!file || file.path !== item.path || typeof file.content !== "string"){
+      return { error: { message: "Maudhui ya file " + item.path + " hayajarudishwa vizuri." } };
+    }
+
+    files[file.path] = file.content;
+  }
+
   return { files };
 }
+
 async function sbSaveFiles(projectId, files){
-  const bucket = sb.storage.from("project-files");
-  for(const path of Object.keys(files)){
-    const content = files[path], storagePath = projectId + "/" + path, type = mimeOf(path);
-    const blob = new Blob([content], { type });
-    await bucket.remove([storagePath]);
-    const up = await bucket.upload(storagePath, blob, { contentType: type, upsert: false });
-    if(up.error) return up.error;
-    const { error } = await sb.from("project_files").upsert({
-      project_id: projectId, path, storage_path: storagePath, file_name: path.split("/").pop(),
-      content_type: type, size_bytes: blob.size, checksum: await sha256Hex(content), is_entrypoint: path === "index.html"
-    }, { onConflict: "project_id,path" });
-    if(error) return error;
+  const list = await apiRequest("GET", projectFilesPath(projectId));
+
+  if(!list.ok){
+    return fileApiError(list, "Imeshindikana kupata files zilizopo.");
   }
-  const { data: existing, error: e3 } = await sb.from("project_files").select("path,storage_path").eq("project_id", projectId);
-  if(e3) return e3;
-  const stale = (existing || []).filter(r => !(r.path in files));
-  if(stale.length){
-    await bucket.remove(stale.map(r => r.storage_path));
-    const { error } = await sb.from("project_files").delete().eq("project_id", projectId).in("path", stale.map(r => r.path));
-    if(error) return error;
+
+  if(!Array.isArray(list.data?.files)){
+    return { message: "Backend imerudisha orodha ya files isiyo sahihi." };
   }
+
+  const existing = new Map(
+    list.data.files
+      .filter(file => file && file.id && typeof file.path === "string")
+      .map(file => [file.path, file])
+  );
+
+  const paths = Object.keys(files);
+
+  if(paths.length > 1000){
+    return { message: "Project imezidi kikomo cha files 1000." };
+  }
+
+  /* Kwanza tengeneza au sasisha files zote. */
+  for(const path of paths){
+    const content = files[path];
+
+    if(typeof content !== "string"){
+      return { message: "Maudhui ya file " + path + " si maandishi." };
+    }
+
+    const current = existing.get(path);
+    const result = current
+      ? await apiRequest(
+          "PUT",
+          projectFilesPath(projectId) + "/" + encodeURIComponent(current.id),
+          { content }
+        )
+      : await apiRequest(
+          "POST",
+          projectFilesPath(projectId),
+          { path, content }
+        );
+
+    if(!result.ok){
+      return fileApiError(result, "Imeshindikana kuhifadhi " + path);
+    }
+  }
+
+  /* Futa files zilizoondolewa kwenye editor baada ya save kufanikiwa. */
+  const removed = [...existing.entries()].filter(([path]) => !(path in files));
+
+  for(const [path, file] of removed){
+    const result = await apiRequest(
+      "DELETE",
+      projectFilesPath(projectId) + "/" + encodeURIComponent(file.id)
+    );
+
+    if(!result.ok){
+      return fileApiError(result, "Imeshindikana kufuta " + path);
+    }
+  }
+
   return null;
 }
 
@@ -1378,7 +1495,7 @@ function resetEditor(){
 function setNote(t){ const n = $("editorNote"); if(n) n.textContent = t; }
 
 async function initEditor(){
-  const r = await apiRequest("GET", "/api/v1/projects");
+  const r = await apiRequest("GET", "/api/projects");
   const list = listOf(r);
   const sel = $("editorProject"), cur = sel.value;
   sel.innerHTML = '<option value="">Bila project (starter, haihifadhiwi)</option>' +
@@ -1386,12 +1503,54 @@ async function initEditor(){
   sel.value = list.some(p => p.id === cur) ? cur : "";
   if(!Object.keys(ED.files).length) await loadEditorCode(); else { renderEditor(); runPreview(); }
 }
+async function generateWithLucasNodeBuilder(){
+  const input = $("builderDescription");
+  const note = $("builderNote");
+  const description = input.value.trim();
+
+  if(!description){
+    note.textContent = "Andika maelezo ya app kwanza.";
+    input.focus();
+    return;
+  }
+
+  if(!confirm("Kutengeneza app mpya kutabadilisha mafaili yaliyo kwenye editor. Unaendelea?")){
+    return;
+  }
+
+  try{
+    note.textContent = "Inatengeneza mafaili na kufanya ukaguzi...";
+    const builder = await import("./src/builder/engine.js");
+    const result = builder.generateProjectFiles(description);
+    const check = builder.validateGeneratedFiles(result.files);
+
+    if(!check.valid) throw new Error("Ukaguzi wa mafaili haujapita.");
+
+    ED.files = {...result.files};
+    ED.active = "index.html";
+    ED.ver++;
+    ED.gate = {
+      testedVer:-1, passed:false, testedHash:"",
+      previewedVer:-1, approvedVer:-1, approvedHash:""
+    };
+
+    renderEditor();
+    clearInspect();
+    runPreview();
+
+    note.textContent = "Mafaili yametengenezwa na kukaguliwa. Kagua Preview, kisha tumia Inspect na majaribio kabla ya kuidhinisha.";
+    $("editorNote").textContent = "Builder imetengeneza mafaili ya kuanzia. Hifadhi na jaribu app kabla ya hatua yoyote ya deployment.";
+  }catch(e){
+    note.textContent = "Hitilafu ya Builder: " + (e.message || "Haikuweza kutengeneza app.");
+  }
+}
+
 async function loadEditorCode(){
   const sel = $("editorProject"), id = sel.value;
   ED.projectId = id;
   let files = null, note = "";
   if(id){
-    if(sbReady()){
+    if(getToken()){
       const r = await sbLoadFiles(id);
       if(r.error) note = "Server: " + sbErr(r.error) + ". ";
       else if(r.files){ files = r.files; note = "Code imesomwa kutoka server."; }
@@ -1519,7 +1678,7 @@ async function saveEditorCode(){
   if(totalBytes(ED.files) > MAX_PROJECT_BYTES){ toast("Project ni kubwa mno (zaidi ya 500 KB).", "err"); return; }
   ED.saving = true;
   try{
-    if(sbReady()){
+    if(getToken()){
       const err = await sbSaveFiles(ED.projectId, ED.files);
       if(err){
         writeDraft(ED.projectId, ED.files);
@@ -1579,14 +1738,118 @@ function inspectProject(files){
 function clearInspect(){ $("inspectResults").innerHTML = '<div class="hint">Bonyeza Inspect kuendesha ukaguzi.</div>'; }
 async function runInspect(){
   ED.files[ED.active] = $("htmlEditor").value;
-  const res = inspectProject(ED.files);
-  const icon = { pass: "✅", warn: "⚠️", fail: "❌" };
-  $("inspectResults").innerHTML = res.map(r => `<div class="check-row">${icon[r.level]} ${escapeHtml(r.msg)}</div>`).join("");
+
+  let res = inspectProject(ED.files);
+  let passed = !res.some(r => r.level === "fail");
+
+  if(ED.projectId){
+    try {
+      setNote("Inahifadhi files na kuendesha Backend Validation...");
+
+      const saveError = await sbSaveFiles(ED.projectId, ED.files);
+
+      if(saveError){
+        res.push({
+          level: "fail",
+          msg: "Files hazijahifadhiwa: " + saveError.message
+        });
+        passed = false;
+      } else {
+        const result = await apiRequest(
+          "POST",
+          "/api/projects/" + encodeURIComponent(ED.projectId) + "/validate"
+        );
+
+        const validation = result.data?.validation;
+
+        if(!result.ok || result.data?.success !== true || !validation){
+          res.push({
+            level: "fail",
+            msg: result.data?.error || "Backend Validation haikukamilika."
+          });
+          passed = false;
+        } else {
+          if(validation.summary){
+            res.push({
+              level: validation.passed === true ? "pass" : "fail",
+              msg: "Backend: " + validation.summary
+            });
+          }
+
+          if(Array.isArray(validation.issues)){
+            for(const issue of validation.issues){
+              const rawLevel = typeof issue === "object" && issue
+                ? String(issue.level || issue.severity || issue.type || "").toLowerCase()
+                : "";
+
+              const level = ["error", "fail", "failed", "critical"].includes(rawLevel)
+                ? "fail"
+                : ["pass", "success"].includes(rawLevel)
+                  ? "pass"
+                  : "warn";
+
+              const message = typeof issue === "string"
+                ? issue
+                : issue?.message || issue?.msg || JSON.stringify(issue);
+
+              res.push({
+                level,
+                msg: "Backend Validation: " + message
+              });
+            }
+          }
+
+          if(validation.passed !== true){
+            res.push({
+              level: "fail",
+              msg: "Backend Validation imeshindwa. Rekebisha issues kabla ya kuendelea."
+            });
+            passed = false;
+          } else if(passed){
+            res.push({
+              level: "pass",
+              msg: "Backend Source Validation imepita."
+            });
+          }
+
+          if(validation.score !== undefined){
+            res.push({
+              level: validation.passed === true ? "pass" : "warn",
+              msg: "Validation score: " + validation.score
+            });
+          }
+        }
+      }
+    } catch(error) {
+      res.push({
+        level: "fail",
+        msg: "Backend Validation haikuweza kukamilika: " +
+          (error?.message || "Hitilafu ya mawasiliano.")
+      });
+      passed = false;
+    }
+  }
+
+  const icon = {
+    pass: "✅",
+    warn: "⚠️",
+    fail: "❌"
+  };
+
+  $("inspectResults").innerHTML = res.map(r =>
+    `<div class="check-row">${icon[r.level] || "ℹ️"} ${escapeHtml(r.msg)}</div>`
+  ).join("");
+
   ED.gate.testedVer = ED.ver;
-  ED.gate.passed = !res.some(r => r.level === "fail");
+  ED.gate.passed = passed;
   ED.gate.testedHash = await fileHash();
+
   renderGate();
-  toast(ED.gate.passed ? "Ukaguzi umepita." : "Ukaguzi umeshindwa — rekebisha makosa.", ED.gate.passed ? "ok" : "err");
+
+  toast(
+    passed ? "Validation imepita." : "Validation imeshindwa — rekebisha makosa.",
+    passed ? "ok" : "err"
+  );
 }
 
 /* ---------- approval gate ---------- */
@@ -1682,3 +1945,6 @@ document.addEventListener("click", (e) => {
   const el = e.target.closest('[data-action="ed-tab"]');
   if(el) switchTab(el.dataset.path);
 });
+</script>
+</body>
+</html>
