@@ -540,6 +540,30 @@ input[type=file]{ display:none; }
       </div>
       <div class="section">
         <div class="card form">
+          <div class="section-title">⚙️ LucasNode Engine</div>
+          <p class="hint">Unganisha project na engines zilizopo kwenye backend. Kwanza hakikisha Inspect imepita kwa version ya sasa.</p>
+          <div class="editor-actions">
+            <button class="btn btn-secondary" type="button" onclick="analyzeDependencies(this)">🔗 Dependency Analysis</button>
+            <button class="btn btn-secondary" type="button" onclick="loadWorkflowJobs()">↻ Refresh Jobs</button>
+          </div>
+          <div class="editor-actions" style="margin-top:10px">
+            <button class="btn btn-secondary" type="button" onclick="queueWorkflowJob('DEPENDENCY_INSTALLATION')">📦 Dependency Installation</button>
+            <button class="btn btn-secondary" type="button" onclick="queueWorkflowJob('BUILD')">⚙️ Build</button>
+            <button class="btn btn-secondary" type="button" onclick="queueWorkflowJob('TEST')">🧪 Test</button>
+            <button class="btn btn-secondary" type="button" onclick="queueWorkflowJob('SECURITY_SCAN')">🛡️ Security Scan</button>
+            <button class="btn btn-secondary" type="button" onclick="queueWorkflowJob('PREVIEW')">👁️ Preview Job</button>
+          </div>
+          <div id="engineResults" style="margin-top:12px">
+            <div class="hint">Chagua project iliyohifadhiwa, kisha endesha Dependency Analysis au workflow job.</div>
+          </div>
+          <div id="workflowResults" style="margin-top:12px">
+            <div class="hint">Workflow jobs zitaonekana hapa.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="card form">
           <div class="section-title">🚀 Deploy (tovuti tuli)</div>
           <div id="gateStatus"></div>
           <label class="hint" style="display:flex;gap:8px;align-items:flex-start;line-height:1.5">
@@ -1850,6 +1874,293 @@ async function runInspect(){
     passed ? "Validation imepita." : "Validation imeshindwa — rekebisha makosa.",
     passed ? "ok" : "err"
   );
+}
+
+/* ---------- LucasNode dependency and workflow integration ---------- */
+
+function engineProjectReady(){
+  if(!ED.projectId){
+    toast("Chagua project iliyohifadhiwa kwanza.", "err");
+    return false;
+  }
+
+  if(ED.gate.testedVer !== ED.ver || ED.gate.passed !== true){
+    toast("Endesha Inspect na hakikisha imepita kwa version ya sasa kwanza.", "err");
+    return false;
+  }
+
+  return true;
+}
+
+function renderEngineMessage(targetId, message, type = "hint"){
+  const el = $(targetId);
+  if(!el) return;
+  el.innerHTML = `<div class="${type === "error" ? "check-row" : "hint"}">${escapeHtml(message)}</div>`;
+}
+
+function renderEngineJson(targetId, title, value){
+  const el = $(targetId);
+  if(!el) return;
+
+  let output;
+  try{
+    output = JSON.stringify(value, null, 2);
+  }catch{
+    output = String(value);
+  }
+
+  el.innerHTML =
+    `<div class="section-title">${escapeHtml(title)}</div>` +
+    `<pre style="white-space:pre-wrap;overflow-wrap:anywhere;max-height:420px;overflow:auto;font-size:12px;margin-top:8px">${escapeHtml(output)}</pre>`;
+}
+
+async function analyzeDependencies(button){
+  if(!engineProjectReady()) return;
+  if(button) button.disabled = true;
+
+  try{
+    ED.files[ED.active] = $("htmlEditor").value;
+
+    renderEngineMessage("engineResults", "Inahifadhi files kabla ya Dependency Analysis...");
+
+    const saveError = await sbSaveFiles(ED.projectId, ED.files);
+    if(saveError){
+      throw new Error("Files hazijahifadhiwa: " + saveError.message);
+    }
+
+    const result = await apiRequest(
+      "POST",
+      "/api/projects/" + encodeURIComponent(ED.projectId) + "/dependencies/analyze"
+    );
+
+    if(!result.ok || result.data?.success !== true || !result.data?.analysis){
+      throw new Error(
+        result.data?.error ||
+        result.data?.message ||
+        "Dependency Analysis haikukamilika."
+      );
+    }
+
+    renderEngineJson(
+      "engineResults",
+      "✅ Dependency Analysis Report",
+      result.data.analysis
+    );
+
+    toast("Dependency Analysis imekamilika.", "ok");
+  }catch(error){
+    renderEngineMessage(
+      "engineResults",
+      error?.message || "Dependency Analysis imeshindwa.",
+      "error"
+    );
+    toast(error?.message || "Dependency Analysis imeshindwa.", "err");
+  }finally{
+    if(button) button.disabled = false;
+  }
+}
+
+function workflowStatus(job){
+  return String(job?.status || job?.state || "UNKNOWN").toUpperCase();
+}
+
+function workflowJobHtml(job){
+  const status = workflowStatus(job);
+  const id = String(job?.id || "N/A");
+  const type = String(job?.job_type || job?.type || "UNKNOWN");
+  const created = String(job?.created_at || "");
+  const error = job?.error_message || job?.error || "";
+
+  return `
+    <div class="check-row">
+      <strong>${escapeHtml(type)}</strong> — ${escapeHtml(status)}
+      <div class="hint">Job ID: ${escapeHtml(id)}</div>
+      ${created ? `<div class="hint">Created: ${escapeHtml(created)}</div>` : ""}
+      ${error ? `<div class="check-row">⚠️ ${escapeHtml(String(error))}</div>` : ""}
+    </div>
+  `;
+}
+
+async function loadWorkflowJobs(){
+  if(!ED.projectId){
+    renderEngineMessage("workflowResults", "Chagua project iliyohifadhiwa kwanza.");
+    return;
+  }
+
+  renderEngineMessage("workflowResults", "Inasoma workflow jobs kutoka backend...");
+
+  try{
+    const result = await apiRequest("GET", "/api/workflow-jobs");
+
+    if(!result.ok || result.data?.success !== true || !Array.isArray(result.data?.data)){
+      throw new Error(result.data?.error || "Imeshindikana kusoma workflow jobs.");
+    }
+
+    const jobs = result.data.data.filter(job =>
+      String(job.project_id) === String(ED.projectId)
+    );
+
+    const el = $("workflowResults");
+    if(!el) return;
+
+    if(!jobs.length){
+      el.innerHTML = '<div class="hint">Hakuna workflow job ya project hii bado.</div>';
+      return;
+    }
+
+    el.innerHTML =
+      '<div class="section-title">Workflow Jobs</div>' +
+      jobs.map(workflowJobHtml).join("");
+
+  }catch(error){
+    renderEngineMessage(
+      "workflowResults",
+      error?.message || "Imeshindikana kusoma workflow jobs.",
+      "error"
+    );
+  }
+}
+
+async function pollWorkflowJob(jobId){
+  const projectId = String(ED.projectId || "");
+  if(!projectId) return;
+
+  const terminal = new Set([
+    "COMPLETED",
+    "SUCCEEDED",
+    "SUCCESS",
+    "FAILED",
+    "CANCELLED",
+    "CANCELED",
+    "DEAD",
+    "EXHAUSTED"
+  ]);
+
+  for(let attempt = 0; attempt < 20; attempt++){
+    await new Promise(resolve => setTimeout(resolve, 3000));
+
+    if(String(ED.projectId || "") !== projectId){
+      return;
+    }
+
+    try{
+      const result = await apiRequest(
+        "GET",
+        "/api/workflow-jobs/" + encodeURIComponent(jobId)
+      );
+
+      if(!result.ok || result.data?.success !== true || !result.data?.data){
+        return;
+      }
+
+      const job = result.data.data;
+
+      const el = $("workflowResults");
+      if(el){
+        const old = el.querySelector(`[data-job-id="${CSS.escape(String(jobId))}"]`);
+        const card = document.createElement("div");
+        card.className = "check-row";
+        card.dataset.jobId = String(jobId);
+        card.innerHTML = workflowJobHtml(job);
+
+        if(old) old.replaceWith(card);
+        else el.prepend(card);
+      }
+
+      if(terminal.has(workflowStatus(job))){
+        return;
+      }
+    }catch{
+      return;
+    }
+  }
+
+  toast("Job bado haijafikia status ya mwisho. Tumia Refresh Jobs kuangalia tena.", "info");
+}
+
+async function queueWorkflowJob(jobType){
+  if(!engineProjectReady()) return;
+
+  const allowed = [
+    "DEPENDENCY_INSTALLATION",
+    "BUILD",
+    "TEST",
+    "SECURITY_SCAN",
+    "PREVIEW"
+  ];
+
+  if(!allowed.includes(jobType)){
+    toast("Aina hii ya workflow hairuhusiwi.", "err");
+    return;
+  }
+
+  const buttons = Array.from(
+    document.querySelectorAll("#page-editor button")
+  ).filter(button => button.getAttribute("onclick")?.includes("queueWorkflowJob"));
+
+  buttons.forEach(button => button.disabled = true);
+
+  try{
+    ED.files[ED.active] = $("htmlEditor").value;
+
+    const saveError = await sbSaveFiles(ED.projectId, ED.files);
+    if(saveError){
+      throw new Error("Files hazijahifadhiwa: " + saveError.message);
+    }
+
+    renderEngineMessage(
+      "workflowResults",
+      "Inaweka " + jobType + " kwenye backend queue..."
+    );
+
+    const result = await apiRequest(
+      "POST",
+      "/api/workflow-jobs",
+      {
+        project_id: ED.projectId,
+        job_type: jobType,
+        payload: {}
+      }
+    );
+
+    if(!result.ok || result.data?.success !== true || !result.data?.data){
+      throw new Error(
+        result.data?.error ||
+        result.data?.message ||
+        "Backend haikukubali workflow job."
+      );
+    }
+
+    const job = result.data.data;
+
+    renderEngineMessage(
+      "workflowResults",
+      "Job imepokelewa na backend queue. Status itaonyeshwa hapa."
+    );
+
+    await loadWorkflowJobs();
+
+    if(job.id){
+      pollWorkflowJob(job.id);
+    }
+
+    toast(
+      result.data.existing
+        ? "Workflow job iliyokuwepo imerudishwa."
+        : "Workflow job imeongezwa kwenye queue.",
+      "ok"
+    );
+
+  }catch(error){
+    renderEngineMessage(
+      "workflowResults",
+      error?.message || "Workflow job imeshindwa kuwasilishwa.",
+      "error"
+    );
+    toast(error?.message || "Workflow job imeshindwa.", "err");
+  }finally{
+    buttons.forEach(button => button.disabled = false);
+  }
 }
 
 /* ---------- approval gate ---------- */

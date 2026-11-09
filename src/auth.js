@@ -1,25 +1,16 @@
-/* =========================================================
-   LUCASNODE — AUTHENTICATION
-   Register • Login • Current User • Session • Logout
+/**
+ * LucasNode — Backend v2 Authentication
+ *
+ * POST /api/idhini/jisajili
+ * POST /api/idhini/kuingia
+ * POST /api/idhini/upya
+ * POST /api/idhini/toka
+ */
 
-   Backend:
-   https://api.lucasnode.com
-
-   Existing endpoints:
-   POST /api/idhini/jisajili
-   POST /api/idhini/kuingia
-   GET  /api/idhini/mimi
-   POST /api/idhini/toka
-========================================================= */
+import { supabase } from "./supabase.js";
 
 const API_BASE_URL = "https://api.lucasnode.com";
 
-const SESSION_KEY = "lucasnode_session";
-const USER_KEY = "lucasnode_user";
-
-/**
- * Send requests to the LucasNode backend.
- */
 async function authRequest(path, options = {}) {
   const headers = {
     Accept: "application/json",
@@ -51,9 +42,7 @@ async function authRequest(path, options = {}) {
   try {
     result = await response.json();
   } catch {
-    throw new Error(
-      "LucasNode API imerudisha majibu yasiyosomeka."
-    );
+    throw new Error("LucasNode API imerudisha majibu yasiyosomeka.");
   }
 
   if (!response.ok || result?.success === false) {
@@ -67,119 +56,63 @@ async function authRequest(path, options = {}) {
   return result;
 }
 
-/**
- * Store a session returned by the backend.
- */
-function saveAuthSession(session, user) {
-  if (!session?.access_token) {
-    throw new Error(
-      "Hakuna access token. Huenda uthibitisho wa email unahitajika."
-    );
-  }
-
-  sessionStorage.setItem(
-    SESSION_KEY,
-    JSON.stringify(session)
-  );
-
-  if (user) {
-    sessionStorage.setItem(
-      USER_KEY,
-      JSON.stringify(user)
-    );
-  }
-}
-
-/**
- * Read the saved session.
- */
-function getAuthSession() {
-  try {
-    const value = sessionStorage.getItem(SESSION_KEY);
-    return value ? JSON.parse(value) : null;
-  } catch {
+async function applyBackendSession(result) {
+  if (!result?.session?.access_token || !result?.session?.refresh_token) {
     return null;
   }
+
+  const { data, error } = await supabase.auth.setSession({
+    access_token: result.session.access_token,
+    refresh_token: result.session.refresh_token,
+  });
+
+  if (error) throw new Error(error.message);
+
+  return {
+    user: data.user || result.user || null,
+    session: data.session,
+  };
 }
 
-/**
- * Read the saved user.
- */
-function getSavedUser() {
-  try {
-    const value = sessionStorage.getItem(USER_KEY);
-    return value ? JSON.parse(value) : null;
-  } catch {
-    return null;
-  }
-}
-
-/**
- * Clear local session data.
- */
-function clearAuthSession() {
-  sessionStorage.removeItem(SESSION_KEY);
-  sessionStorage.removeItem(USER_KEY);
-}
-
-/**
- * REGISTER
- *
- * POST /api/idhini/jisajili
- *
- * Backend accepts email and password.
- */
-async function registerUser({ email, password }) {
+async function registerUser({ email, password, display_name }) {
   if (
     typeof email !== "string" ||
     !email.trim() ||
     typeof password !== "string" ||
-    !password
+    password.length < 8 ||
+    password.length > 128
   ) {
-    throw new Error("Weka email na password.");
+    throw new Error("Weka email sahihi na password yenye angalau herufi 8.");
   }
 
   const normalizedEmail = email.trim().toLowerCase();
 
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
+  if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(normalizedEmail)) {
     throw new Error("Weka email sahihi.");
   }
 
-  if (password.length < 8 || password.length > 128) {
-    throw new Error(
-      "Password lazima iwe na herufi angalau 8."
-    );
-  }
+  const result = await authRequest("/api/idhini/jisajili", {
+    method: "POST",
+    body: {
+      email: normalizedEmail,
+      password,
+      ...(typeof display_name === "string" && display_name.trim()
+        ? { display_name: display_name.trim() }
+        : {}),
+    },
+  });
 
-  const result = await authRequest(
-    "/api/idhini/jisajili",
-    {
-      method: "POST",
-      body: {
-        email: normalizedEmail,
-        password,
-      },
-    }
-  );
-
-  if (result.session?.access_token) {
-    saveAuthSession(result.session, result.user);
-  }
+  const authenticated = await applyBackendSession(result);
 
   return {
     success: true,
     message: result.message,
-    user: result.user || null,
-    session: result.session || null,
-    requiresEmailConfirmation: !result.session?.access_token,
+    user: authenticated?.user || result.user || null,
+    session: authenticated?.session || null,
+    requiresEmailConfirmation: !authenticated,
   };
 }
 
-/**
- * LOGIN
- *
- * POST /api/idhini/kuingia
- */
 async function loginUser({ email, password }) {
   if (
     typeof email !== "string" ||
@@ -190,113 +123,105 @@ async function loginUser({ email, password }) {
     throw new Error("Weka email na password.");
   }
 
-  const result = await authRequest(
-    "/api/idhini/kuingia",
-    {
-      method: "POST",
-      body: {
-        email: email.trim().toLowerCase(),
-        password,
-      },
-    }
-  );
+  const result = await authRequest("/api/idhini/kuingia", {
+    method: "POST",
+    body: {
+      email: email.trim().toLowerCase(),
+      password,
+    },
+  });
 
-  if (!result.session?.access_token) {
-    throw new Error(
-      "Login imejibu bila session token."
-    );
+  const authenticated = await applyBackendSession(result);
+
+  if (!authenticated) {
+    throw new Error("Backend haikurudisha session halali.");
   }
-
-  saveAuthSession(result.session, result.user);
 
   return {
     success: true,
-    user: result.user || null,
-    session: result.session,
+    user: authenticated.user,
+    session: authenticated.session,
   };
 }
 
-/**
- * CURRENT USER
- *
- * GET /api/idhini/mimi
- *
- * The backend validates the bearer token.
- */
 async function getCurrentUser() {
-  const session = getAuthSession();
+  const { data: sessionData, error: sessionError } =
+    await supabase.auth.getSession();
 
-  if (!session?.access_token) {
-    return null;
-  }
+  if (sessionError) throw new Error(sessionError.message);
+  if (!sessionData.session) return null;
 
-  try {
-    const result = await authRequest(
-      "/api/idhini/mimi",
-      {
-        method: "GET",
-        token: session.access_token,
-      }
-    );
+  const { data, error } = await supabase.auth.getUser();
 
-    if (!result.user) {
-      throw new Error(
-        "Backend haikurudisha taarifa za mtumiaji."
-      );
-    }
-
-    sessionStorage.setItem(
-      USER_KEY,
-      JSON.stringify(result.user)
-    );
-
-    return result.user;
-  } catch (error) {
-    // HTTP 401 means the token is invalid or expired.
-    if (/HTTP 401/i.test(error.message)) {
-      clearAuthSession();
+  if (error) {
+    if (
+      error.name === "AuthSessionMissingError" ||
+      error.status === 401
+    ) {
       return null;
     }
 
-    // Do not log the user out because of a network/server failure.
-    throw error;
+    throw new Error(error.message);
   }
+
+  return data.user;
 }
 
-/**
- * LOGOUT
- *
- * POST /api/idhini/toka
- *
- * Revoke the session through the backend, then clear local data.
- */
+async function refreshAuthSession() {
+  const { data: current, error: currentError } =
+    await supabase.auth.getSession();
+
+  if (currentError) throw new Error(currentError.message);
+
+  const refreshToken = current.session?.refresh_token;
+  if (!refreshToken) return null;
+
+  const result = await authRequest("/api/idhini/upya", {
+    method: "POST",
+    body: { refresh_token: refreshToken },
+  });
+
+  return applyBackendSession(result);
+}
+
 async function logoutUser() {
-  const session = getAuthSession();
+  const { data, error } = await supabase.auth.getSession();
+
+  if (error) throw new Error(error.message);
+
+  const accessToken = data.session?.access_token;
 
   try {
-    if (session?.access_token) {
-      await authRequest(
-        "/api/idhini/toka",
-        {
-          method: "POST",
-          token: session.access_token,
-        }
-      );
+    if (accessToken) {
+      await authRequest("/api/idhini/toka", {
+        method: "POST",
+        token: accessToken,
+      });
     }
   } finally {
-    clearAuthSession();
+    await supabase.auth.signOut();
   }
 
   return { success: true };
 }
 
-/**
- * Check whether a session token exists locally.
- *
- * This alone does not prove that the token is still valid.
- */
-function isLoggedIn() {
-  return Boolean(getAuthSession()?.access_token);
+function getAuthSession() {
+  // Session is owned by Supabase; use getCurrentSession() for async access.
+  return null;
+}
+
+async function getSavedUser() {
+  return getCurrentUser();
+}
+
+async function clearAuthSession() {
+  await supabase.auth.signOut();
+}
+
+async function isLoggedIn() {
+  const { data, error } = await supabase.auth.getSession();
+  if (error) return false;
+  return Boolean(data.session?.access_token);
 }
 
 export {
@@ -306,6 +231,7 @@ export {
   getAuthSession,
   getSavedUser,
   clearAuthSession,
+  refreshAuthSession,
   logoutUser,
   isLoggedIn,
 };
