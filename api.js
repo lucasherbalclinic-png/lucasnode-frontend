@@ -1,9 +1,8 @@
-mkdir -p /home/claude/build2 && cd /home/claude/build2 && cat > app.js <<'EOF'
 "use strict";
 /* ===== Config (anon key pekee — usiweke service_role hapa) ===== */
-const SUPABASE_URL = "https://vrpmntqwanoxokjjllgr.supabase.co";
-const SUPABASE_ANON_KEY =
-const API_BASE = "https://lucasnode-backend.lucasherbalclinic.workers.dev";
+const SUPABASE_URL = "https://tligicyjxhmvggubytbp.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_B6ENCwwlVa4v3xv65-s3OQ_Tfq-jmBh";
+const API_BASE = "https://api.lucasnode.com";
 const REQUEST_TIMEOUT_MS = 15000;
 
 let sb = null, initError = null, appStarted = false, authMode = "login", ghRequestId = 0;
@@ -312,6 +311,7 @@ async function loadDeployProjects(){
   $("deployProject").innerHTML = '<option value="">Chagua project</option>' +
     state.projects.map(p => `<option value="${escapeHtml(p.id)}">${escapeHtml(p.name)}</option>`).join("");
   loadDeployHistory();
+  $("deployProject").onchange = loadBuildRuns;
 }
 async function loadDeployHistory(){
   const { data, error } = await sb.from("deployments").select("id,project_id,version,status,created_at")
@@ -324,10 +324,106 @@ async function loadDeployHistory(){
     d => card("🚀", names[d.project_id] || "Deployment",
       metaDiv(`v${escapeHtml(d.version ?? "")} · ${escapeHtml(d.status || "")} · ${escapeHtml(fmtDate(d.created_at))}`)));
 }
-function startDeployment(e){
+async function startDeployment(e){
   e.preventDefault();
-  if(!$("deployProject").value){ toast("Chagua project kwanza.", "err"); return; }
-  toast("Deployment engine haijaunganishwa bado.", "err");
+  return withBusy(e, async () => {
+    const projectId = $("deployProject").value;
+
+    if(!projectId){
+      toast("Chagua project kwanza.", "err");
+      return;
+    }
+
+    const result = await createBuildRun(projectId);
+    if(!result) return;
+
+    toast(
+      "Build run imeundwa: " +
+      (result.data?.current_stage || result.execution?.currentStage || "PLANNED"),
+      "ok"
+    );
+
+    await loadBuildRuns();
+  });
+}
+
+/* ---------- build runs ---------- */
+async function createBuildRun(projectId){
+  if(!isLoggedIn()){ toast("Ingia kwanza.", "err"); return null; }
+
+  const token = state.session?.access_token;
+  if(!token){ toast("Session haijapatikana. Ingia upya.", "err"); return null; }
+
+  try{
+    const response = await fetch(
+      API_BASE + "/api/projects/" + encodeURIComponent(projectId) + "/build-runs",
+      {
+        method: "POST",
+        headers: {
+          "Authorization": "Bearer " + token,
+          "Content-Type": "application/json"
+        }
+      }
+    );
+
+    const data = await response.json().catch(() => null);
+
+    if(!response.ok){
+      toast(data?.error || ("Imeshindikana kuanza build (" + response.status + ")."), "err");
+      return null;
+    }
+
+    return data;
+  }catch{
+    toast("Imeshindikana kufikia LucasNode API.", "err");
+    return null;
+  }
+}
+
+async function loadBuildRuns(){
+  if(!isLoggedIn()) return;
+
+  const projectId = $("deployProject").value;
+  if(!projectId) return;
+
+  const token = state.session?.access_token;
+  if(!token) return;
+
+  try{
+    const response = await fetch(
+      API_BASE + "/api/projects/" + encodeURIComponent(projectId) + "/build-runs?limit=20",
+      { headers: { "Authorization": "Bearer " + token } }
+    );
+
+    const data = await response.json().catch(() => null);
+
+    if(!response.ok){
+      toast(data?.error || ("Imeshindikana kusoma build runs (" + response.status + ")."), "err");
+      return;
+    }
+
+    const runs = data?.data || [];
+    const names = Object.fromEntries(state.projects.map(p => [p.id, p.name]));
+
+    fillList(
+      $("deployHistoryList"),
+      $("deployHistoryEmpty"),
+      runs,
+      run => card(
+        "🚀",
+        names[run.project_id] || "Build",
+        metaDiv(
+          escapeHtml(run.status || "") +
+          " · " +
+          escapeHtml(run.current_stage || "") +
+          " · " +
+          escapeHtml(fmtDate(run.created_at))
+        )
+      )
+    );
+  }catch{
+    toast("Imeshindikana kufikia LucasNode API.", "err");
+  }
 }
 
 /* ---------- monitoring ---------- */
@@ -337,7 +433,7 @@ async function checkBackend(){
   const { error } = await sb.from("plans").select("id", { head: true, count: "exact" });
   let worker = "—";
   try{
-    const r = await fetch(API_BASE + "/api/afya");
+    const r = await fetch(API_BASE + "/api/health");
     const d = await r.json().catch(() => null);
     worker = (r.ok && d?.success) ? "✅" : "❌";
   }catch{ worker = "❌"; }
@@ -505,21 +601,3 @@ function bootstrap(){
   });
 }
 bootstrap();
-EOF
-node --check app.js && echo JS_OK
-python3 - <<'EOF'
-import re
-h=open('/home/claude/build/index.html',encoding='utf-8').read()
-j=open('/home/claude/build2/app.js',encoding='utf-8').read()
-ids=set(re.findall(r'id="([^"]+)"',h))
-print("MISSING IDS:",sorted(i for i in set(re.findall(r'\$\("([^"]+)"\)',j)) if i not in ids))
-calls=set(re.findall(r'on(?:click|submit)="([A-Za-z_]+)\(',h))
-funcs=set(re.findall(r'(?:function|const)\s+([A-Za-z_]+)',j))
-print("UNDEFINED:",sorted(c for c in calls if c not in funcs and c not in('toast','event')))
-print("leftover apiRequest:", 'apiRequest' in j)
-h=h.replace('<script src="app.js?v=1"></script>','<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>\n<script src="app.js?v=2"></script>')
-h=h.replace('Backend: lucasnode-backend • Supabase Auth','Supabase Auth')
-open('/home/claude/build2/index.html','w',encoding='utf-8').write(h)
-print(h.count('supabase-js@2.45.4'), h.count('app.js?v=2'))
-EOF
-cp -f index.html app.js /mnt/user-data/outputs/ && ls -la /mnt/user-data/outputs | head -20

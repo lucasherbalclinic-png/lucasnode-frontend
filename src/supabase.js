@@ -10,7 +10,7 @@
  * - Use only the Supabase publishable key or legacy anon key.
  * - NEVER put the service-role key in frontend code.
  * - Protect database access using Supabase RLS policies.
- * ============================================================
+sb_publishable_B6ENCwwlVa4v3xv65-s3OQ_Tfq-jmBh * ============================================================
  */
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
@@ -31,9 +31,9 @@ const SUPABASE_URL = "https://tligicyjxhmvggubytbp.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_B6ENCwwlVa4v3xv65-s3OQ_Tfq-jmBh";
 
 if (
-  !SUPABASE_URL.startsWith("https://tligicyjxhmvggubytbp.supabase.co") ||
-  !SUPABASE_PUBLISHABLE_KEY || "sb_publishable_B6ENCwwlVa4v3xv65-s3OQ_Tfq-jmBh"
-  SUPABASE_PUBLISHABLE_KEY === "sb_publishable_B6ENCwwlVa4v3xv65-s3OQ_Tfq-jmBh"
+  !SUPABASE_URL.startsWith("https://") ||
+  !SUPABASE_PUBLISHABLE_KEY ||
+  SUPABASE_PUBLISHABLE_KEY === "WEKA_SUPABASE_PUBLISHABLE_KEY_HAPA"
 ) {
   console.error(
     "LucasNode: Weka Supabase publishable key sahihi kwenye src/supabase.js."
@@ -44,8 +44,8 @@ if (
  * Shared Supabase client.
  */
 export const supabase = createClient(
-  SUPABASE_URL, "https://tligicyjxhmvggubytbp.supabase.co"
-  SUPABASE_PUBLISHABLE_KEY, "sb_publishable_B6ENCwwlVa4v3xv65-s3OQ_Tfq-jmBh"
+  SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY,
   {
     auth: {
       persistSession: true,
