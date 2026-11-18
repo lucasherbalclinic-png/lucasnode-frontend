@@ -1,7 +1,7 @@
 mkdir -p /home/claude/build2 && cd /home/claude/build2 && cat > app.js <<'EOF'
 "use strict";
 /* ===== Config (anon key pekee — usiweke service_role hapa) ===== */
-const API_BASE = "https://lucasnode-backend.lucasherbalclinic.workers.dev";
+const API_BASE = "http://127.0.0.1:1573";
 const REQUEST_TIMEOUT_MS = 15000;
 
 
