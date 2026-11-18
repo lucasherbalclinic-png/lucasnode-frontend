@@ -1,71 +1,11 @@
 mkdir -p /home/claude/build2 && cd /home/claude/build2 && cat > app.js <<'EOF'
 "use strict";
 /* ===== Config (anon key pekee — usiweke service_role hapa) ===== */
-const SUPABASE_URL = "https://vrpmntqwanoxokjjllgr.supabase.co";
-const SUPABASE_ANON_KEY =
 const API_BASE = "https://lucasnode-backend.lucasherbalclinic.workers.dev";
 const REQUEST_TIMEOUT_MS = 15000;
 
-let sb = null, initError = null, appStarted = false, authMode = "login", ghRequestId = 0;
-const state = { session: null, user: null, projects: [], ghPath: "", ghOwner: "", ghRepo: "", ghBranch: "main" };
-const counts = { projects: 0, domains: 0, deployments: 0, tovuti: 0 };
 
-/* ---------- helpers ---------- */
-const $ = (id) => document.getElementById(id);
-const uid = () => state.session?.user?.id || null;
-const isLoggedIn = () => !!state.session;
-function escapeHtml(s){
-  return String(s ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]));
-}
-function fmtDate(s){ const d = new Date(s); return isNaN(d) ? "" : d.toLocaleString("sw"); }
-function fmtSize(b){
-  if(b == null) return "";
-  if(b < 1024) return b + " B";
-  if(b < 1048576) return (b/1024).toFixed(1) + " KB";
-  return (b/1048576).toFixed(1) + " MB";
-}
-function toast(msg, kind){
-  const t = $("toast");
-  t.textContent = msg;
-  t.className = "toast show" + (kind === "ok" ? " ok" : kind === "err" ? " err" : "");
-  clearTimeout(t._tm);
-  t._tm = setTimeout(() => { t.className = "toast"; }, 3600);
-}
-function errMsg(e, fb){
-  if(!e) return fb;
-  if(e.code === "23505") return "Thamani hii tayari ipo (slug au domain inatumika).";
-  if(e.code === "23514") return "Thamani si sahihi.";
-  if(e.code === "42501" || /permission denied|row-level security/i.test(e.message || "")) return "Huna ruhusa ya kufanya kitendo hiki.";
-  return e.message || fb;
-}
-async function withBusy(e, fn){
-  const btn = e?.submitter || e?.target?.querySelector?.('[type="submit"]');
-  if(btn){ if(btn.disabled) return; btn.disabled = true; }
-  try{ await fn(); } finally { if(btn) btn.disabled = false; }
-}
-function slugify(s){
-  const v = String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 40).replace(/-+$/g, "");
-  return v.length >= 3 ? v : "project-" + Math.random().toString(36).slice(2, 6);
-}
-const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
-const DOMAIN_RE = /^(?=.{4,253}$)([a-z0-9-]{1,63}\.)+[a-z]{2,63}$/;
-
-/* ---------- Supabase client ---------- */
-function keyIsUnsafe(k){
-  if(/^sb_secret_/.test(k)) return true;
-  try{
-    const p = JSON.parse(atob(k.split(".")[1].replace(/-/g, "+").replace(/_/g, "/")));
-    return p.role === "service_role";
-  }catch{ return false; }
-}
-function initClient(){
-  if(!window.supabase?.createClient) return "Maktaba ya Supabase haikupakiwa.";
-  if(!SUPABASE_ANON_KEY || SUPABASE_ANON_KEY.startsWith("PASTE_")) return "Weka anon key kwenye app.js.";
-  if(keyIsUnsafe(SUPABASE_ANON_KEY)) return "Key hii ni ya siri (service_role). Tumia anon key pekee.";
-  sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-    auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false }
-  });
+let sb = null;
   return null;
 }
 function updateAvatar(){
@@ -86,28 +26,42 @@ function setAuthTab(mode){
 function submitAuth(e){
   e.preventDefault();
   return withBusy(e, async () => {
-    if(!sb){ toast(initError || "Mfumo haujawekwa vizuri.", "err"); return; }
     const email = $("authEmail").value.trim().toLowerCase();
     const password = $("authPassword").value;
     if(!email || !password){ toast("Jaza barua pepe na nenosiri.", "err"); return; }
-    if(authMode === "register"){
-      if(password.length < 10){ toast("Nenosiri liwe na angalau herufi 10.", "err"); return; }
-      const full_name = $("authName").value.trim();
-      const { data, error } = await sb.auth.signUp({ email, password, options: { data: { full_name } } });
-      if(error){ toast(errMsg(error, "Usajili umeshindikana."), "err"); return; }
-      if(data.session) toast("Akaunti imetengenezwa. Karibu!", "ok");
-      else { toast("Akaunti imetengenezwa. Angalia barua pepe kuthibitisha, kisha ingia.", "ok"); setAuthTab("login"); }
-    } else {
-      const { error } = await sb.auth.signInWithPassword({ email, password });
-      if(error){ toast("Barua pepe au nenosiri si sahihi.", "err"); return; }
+    const isRegister = authMode === "register";
+    const full_name = isRegister ? $("authName").value.trim() : undefined;
+    if(isRegister && password.length < 10){ toast("Nenosiri liwe na angalau herufi 10.", "err"); return; }
+    try {
+      const res = await fetch(API_BASE_URL + "/api/auth/" + (isRegister ? "jisajili" : "kuingia"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(isRegister ? { email, password, full_name } : { email, password })
+      });
+      const data = await res.json().catch(() => ({}));
+      if(!res.ok){ toast(data.message || data.error || "Auth imeshindikana.", "err"); return; }
+      const token = data.token || data.access_token || (data.session && data.session.access_token);
+      const user = data.user || data.profile || null;
+      state.session = { access_token: token };
+      state.user = user;
+      if(token) localStorage.setItem("lucasnode_token", token);
+      if(user) localStorage.setItem("lucasnode_user", JSON.stringify(user));
       $("authPassword").value = "";
-      toast("Karibu!", "ok");
+      hideAuthGate();
+      toast(isRegister ? "Akaunti imetengenezwa. Karibu!" : "Karibu!", "ok");
+      if(typeof startApp === "function") startApp();
+    } catch (err) {
+      toast("Mtandao au backend haupatikani.", "err");
     }
   });
 }
 async function logout(){
-  if(sb) await sb.auth.signOut();
-  state.session = null; state.user = null; updateAvatar(); showAuthGate();
+  const token = state.session?.access_token || localStorage.getItem("lucasnode_token");
+  try { if(token) await fetch(API_BASE_URL + "/api/auth/toka", { method: "POST", headers: { Authorization: "Bearer " + token } }); } catch(e){}
+  state.session = null; state.user = null;
+  localStorage.removeItem("lucasnode_token");
+  localStorage.removeItem("lucasnode_user");
+  updateAvatar(); showAuthGate();
   toast("Umetoka kwenye akaunti.", "ok");
 }
 
@@ -498,11 +452,18 @@ function initApp(){
 function bootstrap(){
   initError = initClient();
   if(initError){ showAuthGate(); toast(initError, "err"); return; }
-  sb.auth.onAuthStateChange((event, session) => {
-    state.session = session; state.user = session?.user || null; updateAvatar();
-    if(!session){ appStarted = false; showAuthGate(); return; }
-    if(!appStarted){ appStarted = true; setTimeout(initApp, 0); }
-  });
+  (function restoreSession(){
+  const token = localStorage.getItem("lucasnode_token");
+  const userRaw = localStorage.getItem("lucasnode_user");
+  if(token){
+    state.session = { access_token: token };
+    try { state.user = userRaw ? JSON.parse(userRaw) : null; } catch(e){ state.user = null; }
+    hideAuthGate();
+    if(typeof startApp === "function") startApp();
+  } else {
+    showAuthGate();
+  }
+})();
 }
 bootstrap();
 EOF
