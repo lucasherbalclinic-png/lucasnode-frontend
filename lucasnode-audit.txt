@@ -1,0 +1,55 @@
+=== LUCASNODE QUICK AUDIT ===
+Fri Oct 23 15:15:20 EAT 2026
+
+=== PROJECT FILES ===
+./api.js
+./config.js
+./index.html
+./index.html.backup
+./index.html.before-inline-repair
+./index.html.before-script-fix
+./lucasnode-audit.txt
+./lucasnode-inline-check.js
+./src/api.js
+./src/auth.js
+./src/main.js
+./src/supabase.js
+./styles.css
+
+=== BUILDER FUNCTIONS ===
+1299:const STARTER = {
+1378:async function initEditor(){
+1387:async function loadEditorCode(){
+1405:    files = { ...STARTER };
+1436:function addEditorFile(){
+1445:function deleteEditorFile(){
+1461:function composeHtml(files, forPreview){
+1489:function runPreview(){
+1513:async function saveEditorCode(){
+1543:function inspectProject(files){
+1578:async function runInspect(){
+1591:function gateState(){
+
+=== API CLIENT ===
+29:export const API_ORIGIN = "https://api.lucasnode.com";
+68:  const url = new URL(normalizedPath, API_ORIGIN);
+70:  if (url.origin !== API_ORIGIN) {
+133: *   const result = await apiRequest("GET", "/api/afya");
+135: *   const result = await apiRequest(
+151:export async function apiRequest(
+255:export function apiGetPublic(path, options = {}) {
+256:  return apiRequest("GET", path, undefined, false, options);
+262:export function apiGet(path, options = {}) {
+263:  return apiRequest("GET", path, undefined, true, options);
+269:export function apiPost(path, body, options = {}) {
+270:  return apiRequest("POST", path, body, true, options);
+277:  return apiRequest("PATCH", path, body, true, options);
+284:  return apiRequest("DELETE", path, undefined, true, options);
+293:export async function checkApiHealth() {
+294:  return apiGetPublic("/api/afya", {
+
+=== MAIN SCRIPT FILES ===
+src/main.js: 38
+src/api.js: 6593
+src/auth.js: 5933
+src/supabase.js: 3346
