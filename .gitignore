@@ -1,0 +1,13 @@
+*.backup
+*.backup-*
+*.before-*
+*.bak
+*.bak2
+*.log
+frontend.log
+health-check-temp.js
+api-test.js
+lucasnode-audit.txt
+lucasnode-inline-check.js
+.lucasnode-check/
+node_modules/
