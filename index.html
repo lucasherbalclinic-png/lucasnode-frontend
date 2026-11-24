@@ -163,6 +163,18 @@ main{ padding:22px 18px 110px; }
 .del-btn{ width:34px; height:34px; flex:none; border-radius:10px; background:rgba(239,68,68,.1); border:1px solid rgba(239,68,68,.2); color:#fecaca; font-size:14px; }
 .del-btn:hover{ background:rgba(239,68,68,.2); }
 
+/* CARD ACTION MENU */
+.card-actions{ position:relative; flex:none; }
+.card-menu-trigger{ width:36px; height:36px; display:grid; place-items:center; border:1px solid var(--line); border-radius:11px; background:rgba(15,23,42,.72); color:#cbd5e1; cursor:pointer; }
+.card-menu-trigger:hover,.card-actions.open .card-menu-trigger{ background:rgba(59,130,246,.13); border-color:#3b82f6; color:#bfdbfe; }
+.card-menu-trigger svg{ width:19px; height:19px; fill:currentColor; }
+.card-menu{ display:none; position:absolute; z-index:30; top:43px; right:0; min-width:155px; padding:6px; border:1px solid var(--line); border-radius:12px; background:#0b1220; box-shadow:0 12px 30px rgba(0,0,0,.4); }
+.card-actions.open .card-menu{ display:block; }
+.card-menu-delete{ width:100%; display:flex; align-items:center; gap:9px; padding:10px; border:0; border-radius:8px; background:transparent; color:#fca5a5; text-align:left; font-size:12px; cursor:pointer; }
+.card-menu-delete:hover{ background:rgba(239,68,68,.12); }
+.card-menu-delete svg{ width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; flex:none; }
+
+
 /* FORMS */
 .form{ display:grid; gap:14px; }
 .field{ display:grid; gap:7px; }
@@ -378,7 +390,7 @@ input[type=file]{ display:none; }
       </form>
       <div class="section">
         <div class="section-head"><div><div class="section-title">Deployment History</div><div class="section-sub">Historia ya deployments zako.</div></div></div>
-        <div id="deployHistoryEmpty" class="empty">
+lucasnode        <div id="deployHistoryEmpty" class="empty">
           <div class="empty-icon">🚀</div>
           <h3>Hakuna deployment bado</h3>
           <p>Deployment utakayofanya itaonekana hapa.</p>
@@ -557,8 +569,8 @@ input[type=file]{ display:none; }
     <section id="page-payments" class="page">
       <div class="hero"><span class="badge">💳 Payments & Billing</span><h1>Malipo</h1><p>Angalia plans, payment instructions na historia ya malipo ya account yako.</p></div>
       <div class="notice"><span>ℹ️</span><span>Mfumo unaweza kutumia payment flow ya manual approval: Payment → Pending → Admin Verification → Approved → Service Activation.</span></div>
-      <div class="section"><div class="section-title">Plans</div><div class="empty"><div class="empty-icon">💳</div><h3>Hakuna plan inayopatikana bado</h3><p>Plans zitasomwa kutoka LucasNode backend na Supabase.</p></div></div>
-      <div class="section"><div class="section-title">Payment History</div><div class="empty"><div class="empty-icon">🧾</div><h3>Hakuna payment bado</h3><p>Malipo yako yataonekana hapa.</p></div></div>
+      <div class="section"><div class="section-title">Plans</div><div class="empty"><div class="empty-icon">💳</div><h3>Hakuna plan inayopatikana bado</h3><p>Plans zitasomwa kutoka LucasNode backend na hujasajili
+Lucasnode.</p></div></div>      <div class="section"><div class="section-title">Payment History</div><div class="empty"><div class="empty-icon">🧾</div><h3>Hakuna payment bado</h3><p>Malipo yako yataonekana hapa.</p></div></div>
     </section>
 
     <!-- SECURITY -->
@@ -589,9 +601,17 @@ input[type=file]{ display:none; }
 
     <!-- API KEYS -->
     <section id="page-apikeys" class="page">
-      <div class="section-head"><div><div class="section-title">API Keys</div><div class="section-sub">Keys za kuunganisha LucasNode na services nyingine.</div></div></div>
-      <div class="notice"><span>🔐</span><span>Raw API keys hazipaswi kuhifadhiwa kwenye database. Backend itasimamia hashing na revocation.</span></div>
-      <div class="section"><div class="empty"><div class="empty-icon">🔑</div><h3>Hakuna API key bado</h3><p>API keys utakazounda zitaonekana hapa.</p></div></div>
+      <div class="section-head">
+        <div>
+          <div class="section-title">🔑 API Keys</div>
+          <div class="section-sub">Tengeneza na dhibiti ruhusa za API za akaunti yako.</div>
+        </div>
+      </div>
+      <div class="notice">
+        <span>🔐</span>
+        <span>Secret huonyeshwa mara moja tu. Backend huhifadhi hash na kusimamia revocation.</span>
+      </div>
+      <div id="ln-api-keys"></div>
     </section>
 
     <!-- NOTIFICATIONS -->
@@ -678,7 +698,7 @@ input[type=file]{ display:none; }
       <div class="field"><label>Nenosiri</label><input class="input" id="authPassword" type="password" placeholder="Angalau herufi 10" required></div>
       <button class="btn btn-primary btn-full" type="submit" id="authSubmit">Kuingia</button>
     </form>
-    <p class="hint" style="text-align:center;margin-top:12px">Supabase Auth</p>
+    <p class="hint" style="text-align:center;margin-top:12px">LucasNode Native Authentication</p>
   </div>
 </div>
 
@@ -723,7 +743,7 @@ input[type=file]{ display:none; }
       <form class="form" onsubmit="createTovuti(event)">
         <div class="field"><label>Jina *</label><input class="input" id="tovutiName" placeholder="Tovuti yangu" required></div>
         <div class="field"><label>Slug *</label><input class="input" id="tovutiSlug" placeholder="tovuti-yangu" required></div>
-        <div class="field"><label>HTML (lazima kuwa na &lt;html&gt; au &lt;body&gt;)</label><textarea class="textarea" id="tovutiHtml" placeholder="<html><body><h1>Hello</h1></body></html>" required></textarea></div>
+        <div class="field"><label>HTML (lazima kuwa na &lt;html&gt; au &lt;body&gt;)</label><textarea class="textarea" id="tovutiHtml" placeholder="<html><body><h1>Hello</h1></html>" required></textarea></div>
         <button class="btn btn-primary btn-full" type="submit">💾 Hifadhi Tovuti</button>
       </form>
     </div>
@@ -771,24 +791,31 @@ input[type=file]{ display:none; }
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 
 
+<script src="src/hosting/hosting.js" defer></script>
+  <script src="src/builder/app-builder.js" defer></script>
+  <script src="src/apikeys/api-keys.js" defer></script>
 </body>
 <script>
-const API_ORIGIN = "https://api.lucasnode.com";
+const API_ORIGIN = (location.hostname === "localhost" || location.hostname === "127.0.0.1")
+  ? "http://127.0.0.1:1573"
+  : "https://api.lucasnode.com";
 const LS_TOKEN = "lucasnode_access_token";
 const LS_REFRESH = "lucasnode_refresh_token";
 const LS_USER = "lucasnode_user";
-const REQUEST_TIMEOUT_MS = 15000;
-/* Anon key pekee (ni ya umma). Usiweke service_role hapa. Inatumika kwa Storage/project_files tu. */
-const SUPABASE_URL = "https://tligicyjxhmvggubytbp.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_B6ENCwwlVa4v3xv65-s3OQ_Tfq-jmBh";
-const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
-const DOMAIN_RE = /^(?=.{4,253}$)([a-z0-9-]{1,63}\.)+[a-z]{2,63}$/;
-let sb = null;
+/* LucasNode Native Authentication */
+const AUTH_LOGIN_ENDPOINT = "/api/idhini/kuingia";
+const AUTH_REGISTER_ENDPOINT = "/api/idhini/jisajili";
+
+const AUTH_LOGOUT_ENDPOINT = "/api/idhini/toka";
 
 let authMode = "login";
+const REQUEST_TIMEOUT_MS = 15000;
+const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+const DOMAIN_RE = /^(?=.{4,253}$)([a-z0-9-]{1,63}\.)+[a-z]{2,63}$/;
+
+
 let refreshing = null;
 let ghRequestId = 0;
 const state = { user: null, ghPath: "", ghOwner: "", ghRepo: "", ghBranch: "main" };
@@ -832,23 +859,6 @@ async function withBusy(e, fn){
   try{ await fn(); } finally { if(btn) btn.disabled = false; }
 }
 
-/* ---------- Supabase (Storage + project_files, kwa token ya kikao) ---------- */
-function keyIsUnsafe(k){
-  if(/^sb_secret_/.test(k)) return true;
-  try{ return JSON.parse(atob(k.split(".")[1].replace(/-/g, "+").replace(/_/g, "/"))).role === "service_role"; }catch{ return false; }
-}
-function initSupabase(){
-  try{
-    if(!window.supabase?.createClient) return;
-    if(!SUPABASE_ANON_KEY || SUPABASE_ANON_KEY.startsWith("PASTE_")) return;
-    if(keyIsUnsafe(SUPABASE_ANON_KEY)){ console.error("service_role key haikubaliki kwenye frontend."); return; }
-    sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-      auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
-      global: { fetch: (u, o = {}) => { const h = new Headers(o.headers || {}); const t = getToken(); if(t) h.set("Authorization", "Bearer " + t); return fetch(u, { ...o, headers: h }); } }
-    });
-  }catch{ sb = null; }
-}
-
 /* ---------- session ---------- */
 const getToken = () => store.get(LS_TOKEN);
 const getRefreshToken = () => store.get(LS_REFRESH);
@@ -890,22 +900,42 @@ async function apiRequest(method, path, body, retry = true){
     return { ok:false, status:0, data:{ success:false, error:"Imeshindikana kuunganisha na backend." } };
   }
 }
+window.apiRequest = apiRequest;
+window.toast = toast;
+
 function refreshSession(){
-  if(!getRefreshToken()) return Promise.resolve(false);
   if(refreshing) return refreshing;
+
+  const token = getToken();
+  if(!token) return Promise.resolve(false);
+
   refreshing = (async () => {
-    try{
+    try {
       const r = await rawFetch("/api/idhini/upya", {
-        method:"POST", headers:{ "Content-Type":"application/json" },
-        body: JSON.stringify({ refresh_token: getRefreshToken() })
+        method: "POST",
+        headers: { Authorization: "Bearer " + token }
       });
+
       const d = await r.json().catch(() => null);
-      if(r.ok && d?.success && d.session){ saveSession(d.session, d.user); return true; }
-      if(r.status >= 400 && r.status < 500){ clearSession(); showAuthGate(); }
+
+      if(r.ok && d?.success && d.token){
+        saveSession({ access_token: d.token }, state.user);
+        return true;
+      }
+
+      if(r.status === 401){
+        clearSession();
+        showAuthGate();
+      }
+
       return false;
-    }catch{ return false; }
-    finally{ refreshing = null; }
+    } catch {
+      return false;
+    } finally {
+      refreshing = null;
+    }
   })();
+
   return refreshing;
 }
 
@@ -937,15 +967,15 @@ function submitAuth(e){
     if(authMode === "register"){
       if(password.length < 10){ toast("Nenosiri liwe na angalau herufi 10.", "err"); return; }
       const display_name = $("authName").value.trim();
-      const { ok, data } = await authPost("/api/idhini/jisajili", { email, password, display_name });
+      const { ok, data } = await authPost("/api/idhini/jisajili", { email, password, full_name: display_name });
       if(ok && data?.success){
-        if(data.session){ saveSession(data.session, data.user); toast("Akaunti imetengenezwa. Karibu!", "ok"); initApp(); }
+        if(data.token){ saveSession({ access_token: data.token }, data.user); toast("Akaunti imetengenezwa. Karibu!", "ok"); initApp(); }
         else { toast("Akaunti imetengenezwa. Angalia barua pepe kuthibitisha, kisha ingia.", "ok"); setAuthTab("login"); }
       } else toast(data?.error || "Usajili umeshindikana.", "err");
     } else {
       const { ok, data } = await authPost("/api/idhini/kuingia", { email, password });
-      if(ok && data?.success && data.session){
-        saveSession(data.session, data.user);
+      if(ok && data?.success && data.token){
+        saveSession({ access_token: data.token }, data.user);
         $("authPassword").value = "";
         toast("Karibu, " + (data.user?.email || "") + "!", "ok");
         initApp();
@@ -979,6 +1009,7 @@ function loadPageData(name){
   else if(name === "settings") loadProfile();
   else if(name === "support") renderTickets();
   else if(name === "editor" && typeof initEditor === "function") initEditor();
+  else if(name === "apikeys") window.LucasNodeApiKeys?.init();
 }
 function openDrawer(){ if(!isLoggedIn()){ showAuthGate(); return; } $("drawerOverlay").classList.add("show"); }
 function closeDrawer(){ $("drawerOverlay").classList.remove("show"); }
@@ -1315,14 +1346,17 @@ function initApp(){
   refreshStats();
   showPage("home");
 }
-async function bootstrap(){
-  initSupabase();
-  if(!getToken()){ showAuthGate(); return; }
-  try{ state.user = JSON.parse(store.get(LS_USER) || "null"); }catch{ state.user = null; }
-  const r = await apiRequest("GET", "/api/idhini/mimi", null, false);
-  if(r.ok && r.data?.success && r.data.user){ state.user = r.data.user; initApp(); return; }
-  if(r.status === 0){ toast("Backend haipatikani. Jaribu tena.", "err"); showAuthGate(); return; }
-  if(await refreshSession()) initApp(); else showAuthGate();
+function bootstrap(){
+  if(!getToken()){
+    showAuthGate();
+    return;
+  }
+  try {
+    state.user = JSON.parse(store.get(LS_USER) || "null");
+  } catch {
+    state.user = null;
+  }
+  initApp();
 }
 bootstrap();
 
@@ -1507,6 +1541,7 @@ async function generateWithLucasNodeBuilder(){
   const input = $("builderDescription");
   const note = $("builderNote");
   const description = input.value.trim();
+  const projectId = $("editorProject").value;
 
   if(!description){
     note.textContent = "Andika maelezo ya app kwanza.";
@@ -1514,61 +1549,175 @@ async function generateWithLucasNodeBuilder(){
     return;
   }
 
-  if(!confirm("Kutengeneza app mpya kutabadilisha mafaili yaliyo kwenye editor. Unaendelea?")){
+  if(!projectId){
+    note.textContent = "Chagua project iliyopo kabla ya kutumia Backend AI Builder.";
+    toast("Chagua project kwanza.", "err");
+    $("editorProject").focus();
     return;
   }
 
+  if(!getToken()){
+    note.textContent = "Ingia kwenye LucasNode kwanza ili kutumia AI Builder.";
+    toast("Login inahitajika kutumia AI Builder.", "err");
+    return;
+  }
+
+  if(description.length > 20000){
+    note.textContent = "Maelezo yamezidi urefu unaoruhusiwa.";
+    return;
+  }
+
+  if(!confirm("LucasNode AI Builder itaongeza mafaili mapya kwenye project hii na kuanzisha Build Run. Mafaili yaliyopo hayataandikwa upya. Unaendelea?")){
+    return;
+  }
+
+  const button = document.querySelector(
+    'button[onclick="generateWithLucasNodeBuilder()"]'
+  );
+
+  if(button) button.disabled = true;
+
   try{
-    note.textContent = "Inatengeneza mafaili na kufanya ukaguzi...";
-    const builder = await import("./src/builder/engine.js");
-    const result = builder.generateProjectFiles(description);
-    const check = builder.validateGeneratedFiles(result.files);
+    note.textContent = "Inatuma ombi kwa LucasNode Backend AI Builder...";
 
-    if(!check.valid) throw new Error("Ukaguzi wa mafaili haujapita.");
+    const response = await apiRequest(
+      "POST",
+      "/api/projects/" + encodeURIComponent(projectId) + "/ai-builder",
+      { request: description }
+    );
 
-    ED.files = {...result.files};
-    ED.active = "index.html";
+    const data = response.data || {};
+
+    if(!response.ok || !data.success){
+      if(data.code === "PROJECT_FILE_CONFLICT"){
+        throw new Error(
+          "Majina ya mafaili yanagongana na yaliyopo: " +
+          (data.conflictingPaths || []).join(", ") +
+          ". Hakuna mafaili yaliyopo yaliyoandikwa upya."
+        );
+      }
+
+      throw new Error(
+        data.error || "Backend AI Builder imeshindwa. HTTP " +
+        response.status
+      );
+    }
+
+    if(response.status !== 202 || data.status !== "QUEUED"){
+      throw new Error(
+        "Jibu la Backend halionyeshi Build Run iliyowekwa kwenye foleni."
+      );
+    }
+
+    note.textContent = "Mafaili yamehifadhiwa. Build Run imewekwa kwenye foleni. Inasoma project...";
+
+    const loaded = await sbLoadFiles(projectId);
+
+    if(loaded.error || !loaded.files){
+      note.textContent =
+        "Build Run imewekwa kwenye foleni na mafaili yamehifadhiwa, " +
+        "lakini Editor imeshindwa kuyasoma upya: " +
+        sbErr(loaded.error || "Usomaji wa mafaili umeshindwa.");
+      toast("Build imewekwa kwenye foleni; soma mafaili tena.", "err");
+      return;
+    }
+
+    ED.projectId = projectId;
+    ED.files = loaded.files;
+    ED.active = ("index.html" in ED.files)
+      ? "index.html"
+      : Object.keys(ED.files)[0];
+
     ED.ver++;
     ED.gate = {
-      testedVer:-1, passed:false, testedHash:"",
-      previewedVer:-1, approvedVer:-1, approvedHash:""
+      testedVer:-1,
+      passed:false,
+      testedHash:"",
+      previewedVer:-1,
+      approvedVer:-1,
+      approvedHash:""
     };
 
     renderEditor();
     clearInspect();
     runPreview();
 
-    note.textContent = "Mafaili yametengenezwa na kukaguliwa. Kagua Preview, kisha tumia Inspect na majaribio kabla ya kuidhinisha.";
-    $("editorNote").textContent = "Builder imetengeneza mafaili ya kuanzia. Hifadhi na jaribu app kabla ya hatua yoyote ya deployment.";
-  }catch(e){
-    note.textContent = "Hitilafu ya Builder: " + (e.message || "Haikuweza kutengeneza app.");
+    setNote("Mafaili yamesomwa kutoka Backend. Build Run: " +
+      (data.buildRun?.id || "imeundwa") + ".");
+
+    note.textContent =
+      "Mafaili yamehifadhiwa kwenye project. Build Run imewekwa kwenye foleni; " +
+      "subiri matokeo ya Build, kisha endelea na Inspect na Preview.";
+
+    toast("AI Builder imefanikiwa. Build Run imewekwa kwenye foleni.", "ok");
+
+  }catch(error){
+    note.textContent =
+      "Hitilafu ya Backend AI Builder: " +
+      (error.message || "Ombi halijakamilika.");
+
+    toast(note.textContent, "err");
+
+  }finally{
+    if(button) button.disabled = false;
   }
 }
 
 async function loadEditorCode(){
-  const sel = $("editorProject"), id = sel.value;
+  const sel = $("editorProject");
+  const id = sel.value;
   ED.projectId = id;
-  let files = null, note = "";
+
+  let files = null;
+  let note = "";
+
   if(id){
-    if(getToken()){
-      const r = await sbLoadFiles(id);
-      if(r.error) note = "Server: " + sbErr(r.error) + ". ";
-      else if(r.files){ files = r.files; note = "Code imesomwa kutoka server."; }
+    if(!getToken()){
+      toast("Ingia kwenye akaunti ya LucasNode ili kusoma files za project.", "err");
+      setNote("Project haijasomwa: login inahitajika.");
+      return;
     }
-    if(!files){
-      const d = readDraft(id);
-      if(d){ files = d; note += "Code ni draft ya kivinjari hiki (haijahifadhiwa server)."; }
+
+    const result = await sbLoadFiles(id);
+
+    if(result.error){
+      const message = result.error.message || "Imeshindikana kusoma project.";
+      toast(message, "err");
+      setNote("Kusoma project kumeshindikana: " + message);
+      return;
     }
+
+    if(result.files){
+      files = result.files;
+      note = "Files zimesomwa kutoka Backend v2.";
+    }else{
+      files = { ...STARTER };
+      note = "Project haina files bado. Starter code imewekwa; bonyeza Hifadhi ili kuihifadhi server.";
+    }
+
     const opt = sel.selectedOptions[0];
-    if(opt && !$("deploySlug").value) $("deploySlug").value = opt.dataset.slug || "";
-  }
-  if(!files){
+    if(opt && !$("deploySlug").value){
+      $("deploySlug").value = opt.dataset.slug || "";
+    }
+  }else{
     files = { ...STARTER };
-    note += id ? "Project haina files bado — starter code imewekwa. Bonyeza Hifadhi." : "Bila project, hii ni starter code (haihifadhiwi).";
+    note = "Starter code ya muda. Chagua project ili kuhifadhi kwenye LucasNode.";
   }
+
   ED.files = files;
-  ED.active = ("index.html" in files) ? "index.html" : Object.keys(files)[0];
-  ED.gate = { testedVer: -1, passed: false, testedHash: "", previewedVer: -1, approvedVer: -1, approvedHash: "" };
+  ED.active = ("index.html" in files)
+    ? "index.html"
+    : Object.keys(files)[0];
+
+  ED.gate = {
+    testedVer: -1,
+    passed: false,
+    testedHash: "",
+    previewedVer: -1,
+    approvedVer: -1,
+    approvedHash: ""
+  };
+
   ED.ver++;
   setNote(note);
   renderEditor();
@@ -1594,6 +1743,84 @@ function switchTab(path){
   $("editorLabel").textContent = "Code: " + path;
   renderTabs();
 }
+
+window.LucasNodeEditorBridge = Object.freeze({
+  list() {
+    return Object.keys(ED.files);
+  },
+  read(path) {
+    return Object.prototype.hasOwnProperty.call(ED.files, path)
+      ? ED.files[path] : null;
+  },
+  open(path) {
+    if (!Object.prototype.hasOwnProperty.call(ED.files, path)) return false;
+    switchTab(path);
+    return true;
+  },
+  create(path) {
+    if (!FILE_NAME_RE.test(path) || !ALLOWED_EXT.test(path)) {
+      throw new Error("Aina au jina la faili haliruhusiwi.");
+    }
+    if (Object.prototype.hasOwnProperty.call(ED.files, path)) {
+      throw new Error("Faili hilo tayari lipo.");
+    }
+    ED.files[path] = "";
+    ED.active = path;
+    renderEditor();
+    bumpVersion();
+    return true;
+  },
+  rename(oldPath, newPath) {
+    if (oldPath === "index.html") throw new Error("index.html haiwezi kubadilishwa jina.");
+    if (!Object.prototype.hasOwnProperty.call(ED.files, oldPath)) {
+      throw new Error("Faili halijapatikana.");
+    }
+    if (!FILE_NAME_RE.test(newPath) || !ALLOWED_EXT.test(newPath)) {
+      throw new Error("Jina au aina mpya ya faili si sahihi.");
+    }
+    if (Object.prototype.hasOwnProperty.call(ED.files, newPath)) {
+      throw new Error("Jina hilo tayari linatumika.");
+    }
+    const content = ED.files[oldPath];
+    const wasActive = ED.active === oldPath;
+    delete ED.files[oldPath];
+    ED.files[newPath] = content;
+    if (wasActive) ED.active = newPath;
+    renderEditor();
+    bumpVersion();
+    runPreview();
+    return true;
+  },
+  delete(path) {
+    if (path === "index.html") throw new Error("index.html haiwezi kufutwa.");
+    if (!Object.prototype.hasOwnProperty.call(ED.files, path)) {
+      throw new Error("Faili halijapatikana.");
+    }
+    delete ED.files[path];
+    if (ED.active === path) ED.active = "index.html";
+    renderEditor();
+    bumpVersion();
+    runPreview();
+    return true;
+  },
+  update(path, content) {
+    if (!Object.prototype.hasOwnProperty.call(ED.files, path)) {
+      throw new Error("Faili halijapatikana.");
+    }
+    ED.files[path] = content;
+    if (ED.active === path) {
+      $("htmlEditor").value = content;
+      bumpVersion();
+      clearTimeout(ED.timer);
+      ED.timer = setTimeout(runPreview, 700);
+    } else {
+      bumpVersion();
+      runPreview();
+    }
+    return true;
+  }
+});
+
 function addEditorFile(){
   const name = (prompt("Jina la file (mfano: about.html, app.js, styles.css):") || "").trim();
   if(!name) return;
@@ -1673,29 +1900,47 @@ function closePreviewFullscreen(){
 /* ---------- save ---------- */
 async function saveEditorCode(){
   if(ED.saving) return;
-  if(!ED.projectId){ toast("Chagua project ili kuhifadhi. Bila project code haihifadhiwi.", "err"); return; }
-  ED.files[ED.active] = $("htmlEditor").value;
-  if(totalBytes(ED.files) > MAX_PROJECT_BYTES){ toast("Project ni kubwa mno (zaidi ya 500 KB).", "err"); return; }
-  ED.saving = true;
-  try{
-    if(getToken()){
-      const err = await sbSaveFiles(ED.projectId, ED.files);
-      if(err){
-        writeDraft(ED.projectId, ED.files);
-        toast("Server imekataa: " + sbErr(err) + ". Draft imehifadhiwa kwenye kivinjari.", "err");
-        return;
-      }
-      clearDraft(ED.projectId);
-      toast("Files zimehifadhiwa kwenye server.", "ok");
-      setNote("Imehifadhiwa kwenye server.");
-    } else {
-      const ok = writeDraft(ED.projectId, ED.files);
-      toast(ok ? "Supabase haijawekwa: imehifadhiwa kwenye kivinjari hiki tu." : "Imeshindikana kuhifadhi.", ok ? "ok" : "err");
-      if(ok) setNote("Draft ya kivinjari hiki tu (server haijaunganishwa).");
-    }
-  } finally { ED.saving = false; }
-}
 
+  if(!ED.projectId){
+    toast("Chagua project kabla ya kuhifadhi.", "err");
+    return;
+  }
+
+  if(!getToken()){
+    toast("Ingia kwenye akaunti ya LucasNode kabla ya kuhifadhi.", "err");
+    return;
+  }
+
+  ED.files[ED.active] = $("htmlEditor").value;
+
+  if(totalBytes(ED.files) > MAX_PROJECT_BYTES){
+    toast("Project ni kubwa mno (zaidi ya 500 KB).", "err");
+    return;
+  }
+
+  ED.saving = true;
+
+  try{
+    const error = await sbSaveFiles(ED.projectId, ED.files);
+
+    if(error){
+      const message = error.message || "Backend imeshindwa kuhifadhi project.";
+      toast(message, "err");
+      setNote("Uhifadhi umeshindwa: " + message);
+      return;
+    }
+
+    clearDraft(ED.projectId);
+    toast("Project files zimehifadhiwa kupitia Backend v2.", "ok");
+    setNote("Files zimehifadhiwa kwenye Backend v2. LNDB persistence inategemea mafanikio ya backend.");
+  }catch(error){
+    const message = error?.message || "Hitilafu isiyotarajiwa wakati wa kuhifadhi.";
+    toast(message, "err");
+    setNote("Uhifadhi umeshindwa: " + message);
+  }finally{
+    ED.saving = false;
+  }
+}
 /* ---------- inspect (static tests + security checks) ---------- */
 function checkJs(code, name, add){
   if(/^\s*(import|export)\s/m.test(code)){ add("warn", name + ": ES module — syntax haikukaguliwa."); return; }
@@ -1945,6 +2190,217 @@ document.addEventListener("click", (e) => {
   const el = e.target.closest('[data-action="ed-tab"]');
   if(el) switchTab(el.dataset.path);
 });
+
+
+/* LUCASNODE NATIVE AUTH CLIENT */
+window.LucasNodeNativeAuth = (() => {
+  const API = (location.hostname === "localhost" ||
+               location.hostname === "127.0.0.1")
+    ? "http://127.0.0.1:1573"
+    : "https://api.lucasnode.com";
+
+  const TOKEN_KEY = "lucasnode_access_token";
+  const USER_KEY = "lucasnode_user";
+
+  function getToken() {
+    return localStorage.getItem(TOKEN_KEY);
+  }
+
+  function getUser() {
+    try {
+      return JSON.parse(localStorage.getItem(USER_KEY) || "null");
+    } catch {
+      return null;
+    }
+  }
+
+  function saveSession(data) {
+    if (!data || !data.token) {
+      throw new Error("Backend haikurudisha access token.");
+    }
+
+    localStorage.setItem(TOKEN_KEY, data.token);
+
+    if (data.user) {
+      localStorage.setItem(USER_KEY, JSON.stringify(data.user));
+    }
+  }
+
+  async function request(path, body = null, authenticated = false) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 15000);
+
+    const headers = {
+      "Content-Type": "text/plain;charset=UTF-8",
+      "Accept": "application/json"
+    };
+
+    const token = getToken();
+
+    if (authenticated && token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+
+    try {
+      const response = await fetch(API + path, {
+        method: "POST",
+        headers,
+        body: body === null ? undefined : JSON.stringify(body),
+        signal: controller.signal,
+        mode: "cors",
+        cache: "no-store",
+        credentials: "omit"
+      });
+
+      const raw = await response.text();
+      let data = {};
+
+      try {
+        data = raw ? JSON.parse(raw) : {};
+      } catch {
+        throw new Error("Backend imerudisha majibu yasiyo JSON: " + raw.slice(0, 180));
+      }
+
+      if (!response.ok || data.success === false) {
+        throw new Error(
+          data.error || data.message || `Backend HTTP ${response.status}`
+        );
+      }
+
+      return data;
+    } catch (error) {
+      if (error.name === "AbortError") {
+        throw new Error("Backend haikujibu ndani ya sekunde 15.");
+      }
+
+      if (error instanceof TypeError) {
+        throw new Error("Fetch imeshindwa. Angalia Backend v2, CORS na muunganisho wa mtandao.");
+      }
+
+      throw error;
+    } finally {
+      clearTimeout(timeout);
+    }
+  }
+
+  async function register(email, password, fullName) {
+    const data = await request("/api/idhini/jisajili", {
+      email,
+      password,
+      full_name: fullName
+    });
+
+    if (data.token) saveSession(data);
+    return data;
+  }
+
+  async function login(email, password) {
+    const data = await request("/api/idhini/kuingia", {
+      email,
+      password
+    });
+
+    saveSession(data);
+    return data;
+  }
+
+  async function refresh() {
+    const data = await request("/api/idhini/upya", {}, true);
+    if (data.token) saveSession(data);
+    return data;
+  }
+
+  async function logout() {
+    try {
+      if (getToken()) {
+        await request("/api/idhini/toka", {}, true);
+      }
+    } finally {
+      localStorage.removeItem(TOKEN_KEY);
+      localStorage.removeItem(USER_KEY);
+    }
+  }
+
+  return {
+    api: API,
+    getToken,
+    getUser,
+    request,
+    register,
+    login,
+    refresh,
+    logout
+  };
+})();
+
+
+
+/* LUCASNODE_NATIVE_AUTH_FORM_BRIDGE */
+window.submitAuth = async function(e) {
+  if (e) e.preventDefault();
+
+  const form = e && e.currentTarget
+    ? e.currentTarget
+    : document.querySelector("#authForm, form");
+
+  if (!form) {
+    console.error("LucasNode Auth form haijapatikana.");
+    return;
+  }
+
+  const fields = [...form.querySelectorAll("input")];
+  const email = (fields.find(x => x.type === "email")?.value || "").trim();
+  const password = fields.find(x => x.type === "password")?.value || "";
+  const fullName = (
+    fields.find(x =>
+      /name|jina|display/i.test((x.name || "") + " " + (x.id || ""))
+    )?.value || ""
+  ).trim();
+
+  const registerMode =
+    String(window.authMode || "").toLowerCase().includes("register") ||
+    String(window.authMode || "").toLowerCase().includes("sajili") ||
+    !!form.querySelector('[name="full_name"], [name="display_name"]');
+
+  if (!email || !password) {
+    alert("Jaza barua pepe na nenosiri.");
+    return;
+  }
+
+  const button = form.querySelector('[type="submit"]');
+  if (button) {
+    button.disabled = true;
+    button.dataset.originalText = button.textContent;
+    button.textContent = "Inasubiri...";
+  }
+
+  try {
+    const result = registerMode
+      ? await window.LucasNodeNativeAuth.register(email, password, fullName)
+      : await window.LucasNodeNativeAuth.login(email, password);
+
+    if (!result.token && !result.access_token) {
+      throw new Error(result.error || "Backend haikurudisha token ya kuingia.");
+    }
+
+    if (result.access_token && !result.token) {
+      localStorage.setItem("lucasnode_access_token", result.access_token);
+    }
+
+    if (typeof window.hideAuthGate === "function") window.hideAuthGate();
+    if (typeof window.initApp === "function") await window.initApp();
+
+  } catch (error) {
+    console.error("LucasNode Native Auth:", error);
+    alert("Imeshindwa kuingia: " + (error.message || "Hitilafu ya mawasiliano."));
+  } finally {
+    if (button) {
+      button.disabled = false;
+      button.textContent = button.dataset.originalText || "Ingia";
+    }
+  }
+};
+
 </script>
 </body>
 </html>

@@ -1,25 +1,23 @@
 /**
  * ============================================================
- * LUCASNODE — API CLIENT
- * File: src/api.js
+ * LUCASNODE NATIVE API CLIENT
  * ============================================================
  *
  * Centralized API communication for LucasNode.
  *
- * - One API origin
- * - Supabase access token support
+ * - Single LucasNode backend origin
+ * - LucasNode native access token
+ * - Secure Bearer authentication
  * - JSON request/response handling
  * - Timeout and network error handling
  * - No fake success responses
  *
  * IMPORTANT:
  * This file does not create backend endpoints.
- * Each requested endpoint must exist on the server.
+ * Each requested endpoint must exist on LNNB.
  * ============================================================
  */
-
-import { supabase } from "./supabase.js";
-
+localStorage.getItem("lucasnode_access_token")
 /**
  * Single backend origin.
  *
@@ -77,13 +75,13 @@ function buildApiUrl(path) {
 }
 
 /**
- * Get the current Supabase access token.
+ * Get the current lucasnode access token.
  *
  * This token is sent to the existing backend for authentication.
  * The backend must validate it before granting access.
  */
 async function getAccessToken() {
-  const { data, error } = await supabase.auth.getSession();
+  const { data, error } = await lucasnode.auth.getSession();
 
   if (error) {
     throw new LucasNodeApiError(
